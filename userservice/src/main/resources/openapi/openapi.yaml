@@ -1,0 +1,64 @@
+openapi: 3.0.0
+info:
+  title: openapi
+  version: '1.0'
+  contact:
+    name: Balint Jeszenszky
+  description: Classified advertisement site user service
+servers:
+  - url: 'http://localhost:8081/api/user'
+tags:
+  - name: authentication
+paths:
+  /login:
+    post:
+      summary: ''
+      operationId: post-login
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailsResponse'
+      description: Log in user
+      tags:
+        - authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+components:
+  schemas:
+    UserDetailsResponse:
+      title: UserDetailsResponse
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+      required:
+        - id
+        - username
+        - email
+        - roles
+    LoginRequest:
+      title: LoginRequest
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+      description: ''
