@@ -115,8 +115,10 @@
 								${project.basedir}/src/main/resources/openapi/openapi.yaml
 							</inputSpec>
 							<generatorName>spring</generatorName>
+							<generateSupportingFiles>false</generateSupportingFiles>
 							<configOptions>
 								<interfaceOnly>true</interfaceOnly>
+								<skipDefaultInterface>true</skipDefaultInterface>
 								<serializableModel>true</serializableModel>
 							</configOptions>
 							<apiPackage>hu.bme.aut.classifiedadvertisementsite.userservice.api</apiPackage>

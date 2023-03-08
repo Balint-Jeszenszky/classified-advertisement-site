@@ -5,6 +5,10 @@
 			"path": "gateway"
 		},
 		{
+			"name": "User service",
+			"path": "userservice"
+		},
+		{
 			"name": "Root",
 			"path": "."
 		}
