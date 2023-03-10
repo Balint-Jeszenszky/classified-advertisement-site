@@ -31,7 +31,12 @@ public class AuthHeaderFilter extends OncePerRequestFilter {
             try {
                 node = mapper.readTree(Base64.getDecoder().decode(authHeader));
 
-                UserDetails userDetails = new UserDetailsImpl(node.get("id").asInt(), node.get("username").asText(), node.get("email").asText(), jsonArrayToList(node.get("roles")));
+                UserDetails userDetails = new UserDetailsImpl(
+                        node.get("id").asInt(),
+                        node.get("username").asText(),
+                        node.get("email").asText(),
+                        null,
+                        jsonArrayToList(node.get("roles")));
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 

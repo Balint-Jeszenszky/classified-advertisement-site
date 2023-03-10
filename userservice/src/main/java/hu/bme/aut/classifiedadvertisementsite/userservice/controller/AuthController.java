@@ -1,25 +1,31 @@
 package hu.bme.aut.classifiedadvertisementsite.userservice.controller;
 
-import hu.bme.aut.classifiedadvertisementsite.userservice.api.LoginApi;
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.AuthApi;
 import hu.bme.aut.classifiedadvertisementsite.userservice.model.LoginRequest;
+import hu.bme.aut.classifiedadvertisementsite.userservice.model.RegistrationRequest;
 import hu.bme.aut.classifiedadvertisementsite.userservice.model.UserDetailsResponse;
+import hu.bme.aut.classifiedadvertisementsite.userservice.service.AuthService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
-public class AuthController implements LoginApi {
+@RequiredArgsConstructor
+public class AuthController implements AuthApi {
+
+    private final AuthService authService;
 
     @Override
-    public ResponseEntity<UserDetailsResponse> postLogin(LoginRequest loginRequest) {
-        return new ResponseEntity<>(
-                new UserDetailsResponse()
-                        .id(5)
-                        .username(loginRequest.getUsername())
-                        .email("test@example.com")
-                        .roles(List.of("ROLE_USER", "ROLE_ADMIN")),
-                HttpStatus.OK);
+    public ResponseEntity<Void> postAuthReguster(RegistrationRequest registrationRequest) {
+        authService.registerUser(registrationRequest);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<UserDetailsResponse> postAuthLogin(LoginRequest loginRequest) {
+        UserDetailsResponse user = authService.login(loginRequest);
+
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 }

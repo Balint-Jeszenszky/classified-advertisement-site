@@ -10,10 +10,10 @@ servers:
 tags:
   - name: authentication
 paths:
-  /login:
+  /auth/login:
     post:
       summary: ''
-      operationId: post-login
+      operationId: post-auth-login
       responses:
         '200':
           description: OK
@@ -29,6 +29,25 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/LoginRequest'
+    parameters: []
+  /auth/register:
+    parameters: []
+    post:
+      summary: ''
+      operationId: post-auth-reguster
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+      tags:
+        - authentication
+      description: Register a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationRequest'
 components:
   schemas:
     UserDetailsResponse:
@@ -62,3 +81,20 @@ components:
         - username
         - password
       description: ''
+    RegistrationRequest:
+      title: RegistrationRequest
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        confirmPassword:
+          type: string
+      required:
+        - username
+        - email
+        - password
+        - confirmPassword
