@@ -9,6 +9,7 @@ import hu.bme.aut.classifiedadvertisementsite.userservice.controller.exceptions.
 import hu.bme.aut.classifiedadvertisementsite.userservice.controller.exceptions.InternalServerErrorException;
 import hu.bme.aut.classifiedadvertisementsite.userservice.security.UserDetailsImpl;
 import hu.bme.aut.classifiedadvertisementsite.userservice.service.util.EmailValidator;
+import hu.bme.aut.classifiedadvertisementsite.userservice.service.util.PasswordValidator;
 import hu.bme.aut.classifiedadvertisementsite.userservice.service.util.UserValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +57,7 @@ public class AuthService {
             throw new BadRequestException("Error: Username is already in use!");
         }
 
-        if (registrationRequest.getPassword().length() < 8) {
+        if (PasswordValidator.validatePassoword(registrationRequest.getPassword())) {
             throw new BadRequestException("Error: Password should be at least 8 character!");
         }
 
@@ -109,7 +110,7 @@ public class AuthService {
                             loginRequest.getPassword()));
         } catch (AuthenticationException e) {
             log.error("Login failed with username {}", loginRequest.getUsername());
-            throw new UnauthorizedException("User not found");
+            throw new UnauthorizedException("Wrong credentials");
         }
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();

@@ -21,7 +21,7 @@ public class GatewayApplication {
 	public RouteLocator myRoutes(RouteLocatorBuilder builder) {
 		return builder.routes()
 				.route(p -> p
-						.path("/api/user/login")
+						.path("/api/user/auth/login")
 						.filters(f -> f.modifyResponseBody(
 								User.class,
 								UserData.class,

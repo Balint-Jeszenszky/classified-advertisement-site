@@ -9,6 +9,8 @@ servers:
   - url: 'http://localhost:8081/api/user'
 tags:
   - name: authentication
+  - name: userManagement
+  - name: userProfile
 paths:
   /auth/login:
     post:
@@ -48,6 +50,116 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/RegistrationRequest'
+  /auth/resetPassword:
+    post:
+      summary: ''
+      operationId: post-auth-resetPassword
+      responses:
+        '200':
+          description: OK
+      description: Change forgotten password by reset code
+      parameters:
+        - schema:
+            type: string
+          in: query
+          required: true
+          name: code
+      tags:
+        - authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+    parameters: []
+  '/users/{userId}':
+    parameters:
+      - schema:
+          type: integer
+        name: userId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailsResponse'
+        '403':
+          description: Forbidden
+      operationId: get-users-userId
+      description: Query details of a user
+      tags:
+        - userManagement
+    put:
+      summary: ''
+      operationId: put-users-userId
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+      description: Modify user data for admin
+      tags:
+        - userManagement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModifyUserRequest'
+  /users/all:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - userManagement
+      operationId: get-users-all
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDetailsResponse'
+        '403':
+          description: Forbidden
+      description: list all users for admin
+  /profile:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - userProfile
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailsResponse'
+      operationId: get-profile
+      description: Get personal profile
+    put:
+      summary: ''
+      operationId: put-profile
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+      description: Modify personal profile
+      tags:
+        - userProfile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModifyProfileRequest'
 components:
   schemas:
     UserDetailsResponse:
@@ -96,5 +208,49 @@ components:
       required:
         - username
         - email
+        - password
+        - confirmPassword
+    ModifyUserRequest:
+      title: ModifyUserRequest
+      x-stoplight:
+        id: wsccpy4x86ije
+      type: object
+      properties:
+        email:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+      required:
+        - email
+        - roles
+    ModifyProfileRequest:
+      title: ModifyProfileRequest
+      x-stoplight:
+        id: c34swq186n2a5
+      type: object
+      properties:
+        email:
+          type: string
+        oldPassword:
+          type: string
+        newPassword:
+          type: string
+        confirmNewPassword:
+          type: string
+      required:
+        - email
+    ResetPasswordRequest:
+      title: ResetPasswordRequest
+      x-stoplight:
+        id: qkdx9pkh7jvpy
+      type: object
+      properties:
+        password:
+          type: string
+        confirmPassword:
+          type: string
+      required:
         - password
         - confirmPassword
