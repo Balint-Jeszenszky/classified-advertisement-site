@@ -36,6 +36,7 @@ public class AuthHeaderFilter extends OncePerRequestFilter {
                         node.get("username").asText(),
                         node.get("email").asText(),
                         null,
+                        Boolean.TRUE,
                         jsonArrayToList(node.get("roles")));
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

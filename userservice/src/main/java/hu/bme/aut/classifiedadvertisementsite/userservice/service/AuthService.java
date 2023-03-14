@@ -35,6 +35,7 @@ public class AuthService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final EmailVerificationService emailVerificationService;
 
     @Transactional
     public void registerUser(RegistrationRequest registrationRequest) {
@@ -57,7 +58,7 @@ public class AuthService {
             throw new BadRequestException("Error: Username is already in use!");
         }
 
-        if (PasswordValidator.validatePassoword(registrationRequest.getPassword())) {
+        if (!PasswordValidator.validatePassoword(registrationRequest.getPassword())) {
             throw new BadRequestException("Error: Password should be at least 8 character!");
         }
 
@@ -90,7 +91,6 @@ public class AuthService {
 
         User user = User.builder()
                 .username(username)
-                .email(email)
                 .password(passwordEncoder.encode(registrationRequest.getPassword()))
                 .roles(roles)
                 .build();
@@ -98,6 +98,8 @@ public class AuthService {
         log.info("User {} registered successfully", username);
 
         userRepository.save(user);
+
+        emailVerificationService.sendVerificationEmail(user, email);
     }
 
     public UserDetailsResponse login(LoginRequest loginRequest) {

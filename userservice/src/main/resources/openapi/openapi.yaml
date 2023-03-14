@@ -72,6 +72,21 @@ paths:
             schema:
               $ref: '#/components/schemas/ResetPasswordRequest'
     parameters: []
+  /auth/verifyEmail:
+    post:
+      summary: ''
+      operationId: post-auth-verifyEmail
+      responses:
+        '204':
+          description: No Content
+      description: Verify email address
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyEmailRequest'
+      tags:
+        - authentication
   '/users/{userId}':
     parameters:
       - schema:
@@ -176,11 +191,14 @@ components:
           type: array
           items:
             type: string
+        enabled:
+          type: boolean
       required:
         - id
         - username
         - email
         - roles
+        - enabled
     LoginRequest:
       title: LoginRequest
       type: object
@@ -254,3 +272,13 @@ components:
       required:
         - password
         - confirmPassword
+    VerifyEmailRequest:
+      title: VerifyEmailRequest
+      x-stoplight:
+        id: gye7239qp4e8s
+      type: object
+      properties:
+        key:
+          type: string
+      required:
+        - key

@@ -21,9 +21,11 @@ public class UserDetailsImpl implements UserDetails {
     @JsonIgnore
     private String password;
 
+    private Boolean enabled;
+
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Integer id, String username, String email, String password, List<String> roles) {
+    public UserDetailsImpl(Integer id, String username, String email, String password, Boolean enabled, List<String> roles) {
         List<SimpleGrantedAuthority> authorities =
                 roles.stream().map(role -> new SimpleGrantedAuthority(role)).toList();
 
@@ -31,6 +33,7 @@ public class UserDetailsImpl implements UserDetails {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.enabled = enabled;
         this.authorities = authorities;
     }
 
@@ -44,6 +47,7 @@ public class UserDetailsImpl implements UserDetails {
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
+                user.getEnabled(),
                 authorities);
     }
 
@@ -77,7 +81,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return email != null;
     }
 
     @Override
@@ -87,6 +91,6 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }

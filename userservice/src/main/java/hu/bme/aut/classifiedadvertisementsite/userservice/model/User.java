@@ -26,15 +26,20 @@ public class User {
     @Column(name = "username", nullable = false, unique = true)
     private String username;
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "password")
     private String password;
 
+    @Column(name = "enabled", nullable = false)
+    @Builder.Default
+    private Boolean enabled = Boolean.TRUE;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(	name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @Builder.Default
     private Set<Role> roles = new HashSet<>();
 }

@@ -1,11 +1,9 @@
 package hu.bme.aut.classifiedadvertisementsite.userservice.controller;
 
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.AuthApi;
-import hu.bme.aut.classifiedadvertisementsite.userservice.model.LoginRequest;
-import hu.bme.aut.classifiedadvertisementsite.userservice.model.RegistrationRequest;
-import hu.bme.aut.classifiedadvertisementsite.userservice.model.ResetPasswordRequest;
-import hu.bme.aut.classifiedadvertisementsite.userservice.model.UserDetailsResponse;
+import hu.bme.aut.classifiedadvertisementsite.userservice.model.*;
 import hu.bme.aut.classifiedadvertisementsite.userservice.service.AuthService;
+import hu.bme.aut.classifiedadvertisementsite.userservice.service.EmailVerificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController implements AuthApi {
 
     private final AuthService authService;
+    private final EmailVerificationService emailVerificationService;
 
     @Override
     public ResponseEntity<Void> postAuthReguster(RegistrationRequest registrationRequest) {
@@ -26,6 +25,12 @@ public class AuthController implements AuthApi {
     @Override
     public ResponseEntity<Void> postAuthResetPassword(String code, ResetPasswordRequest resetPasswordRequest) {
         return null; // TODO
+    }
+
+    @Override
+    public ResponseEntity<Void> postAuthVerifyEmail(VerifyEmailRequest verifyEmailRequest) {
+        emailVerificationService.validateKey(verifyEmailRequest.getKey());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Override

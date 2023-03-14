@@ -26,7 +26,12 @@ public class LoggedInUserService {
                 .map(a -> Role.builder().name(ERole.valueOf(a.getAuthority())).build())
                 .collect(Collectors.toSet());
 
-        return new User(userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), null, roles);
+        return  User.builder()
+                .id(userDetails.getId())
+                .username(userDetails.getUsername())
+                .email(userDetails.getEmail())
+                .roles(roles)
+                .build();
     }
 
     public boolean isAdmin() {

@@ -25,6 +25,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final EmailVerificationService emailVerificationService;
 
     public UserDetailsResponse getLoggedInUserProfile() {
         Integer id = loggedInUserService.getLoggedInUser().getId();
@@ -47,7 +48,10 @@ public class UserService {
         }
 
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
-        user.setEmail(email); // TODO confirm email
+
+        if (!user.getEmail().equals(email)) {
+            emailVerificationService.sendVerificationEmail(user, email);
+        }
 
         String oldPassword = modifyProfileRequest.getOldPassword();
         if (oldPassword != null && oldPassword.length() > 0) {
@@ -98,7 +102,9 @@ public class UserService {
         }
 
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
-        user.setEmail(email);
+        if (!user.getEmail().equals(email)) {
+            emailVerificationService.sendVerificationEmail(user, email);
+        }
 
         Set<Role> roles = roleRepository.findAllByNameIn(parsedRoles);
 
