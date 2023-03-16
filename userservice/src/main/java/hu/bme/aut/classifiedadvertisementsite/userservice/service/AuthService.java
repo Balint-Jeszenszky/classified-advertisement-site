@@ -1,19 +1,22 @@
 package hu.bme.aut.classifiedadvertisementsite.userservice.service;
 
-import hu.bme.aut.classifiedadvertisementsite.userservice.controller.exceptions.UnauthorizedException;
+import hu.bme.aut.classifiedadvertisementsite.userservice.controller.exceptions.*;
 import hu.bme.aut.classifiedadvertisementsite.userservice.mapper.UserMapper;
 import hu.bme.aut.classifiedadvertisementsite.userservice.model.*;
+import hu.bme.aut.classifiedadvertisementsite.userservice.repository.EmailVerificationRepository;
+import hu.bme.aut.classifiedadvertisementsite.userservice.repository.PasswordResetRepository;
 import hu.bme.aut.classifiedadvertisementsite.userservice.repository.RoleRepository;
 import hu.bme.aut.classifiedadvertisementsite.userservice.repository.UserRepository;
-import hu.bme.aut.classifiedadvertisementsite.userservice.controller.exceptions.BadRequestException;
-import hu.bme.aut.classifiedadvertisementsite.userservice.controller.exceptions.InternalServerErrorException;
 import hu.bme.aut.classifiedadvertisementsite.userservice.security.UserDetailsImpl;
 import hu.bme.aut.classifiedadvertisementsite.userservice.service.util.EmailValidator;
 import hu.bme.aut.classifiedadvertisementsite.userservice.service.util.PasswordValidator;
+import hu.bme.aut.classifiedadvertisementsite.userservice.service.util.RandomStringGenerator;
 import hu.bme.aut.classifiedadvertisementsite.userservice.service.util.UserValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,14 +24,12 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@EnableScheduling
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -36,6 +37,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final EmailVerificationService emailVerificationService;
+    private final EmailVerificationRepository emailVerificationRepository;
+    private final PasswordResetRepository passwordResetRepository;
 
     @Transactional
     public void registerUser(RegistrationRequest registrationRequest) {
@@ -120,5 +123,59 @@ public class AuthService {
         log.info("User {} logged in successfully", userDetails.getUsername());
 
         return UserMapper.INSTANCE.userDetailsToUserDetailsResponse(userDetails);
+    }
+
+    public void sendResetMail(String email) {
+        User user = userRepository.findByEmail(email.toLowerCase()).orElseThrow(() -> new NotFoundException("User not found"));
+
+        passwordResetRepository.deleteAllByUser(user);
+
+        String key = RandomStringGenerator.generate(32);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.MINUTE, 30);
+
+        PasswordReset passwordReset = PasswordReset.builder()
+                .user(user)
+                .key(key)
+                .expiration(calendar.getTime())
+                .build();
+
+        passwordResetRepository.save(passwordReset);
+
+        log.info("Sending password reset email to {}, key: {}", email, key); // TODO use the notification microservice
+    }
+
+    public void resetPassword(ResetPasswordRequest passwordResetDto) {
+        PasswordReset passwordReset = passwordResetRepository.findByKey(passwordResetDto.getKey())
+                .orElseThrow(() -> new ForbiddenException("Invalid key"));
+
+        if (passwordReset.getExpiration().before(new Date())) {
+            passwordResetRepository.delete(passwordReset);
+            throw new BadRequestException("Link expired");
+        }
+
+        if (!passwordResetDto.getPassword().equals(passwordResetDto.getConfirmPassword())) {
+            throw new BadRequestException("Two password not match");
+        }
+
+        if (passwordResetDto.getPassword().length() < 8) {
+            throw new BadRequestException("Password should be at least 8 character");
+        }
+
+        User userToUpdate = passwordReset.getUser();
+
+        userToUpdate.setPassword(passwordEncoder.encode(passwordResetDto.getPassword()));
+
+        passwordResetRepository.delete(passwordReset);
+    }
+
+    @Scheduled(cron = "0 0 3 * * *", zone = "Europe/Budapest")
+    void deleteExpiredPasswordResetKeys() {
+        log.info("Deleting expired password reset keys");
+        List<PasswordReset> expired = passwordResetRepository.findByExpirationLessThan(new Date());
+        passwordResetRepository.deleteAllInBatch(expired);
+        log.info("Deleted {} password reset keys", expired.size());
     }
 }

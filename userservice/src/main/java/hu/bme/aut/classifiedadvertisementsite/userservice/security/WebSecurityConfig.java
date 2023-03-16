@@ -42,8 +42,18 @@ public class WebSecurityConfig {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register", "/auth/verifyEmail")
-                .permitAll().anyRequest().authenticated();
+                .requestMatchers(
+                        HttpMethod.POST,
+                        "/auth/login",
+                        "/auth/register",
+                        "/auth/verifyEmail",
+                        "/auth/resetPassword")
+                .permitAll()
+                .requestMatchers(
+                        HttpMethod.PUT,
+                        "/auth/resetPassword")
+                .permitAll()
+                .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 

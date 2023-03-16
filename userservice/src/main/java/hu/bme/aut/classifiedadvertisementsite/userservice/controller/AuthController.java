@@ -17,20 +17,27 @@ public class AuthController implements AuthApi {
     private final EmailVerificationService emailVerificationService;
 
     @Override
-    public ResponseEntity<Void> postAuthReguster(RegistrationRequest registrationRequest) {
+    public ResponseEntity<Void> postAuthRegister(RegistrationRequest registrationRequest) {
         authService.registerUser(registrationRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<Void> postAuthResetPassword(String code, ResetPasswordRequest resetPasswordRequest) {
-        return null; // TODO
+    public ResponseEntity<Void> postAuthResetPassword(ForgotPasswordRequest forgotPasswordRequest) {
+        authService.sendResetMail(forgotPasswordRequest.getEmail());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Override
     public ResponseEntity<Void> postAuthVerifyEmail(VerifyEmailRequest verifyEmailRequest) {
         emailVerificationService.validateKey(verifyEmailRequest.getKey());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Override
+    public ResponseEntity<Void> putAuthResetPassword(ResetPasswordRequest resetPasswordRequest) {
+        authService.resetPassword(resetPasswordRequest);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
     @Override

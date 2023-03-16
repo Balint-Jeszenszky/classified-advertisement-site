@@ -36,7 +36,7 @@ paths:
     parameters: []
     post:
       summary: ''
-      operationId: post-auth-reguster
+      operationId: post-auth-register
       responses:
         '201':
           description: Created
@@ -51,19 +51,17 @@ paths:
             schema:
               $ref: '#/components/schemas/RegistrationRequest'
   /auth/resetPassword:
-    post:
+    put:
       summary: ''
-      operationId: post-auth-resetPassword
+      operationId: put-auth-resetPassword
       responses:
-        '200':
-          description: OK
-      description: Change forgotten password by reset code
-      parameters:
-        - schema:
-            type: string
-          in: query
-          required: true
-          name: code
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+      description: Reset password with key from email
       tags:
         - authentication
       requestBody:
@@ -71,6 +69,20 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ResetPasswordRequest'
+    post:
+      summary: ''
+      operationId: post-auth-resetPassword
+      responses:
+        '204':
+          description: No Content
+      description: Request password reset
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+      tags:
+        - authentication
     parameters: []
   /auth/verifyEmail:
     post:
@@ -268,11 +280,14 @@ components:
         id: qkdx9pkh7jvpy
       type: object
       properties:
+        key:
+          type: string
         password:
           type: string
         confirmPassword:
           type: string
       required:
+        - key
         - password
         - confirmPassword
     VerifyEmailRequest:
@@ -285,3 +300,13 @@ components:
           type: string
       required:
         - key
+    ForgotPasswordRequest:
+      title: ForgotPasswordRequest
+      x-stoplight:
+        id: zry6f1hb094xj
+      type: object
+      properties:
+        email:
+          type: string
+      required:
+        - email
