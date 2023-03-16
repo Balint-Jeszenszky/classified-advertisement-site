@@ -87,6 +87,10 @@ public class UserService {
         User loggedInUser = loggedInUserService.getLoggedInUser();
         String email = modifyUserRequest.getEmail();
 
+        if (userId.equals(loggedInUser.getId()) && !modifyUserRequest.getEnabled()) {
+            throw new BadRequestException("Deactivate your own user is prohibited");
+        }
+
         if (!EmailValidator.validateEmail(email)) {
             throw new BadRequestException("Error: Email is invalid!");
         }
@@ -109,6 +113,7 @@ public class UserService {
         Set<Role> roles = roleRepository.findAllByNameIn(parsedRoles);
 
         user.setRoles(roles);
+        user.setEnabled(modifyUserRequest.getEnabled());
 
         userRepository.save(user);
 

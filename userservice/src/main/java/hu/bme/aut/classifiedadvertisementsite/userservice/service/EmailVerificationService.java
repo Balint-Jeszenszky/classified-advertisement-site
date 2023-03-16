@@ -6,6 +6,7 @@ import hu.bme.aut.classifiedadvertisementsite.userservice.model.User;
 import hu.bme.aut.classifiedadvertisementsite.userservice.repository.EmailVerificationRepository;
 import hu.bme.aut.classifiedadvertisementsite.userservice.repository.UserRepository;
 import hu.bme.aut.classifiedadvertisementsite.userservice.service.util.RandomStringGenerator;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class EmailVerificationService {
     private final EmailVerificationRepository emailVerificationRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public void sendVerificationEmail(User user, String email) {
         String key = RandomStringGenerator.generate(32);
 
@@ -27,6 +29,8 @@ public class EmailVerificationService {
                 .key(key)
                 .build();
 
+        emailVerificationRepository.deleteAllByUser(user);
+        emailVerificationRepository.flush();
         emailVerificationRepository.save(emailVerification);
 
         log.info("Sending verification email to {}, key: {}", email, key); // TODO use the notification microservice

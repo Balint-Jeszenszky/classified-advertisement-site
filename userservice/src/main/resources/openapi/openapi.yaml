@@ -240,9 +240,12 @@ components:
           type: array
           items:
             type: string
+        enabled:
+          type: boolean
       required:
         - email
         - roles
+        - enabled
     ModifyProfileRequest:
       title: ModifyProfileRequest
       x-stoplight:
