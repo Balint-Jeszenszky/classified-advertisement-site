@@ -109,12 +109,13 @@
 				<version>${openapi-generator-version}</version>
 				<executions>
 					<execution>
+						<id>external-api</id>
 						<goals>
 							<goal>generate</goal>
 						</goals>
 						<configuration>
 							<inputSpec>
-								${project.basedir}/src/main/resources/openapi/openapi.yaml
+								${project.basedir}/src/main/resources/openapi/external.yaml
 							</inputSpec>
 							<generatorName>spring</generatorName>
 							<generateSupportingFiles>false</generateSupportingFiles>
@@ -123,8 +124,28 @@
 								<skipDefaultInterface>true</skipDefaultInterface>
 								<serializableModel>true</serializableModel>
 							</configOptions>
-							<apiPackage>hu.bme.aut.classifiedadvertisementsite.userservice.api</apiPackage>
-							<modelPackage>hu.bme.aut.classifiedadvertisementsite.userservice.model</modelPackage>
+							<apiPackage>hu.bme.aut.classifiedadvertisementsite.userservice.api.external</apiPackage>
+							<modelPackage>hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model</modelPackage>
+						</configuration>
+					</execution>
+					<execution>
+						<id>internal-api</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>
+								${project.basedir}/src/main/resources/openapi/internal.yaml
+							</inputSpec>
+							<generatorName>spring</generatorName>
+							<generateSupportingFiles>false</generateSupportingFiles>
+							<configOptions>
+								<interfaceOnly>true</interfaceOnly>
+								<skipDefaultInterface>true</skipDefaultInterface>
+								<serializableModel>true</serializableModel>
+							</configOptions>
+							<apiPackage>hu.bme.aut.classifiedadvertisementsite.userservice.api.internal</apiPackage>
+							<modelPackage>hu.bme.aut.classifiedadvertisementsite.userservice.api.internal.model</modelPackage>
 						</configuration>
 					</execution>
 				</executions>

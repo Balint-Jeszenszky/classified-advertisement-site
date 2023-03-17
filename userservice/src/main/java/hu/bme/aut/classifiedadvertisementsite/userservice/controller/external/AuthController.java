@@ -1,7 +1,7 @@
-package hu.bme.aut.classifiedadvertisementsite.userservice.controller;
+package hu.bme.aut.classifiedadvertisementsite.userservice.controller.external;
 
-import hu.bme.aut.classifiedadvertisementsite.userservice.api.AuthApi;
-import hu.bme.aut.classifiedadvertisementsite.userservice.model.*;
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.AuthApi;
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.*;
 import hu.bme.aut.classifiedadvertisementsite.userservice.service.AuthService;
 import hu.bme.aut.classifiedadvertisementsite.userservice.service.EmailVerificationService;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class AuthController implements AuthApi {
+public class AuthController implements AuthApi, ExternalApi {
 
     private final AuthService authService;
     private final EmailVerificationService emailVerificationService;

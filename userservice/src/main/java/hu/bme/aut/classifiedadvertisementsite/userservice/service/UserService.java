@@ -1,5 +1,8 @@
 package hu.bme.aut.classifiedadvertisementsite.userservice.service;
 
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.ModifyProfileRequest;
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.ModifyUserRequest;
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.UserDetailsResponse;
 import hu.bme.aut.classifiedadvertisementsite.userservice.controller.exceptions.BadRequestException;
 import hu.bme.aut.classifiedadvertisementsite.userservice.controller.exceptions.NotFoundException;
 import hu.bme.aut.classifiedadvertisementsite.userservice.mapper.UserMapper;
@@ -7,6 +10,7 @@ import hu.bme.aut.classifiedadvertisementsite.userservice.model.*;
 import hu.bme.aut.classifiedadvertisementsite.userservice.repository.RoleRepository;
 import hu.bme.aut.classifiedadvertisementsite.userservice.repository.UserRepository;
 import hu.bme.aut.classifiedadvertisementsite.userservice.security.LoggedInUserService;
+import hu.bme.aut.classifiedadvertisementsite.userservice.service.dto.UserData;
 import hu.bme.aut.classifiedadvertisementsite.userservice.service.util.EmailValidator;
 import hu.bme.aut.classifiedadvertisementsite.userservice.service.util.PasswordValidator;
 import lombok.RequiredArgsConstructor;
@@ -78,9 +82,9 @@ public class UserService {
         return users.stream().map(UserMapper.INSTANCE::userToUserDetailsResponse).toList();
     }
 
-    public UserDetailsResponse getUserById(Integer userId) {
+    public UserData getUserById(Integer userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
-        return UserMapper.INSTANCE.userToUserDetailsResponse(user);
+        return UserMapper.INSTANCE.userToUserData(user);
     }
 
     public void modifyUser(Integer userId, ModifyUserRequest modifyUserRequest) {

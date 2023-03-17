@@ -1,9 +1,12 @@
 package hu.bme.aut.classifiedadvertisementsite.userservice.service;
 
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.LoginRequest;
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.RegistrationRequest;
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.ResetPasswordRequest;
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.UserDetailsResponse;
 import hu.bme.aut.classifiedadvertisementsite.userservice.controller.exceptions.*;
 import hu.bme.aut.classifiedadvertisementsite.userservice.mapper.UserMapper;
 import hu.bme.aut.classifiedadvertisementsite.userservice.model.*;
-import hu.bme.aut.classifiedadvertisementsite.userservice.repository.EmailVerificationRepository;
 import hu.bme.aut.classifiedadvertisementsite.userservice.repository.PasswordResetRepository;
 import hu.bme.aut.classifiedadvertisementsite.userservice.repository.RoleRepository;
 import hu.bme.aut.classifiedadvertisementsite.userservice.repository.UserRepository;
@@ -37,7 +40,6 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final EmailVerificationService emailVerificationService;
-    private final EmailVerificationRepository emailVerificationRepository;
     private final PasswordResetRepository passwordResetRepository;
 
     @Transactional

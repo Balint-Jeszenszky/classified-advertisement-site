@@ -44,14 +44,16 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers(
                         HttpMethod.POST,
-                        "/auth/login",
-                        "/auth/register",
-                        "/auth/verifyEmail",
-                        "/auth/resetPassword")
+                        "/external/auth/login",
+                        "/external/auth/register",
+                        "/external/auth/verifyEmail",
+                        "/external/auth/resetPassword")
                 .permitAll()
                 .requestMatchers(
                         HttpMethod.PUT,
-                        "/auth/resetPassword")
+                        "/external/auth/resetPassword")
+                .permitAll()
+                .requestMatchers("/internal/**")
                 .permitAll()
                 .anyRequest().authenticated();
 

@@ -1,10 +1,12 @@
 package hu.bme.aut.classifiedadvertisementsite.userservice.mapper;
 
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.internal.model.UserDataResponse;
 import hu.bme.aut.classifiedadvertisementsite.userservice.model.ERole;
 import hu.bme.aut.classifiedadvertisementsite.userservice.model.Role;
 import hu.bme.aut.classifiedadvertisementsite.userservice.model.User;
-import hu.bme.aut.classifiedadvertisementsite.userservice.model.UserDetailsResponse;
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.UserDetailsResponse;
 import hu.bme.aut.classifiedadvertisementsite.userservice.security.UserDetailsImpl;
+import hu.bme.aut.classifiedadvertisementsite.userservice.service.dto.UserData;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -19,7 +21,13 @@ import java.util.stream.Collectors;
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
+    UserData userToUserData(User user);
+
     UserDetailsResponse userToUserDetailsResponse(User user);
+
+    UserDetailsResponse userDataToUserDetailsResponse(UserData user);
+
+    UserDataResponse userDataToUserDataResponse(UserData user);
 
     @Mapping(source = "authorities", target = "roles")
     User userDetailsToUser(UserDetailsImpl userDetails);

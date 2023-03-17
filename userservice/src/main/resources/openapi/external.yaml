@@ -6,7 +6,7 @@ info:
     name: Balint Jeszenszky
   description: Classified advertisement site user service
 servers:
-  - url: 'http://localhost:8081/api/user'
+  - url: 'http://localhost:8081/api/user/external'
 tags:
   - name: authentication
   - name: userManagement

@@ -22,17 +22,20 @@ public class GatewayApplication {
 		return builder.routes()
 				.route(p -> p
 						.path("/api/user/auth/login")
-						.filters(f -> f.modifyResponseBody(
-								User.class,
-								UserData.class,
-								(exchange, s) -> Mono.just(
-										new UserData(
-												new User(s.getId(), s.getUsername(), s.getEmail(), s.getRoles()),
-												jwtUtils.generateJwtToken(s),
-												jwtUtils.generateJwtRefreshToken(s)))))
+						.filters(f -> f
+								.rewritePath("/api/user/", "/api/user/external/")
+								.modifyResponseBody(
+										User.class,
+										UserData.class,
+										(exchange, s) -> Mono.just(
+												new UserData(
+														new User(s.getId(), s.getUsername(), s.getEmail(), s.getRoles()),
+														jwtUtils.generateJwtToken(s),
+														jwtUtils.generateJwtRefreshToken(s)))))
 						.uri("http://localhost:8081"))
 				.route(p -> p
 						.path("/api/user/**")
+						.filters(f -> f.rewritePath("/api/user/", "/api/user/external/"))
 						.uri("http://localhost:8081"))
 				.build();
 	}

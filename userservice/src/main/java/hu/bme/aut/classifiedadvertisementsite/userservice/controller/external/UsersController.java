@@ -1,8 +1,9 @@
-package hu.bme.aut.classifiedadvertisementsite.userservice.controller;
+package hu.bme.aut.classifiedadvertisementsite.userservice.controller.external;
 
-import hu.bme.aut.classifiedadvertisementsite.userservice.api.UsersApi;
-import hu.bme.aut.classifiedadvertisementsite.userservice.model.ModifyUserRequest;
-import hu.bme.aut.classifiedadvertisementsite.userservice.model.UserDetailsResponse;
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.UsersApi;
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.ModifyUserRequest;
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.UserDetailsResponse;
+import hu.bme.aut.classifiedadvertisementsite.userservice.mapper.UserMapper;
 import hu.bme.aut.classifiedadvertisementsite.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class UsersController implements UsersApi {
+public class UsersController implements UsersApi, ExternalApi {
     private final UserService userService;
 
     @Override
@@ -27,8 +28,8 @@ public class UsersController implements UsersApi {
     @Override
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDetailsResponse> getUsersUserId(Integer userId) {
-        UserDetailsResponse user = userService.getUserById(userId);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        UserDetailsResponse userDetailsResponse = UserMapper.INSTANCE.userDataToUserDetailsResponse(userService.getUserById(userId));
+        return new ResponseEntity<>(userDetailsResponse, HttpStatus.OK);
     }
 
     @Override

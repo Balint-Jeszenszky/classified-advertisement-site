@@ -1,0 +1,63 @@
+openapi: 3.0.0
+x-stoplight:
+  id: 7byetgk7w20f6
+info:
+  title: openapi
+  version: '1.0'
+  contact:
+    name: Balint Jeszenszky
+  description: Classified advertisement site user service
+servers:
+  - url: 'http://localhost:8081/api/user/internal'
+tags:
+  - name: users
+paths:
+  '/users/{userId}':
+    parameters:
+      - schema:
+          type: integer
+        name: userId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDataResponse'
+        '403':
+          description: Forbidden
+      operationId: get-users-userId
+      description: Query details of a user
+      tags:
+        - users
+components:
+  schemas:
+    UserDataResponse:
+      title: UserDataResponse
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        enabled:
+          type: boolean
+      required:
+        - id
+        - username
+        - email
+        - roles
+        - enabled
+      x-stoplight:
+        id: 48dc58249bf26
+x-internal: true
