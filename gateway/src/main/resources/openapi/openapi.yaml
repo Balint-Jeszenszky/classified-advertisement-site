@@ -1,0 +1,86 @@
+openapi: 3.0.0
+x-stoplight:
+  id: 5r8fq3dp1cw8j
+info:
+  title: openapi
+  version: '1.0'
+  contact:
+    name: Balint Jeszenszky
+  description: lassified advertisement site gateway
+servers:
+  - url: 'http://localhost:8080'
+tags:
+  - name: auth
+paths:
+  /api/auth/refresh:
+    post:
+      summary: ''
+      operationId: post-api-auth-refresh
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshResponse'
+        '401':
+          description: Unauthorized
+      tags:
+        - auth
+      description: Refresh login with a refreshToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+        description: ''
+  /api/auth/logout:
+    delete:
+      summary: ''
+      operationId: delete-api-auth-logout
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - auth
+      description: Destroy refreshToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+components:
+  schemas:
+    LogoutRequest:
+      title: LogoutRequest
+      x-stoplight:
+        id: f293nn5oep713
+      type: object
+      properties:
+        refreshToken:
+          type: string
+      required:
+        - refreshToken
+    RefreshRequest:
+      title: RefreshRequest
+      x-stoplight:
+        id: f958cfd92e2eb
+      type: object
+      properties:
+        refreshToken:
+          type: string
+      required:
+        - refreshToken
+    RefreshResponse:
+      title: RefreshResponse
+      x-stoplight:
+        id: dk41kyqm3rf20
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+      required:
+        - accessToken
+        - refreshToken

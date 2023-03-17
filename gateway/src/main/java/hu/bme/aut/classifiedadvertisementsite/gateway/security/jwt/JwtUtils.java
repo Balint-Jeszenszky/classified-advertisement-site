@@ -44,6 +44,7 @@ public class JwtUtils {
 
         return Jwts.builder()
                 .setSubject((user.getUsername()))
+                .claim(ID, user.getId())
                 .setIssuedAt(new Date())
                 .claim("type", "refresh")
                 .signWith(SignatureAlgorithm.HS512, jwtRefreshSecret)
@@ -69,6 +70,14 @@ public class JwtUtils {
         List<String> roles = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(accessToken).getBody().get(ROLES, List.class);
 
         return new User(id, username, email, roles);
+    }
+
+    public Integer getUserIdFromRefreshToken(String refreshToken) {
+        if (!validateJwtRefreshToken(refreshToken)) {
+            return null;
+        }
+
+        return Jwts.parser().setSigningKey(jwtRefreshSecret).parseClaimsJws(refreshToken).getBody().get(ID, Integer.class);
     }
 
     private boolean validateToken(String token, String secret) {
