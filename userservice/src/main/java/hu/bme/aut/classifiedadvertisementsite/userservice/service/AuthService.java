@@ -41,6 +41,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final EmailVerificationService emailVerificationService;
     private final PasswordResetRepository passwordResetRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public void registerUser(RegistrationRequest registrationRequest) {
@@ -127,10 +128,12 @@ public class AuthService {
         return UserMapper.INSTANCE.userDetailsToUserDetailsResponse(userDetails);
     }
 
+    @Transactional
     public void sendResetMail(String email) {
         User user = userRepository.findByEmail(email.toLowerCase()).orElseThrow(() -> new NotFoundException("User not found"));
 
         passwordResetRepository.deleteAllByUser(user);
+        passwordResetRepository.flush();
 
         String key = RandomStringGenerator.generate(32);
 
@@ -146,7 +149,9 @@ public class AuthService {
 
         passwordResetRepository.save(passwordReset);
 
-        log.info("Sending password reset email to {}, key: {}", email, key); // TODO use the notification microservice
+        log.info("Sending password reset email to {}, key: {}", email, key);
+
+        notificationService.sendEmail(email, "Reset password", key);
     }
 
     public void resetPassword(ResetPasswordRequest passwordResetDto) {

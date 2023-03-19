@@ -18,6 +18,7 @@ public class EmailVerificationService {
 
     private final EmailVerificationRepository emailVerificationRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public void sendVerificationEmail(User user, String email) {
@@ -33,7 +34,9 @@ public class EmailVerificationService {
         emailVerificationRepository.flush();
         emailVerificationRepository.save(emailVerification);
 
-        log.info("Sending verification email to {}, key: {}", email, key); // TODO use the notification microservice
+        log.info("Sending verification email to {}, key: {}", email, key);
+
+        notificationService.sendEmail(email, "Email verification", key);
     }
 
     public void validateKey(String key) {
