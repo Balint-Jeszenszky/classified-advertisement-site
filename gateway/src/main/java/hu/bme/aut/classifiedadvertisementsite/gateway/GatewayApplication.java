@@ -1,8 +1,8 @@
 package hu.bme.aut.classifiedadvertisementsite.gateway;
 
-import hu.bme.aut.classifiedadvertisementsite.gateway.security.jwt.JwtUtils;
 import hu.bme.aut.classifiedadvertisementsite.gateway.security.model.User;
 import hu.bme.aut.classifiedadvertisementsite.gateway.security.model.UserData;
+import hu.bme.aut.classifiedadvertisementsite.gateway.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 public class GatewayApplication {
 
 	@Autowired
-	private JwtUtils jwtUtils;
+	private AuthService authService;
 
 	@Bean
 	public RouteLocator myRoutes(RouteLocatorBuilder builder) {
@@ -27,11 +27,7 @@ public class GatewayApplication {
 								.modifyResponseBody(
 										User.class,
 										UserData.class,
-										(exchange, s) -> Mono.just(
-												new UserData(
-														new User(s.getId(), s.getUsername(), s.getEmail(), s.getRoles()),
-														jwtUtils.generateJwtToken(s),
-														jwtUtils.generateJwtRefreshToken(s)))))
+										(exchange, user) -> Mono.just(authService.login(user))))
 						.uri("http://localhost:8081"))
 				.route(p -> p
 						.path("/api/user/**")

@@ -6,6 +6,7 @@ import hu.bme.aut.classifiedadvertisementsite.gateway.api.model.RefreshRequest;
 import hu.bme.aut.classifiedadvertisementsite.gateway.api.model.RefreshResponse;
 import hu.bme.aut.classifiedadvertisementsite.gateway.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -18,13 +19,17 @@ public class AuthController implements AuthApi {
 
     @Override
     public Mono<ResponseEntity<Void>> deleteApiAuthLogout(Mono<LogoutRequest> logoutRequest, ServerWebExchange exchange) {
-        return null;
+        return logoutRequest.flatMap(r -> {
+            authService.logout(r.getRefreshToken());
+            return Mono.just(new ResponseEntity<>(HttpStatus.NO_CONTENT));
+        });
     }
 
     @Override
     public Mono<ResponseEntity<RefreshResponse>> postApiAuthRefresh(Mono<RefreshRequest> refreshRequest, ServerWebExchange exchange) {
-        return null;
+        return refreshRequest.flatMap(r -> {
+            RefreshResponse refreshResponse = authService.refreshLogin(r.getRefreshToken());
+            return Mono.just(new ResponseEntity<>(refreshResponse, HttpStatus.CREATED));
+        });
     }
-
-
 }

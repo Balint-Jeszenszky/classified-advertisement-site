@@ -22,6 +22,9 @@ public class JwtUtils {
     @Value("${gateway.auth.jwtExpirationMs}")
     private int jwtExpirationMs;
 
+    @Value("${gateway.auth.jwtRefreshExpirationMs}")
+    private int jwtRefreshExpirationMs;
+
     private static final String ROLES = "roles";
     private static final String EMAIL = "email";
     private static final String ID = "id";
@@ -47,6 +50,7 @@ public class JwtUtils {
                 .claim(ID, user.getId())
                 .setIssuedAt(new Date())
                 .claim("type", "refresh")
+                .setExpiration(new Date((new Date()).getTime() + jwtRefreshExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtRefreshSecret)
                 .compact();
     }
@@ -78,6 +82,10 @@ public class JwtUtils {
         }
 
         return Jwts.parser().setSigningKey(jwtRefreshSecret).parseClaimsJws(refreshToken).getBody().get(ID, Integer.class);
+    }
+
+    public Date getRefreshTokenExpiration(String token) {
+        return Jwts.parser().setSigningKey(jwtRefreshSecret).parseClaimsJws(token).getBody().getExpiration();
     }
 
     private boolean validateToken(String token, String secret) {
