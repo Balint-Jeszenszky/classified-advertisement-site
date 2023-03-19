@@ -48,6 +48,8 @@ public class EmailVerificationService {
         user.setEmail(emailVerification.getEmail());
         userRepository.save(user);
 
+        log.info("email {} verified for user id({})", emailVerification.getEmail(), user.getId());
+
         emailVerificationRepository.delete(emailVerification);
     }
 }

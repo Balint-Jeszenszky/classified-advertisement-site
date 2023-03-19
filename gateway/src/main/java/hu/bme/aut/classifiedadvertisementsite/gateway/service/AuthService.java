@@ -47,6 +47,7 @@ public class AuthService {
         Optional<RefreshToken> storedToken = refreshTokenRepository.findFirstByTokenHashAndUserId(hashOfJwtToken, userId);
 
         if (storedToken.isEmpty()) {
+            log.error("Token not found for user id({}), hash: {}", userId, hashOfJwtToken);
             throw new RuntimeException("Wrong refresh token"); // TODO error handling
         }
 
@@ -64,6 +65,8 @@ public class AuthService {
 
         saveRefreshToken(refreshJwt, user);
 
+        log.info("User id({}) refreshed login", userId);
+
         return newTokenResponse;
     }
 
@@ -72,6 +75,8 @@ public class AuthService {
         String refreshJwt = jwtUtils.generateJwtRefreshToken(user);
 
         saveRefreshToken(refreshJwt, user);
+
+        log.info("User id({}) logged in", user.getId());
 
         return new UserData(user, jwt, refreshJwt);
     }

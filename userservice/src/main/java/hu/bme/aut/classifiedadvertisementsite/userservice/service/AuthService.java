@@ -101,9 +101,9 @@ public class AuthService {
                 .roles(roles)
                 .build();
 
-        log.info("User {} registered successfully", username);
-
         userRepository.save(user);
+
+        log.info("User {} registered successfully, id({})", username, user.getId());
 
         emailVerificationService.sendVerificationEmail(user, email);
     }
@@ -123,7 +123,7 @@ public class AuthService {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        log.info("User {} logged in successfully", userDetails.getUsername());
+        log.info("User {} id({}) logged in successfully", userDetails.getUsername(), userDetails.getId());
 
         return UserMapper.INSTANCE.userDetailsToUserDetailsResponse(userDetails);
     }
@@ -174,6 +174,8 @@ public class AuthService {
         User userToUpdate = passwordReset.getUser();
 
         userToUpdate.setPassword(passwordEncoder.encode(passwordResetDto.getPassword()));
+
+        log.info("Successful password reset by user id({})", userToUpdate.getId());
 
         passwordResetRepository.delete(passwordReset);
     }

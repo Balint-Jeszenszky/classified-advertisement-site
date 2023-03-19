@@ -74,6 +74,8 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(modifyProfileRequest.getNewPassword()));
         }
 
+        log.info("User id({}) profile modified their profile", user.getId());
+
         userRepository.save(user);
     }
 
@@ -121,6 +123,6 @@ public class UserService {
 
         userRepository.save(user);
 
-        log.info("Admin {} successfully modified {}", loggedInUser.getUsername(), user.getUsername());
+        log.info("Admin {} successfully modified {} id({})", loggedInUser.getUsername(), user.getUsername(), user.getId());
     }
 }
