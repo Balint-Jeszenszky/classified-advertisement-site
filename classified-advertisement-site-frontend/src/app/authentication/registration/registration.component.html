@@ -1,0 +1,21 @@
+<div class="m-05">
+  <form (ngSubmit)="onRegister()">
+      <mat-form-field appearance="fill" class="w-100">
+          <mat-label>Username</mat-label>
+          <input matInput placeholder="Username" name="username" [(ngModel)]="username">
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="w-100">
+          <mat-label>Email</mat-label>
+          <input matInput placeholder="Email" name="email" [(ngModel)]="email">
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="w-100">
+          <mat-label>Password</mat-label>
+          <input matInput="password" type="password" placeholder="Password" name="password" [(ngModel)]="password">
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="w-100">
+          <mat-label>Confirm password</mat-label>
+          <input matInput="password" type="password" placeholder="Password" name="confirmPassword" [(ngModel)]="confirmPassword">
+      </mat-form-field>
+      <button mat-raised-button color="primary">Register</button>
+  </form>
+</div>

@@ -1,0 +1,14 @@
+<div class="m-05">
+  <form (ngSubmit)="onLogin()">
+      <mat-form-field appearance="fill" class="w-100">
+          <mat-label>Username</mat-label>
+          <input matInput placeholder="Username" name="username" [(ngModel)]="username">
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="w-100">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" placeholder="Password" name="password" [(ngModel)]="password">
+      </mat-form-field>
+      <button mat-raised-button color="primary" type="submit">Login</button>
+      <button mat-raised-button type="button" class="ml-05" (click)="onResetPassword()">Reset password</button>
+  </form>
+</div>
