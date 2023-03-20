@@ -7,7 +7,10 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:headless": "ng test --watch=false --browsers=ChromeHeadless"
+    "test:headless": "ng test --watch=false --browsers=ChromeHeadless",
+    "openapi:generate-gateway": "openapi-generator-cli generate -i ../gateway/src/main/resources/openapi/openapi.yaml -g typescript-angular -o src/app/openapi/gateway",
+    "openapi:generate-userservice": "openapi-generator-cli generate -i ../userservice/src/main/resources/openapi/external.yaml -g typescript-angular -o src/app/openapi/userservice",
+    "openapi:generate": "npm run openapi:generate-gateway && npm run openapi:generate-userservice"
   },
   "private": true,
   "dependencies": {
@@ -27,6 +30,7 @@
     "@angular-devkit/build-angular": "^15.2.4",
     "@angular/cli": "~15.2.4",
     "@angular/compiler-cli": "^15.2.0",
+    "@openapitools/openapi-generator-cli": "^2.5.2",
     "@types/jasmine": "~4.3.0",
     "jasmine-core": "~4.5.0",
     "karma": "~6.4.0",
