@@ -9,6 +9,10 @@
 			"path": "userservice"
 		},
 		{
+			"name": "Frontend",
+			"path": "classified-advertisement-site-frontend"
+		},
+		{
 			"name": "Root",
 			"path": "."
 		}
