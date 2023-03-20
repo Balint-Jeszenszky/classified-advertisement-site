@@ -35,6 +35,9 @@ public interface UserMapper {
     @Mapping(source = "authorities", target = "roles")
     UserDetailsResponse userDetailsToUserDetailsResponse(UserDetailsImpl userDetails);
 
+    @Mapping(source = "authorities", target = "roles")
+    UserDataResponse userDetailsToUserDataResponse(UserDetailsImpl userDetails);
+
     default List<String> mapRoles(Set<Role> roles) {
         return roles.stream().map(role -> role.getName().name()).toList();
     }

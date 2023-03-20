@@ -39,11 +39,4 @@ public class AuthController implements AuthApi, ExternalApi {
         authService.resetPassword(resetPasswordRequest);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
-
-    @Override
-    public ResponseEntity<UserDetailsResponse> postAuthLogin(LoginRequest loginRequest) {
-        UserDetailsResponse user = authService.login(loginRequest);
-
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
 }

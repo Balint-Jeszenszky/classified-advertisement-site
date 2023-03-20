@@ -1,9 +1,10 @@
 package hu.bme.aut.classifiedadvertisementsite.userservice.service;
 
-import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.LoginRequest;
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.RegistrationRequest;
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.ResetPasswordRequest;
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.UserDetailsResponse;
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.internal.model.LoginRequest;
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.internal.model.UserDataResponse;
 import hu.bme.aut.classifiedadvertisementsite.userservice.controller.exceptions.*;
 import hu.bme.aut.classifiedadvertisementsite.userservice.mapper.UserMapper;
 import hu.bme.aut.classifiedadvertisementsite.userservice.model.*;
@@ -108,7 +109,7 @@ public class AuthService {
         emailVerificationService.sendVerificationEmail(user, email);
     }
 
-    public UserDetailsResponse login(LoginRequest loginRequest) {
+    public UserDataResponse login(LoginRequest loginRequest) {
         Authentication authentication;
 
         try {
@@ -125,7 +126,7 @@ public class AuthService {
 
         log.info("User {} id({}) logged in successfully", userDetails.getUsername(), userDetails.getId());
 
-        return UserMapper.INSTANCE.userDetailsToUserDetailsResponse(userDetails);
+        return UserMapper.INSTANCE.userDetailsToUserDataResponse(userDetails);
     }
 
     @Transactional

@@ -11,7 +11,27 @@ servers:
   - url: 'http://localhost:8081/api/user/internal'
 tags:
   - name: users
+  - name: authentication
 paths:
+  /login:
+    post:
+      summary: ''
+      operationId: post-auth-login
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDataResponse'
+      description: Log in user
+      tags:
+        - authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
   '/users/{userId}':
     parameters:
       - schema:
@@ -60,4 +80,16 @@ components:
         - enabled
       x-stoplight:
         id: 48dc58249bf26
+    LoginRequest:
+      title: LoginRequest
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+      description: ''
 x-internal: true

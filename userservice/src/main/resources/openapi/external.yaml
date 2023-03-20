@@ -12,26 +12,6 @@ tags:
   - name: userManagement
   - name: userProfile
 paths:
-  /auth/login:
-    post:
-      summary: ''
-      operationId: post-auth-login
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserDetailsResponse'
-      description: Log in user
-      tags:
-        - authentication
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoginRequest'
-    parameters: []
   /auth/register:
     parameters: []
     post:
@@ -211,18 +191,6 @@ components:
         - email
         - roles
         - enabled
-    LoginRequest:
-      title: LoginRequest
-      type: object
-      properties:
-        username:
-          type: string
-        password:
-          type: string
-      required:
-        - username
-        - password
-      description: ''
     RegistrationRequest:
       title: RegistrationRequest
       type: object

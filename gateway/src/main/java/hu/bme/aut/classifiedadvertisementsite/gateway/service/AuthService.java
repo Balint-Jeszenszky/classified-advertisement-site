@@ -1,7 +1,11 @@
 package hu.bme.aut.classifiedadvertisementsite.gateway.service;
 
+import hu.bme.aut.classifiedadvertisementsite.gateway.api.model.LoginResponse;
 import hu.bme.aut.classifiedadvertisementsite.gateway.api.model.RefreshResponse;
+import hu.bme.aut.classifiedadvertisementsite.gateway.api.model.UserDetailsResponse;
+import hu.bme.aut.classifiedadvertisementsite.gateway.client.userservice.api.AuthenticationApi;
 import hu.bme.aut.classifiedadvertisementsite.gateway.client.userservice.api.UsersApi;
+import hu.bme.aut.classifiedadvertisementsite.gateway.client.userservice.api.model.LoginRequest;
 import hu.bme.aut.classifiedadvertisementsite.gateway.client.userservice.api.model.UserDataResponse;
 import hu.bme.aut.classifiedadvertisementsite.gateway.controller.exception.InternalServerErrorException;
 import hu.bme.aut.classifiedadvertisementsite.gateway.controller.exception.UnauthorizedException;
@@ -9,7 +13,6 @@ import hu.bme.aut.classifiedadvertisementsite.gateway.model.RefreshToken;
 import hu.bme.aut.classifiedadvertisementsite.gateway.repository.RefreshTokenRepository;
 import hu.bme.aut.classifiedadvertisementsite.gateway.security.jwt.JwtUtils;
 import hu.bme.aut.classifiedadvertisementsite.gateway.security.model.User;
-import hu.bme.aut.classifiedadvertisementsite.gateway.security.model.UserData;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +36,7 @@ public class AuthService {
     private final JwtUtils jwtUtils;
     private final RefreshTokenRepository refreshTokenRepository;
     private final UsersApi usersApi;
+    private final AuthenticationApi authenticationApi;
 
     @Transactional
     public void logout(String refreshToken) {
@@ -60,11 +64,7 @@ public class AuthService {
 
         UserDataResponse userData = usersApi.getUsersUserId(userId);
 
-        User user = new User(
-                userData.getId(),
-                userData.getUsername(),
-                userData.getEmail(),
-                userData.getRoles());
+        User user = userDataResponseToUser(userData);
 
         String jwt = jwtUtils.generateJwtToken(user);
         String refreshJwt = jwtUtils.generateJwtRefreshToken(user);
@@ -80,7 +80,10 @@ public class AuthService {
         return newTokenResponse;
     }
 
-    public UserData login(User user) {
+    public LoginResponse login(String username, String password) {
+        UserDataResponse userData = authenticationApi.postAuthLogin(new LoginRequest().username(username).password(password));
+        User user = userDataResponseToUser(userData);
+
         String jwt = jwtUtils.generateJwtToken(user);
         String refreshJwt = jwtUtils.generateJwtRefreshToken(user);
 
@@ -88,7 +91,22 @@ public class AuthService {
 
         log.info("User id({}) logged in", user.getId());
 
-        return new UserData(user, jwt, refreshJwt);
+        return new LoginResponse()
+                .user(new UserDetailsResponse()
+                        .id(user.getId())
+                        .username(user.getUsername())
+                        .email(user.getEmail())
+                        .roles(user.getRoles()))
+                .accessToken(jwt)
+                .refreshToken(refreshJwt);
+    }
+
+    private User userDataResponseToUser(UserDataResponse userData) {
+        return new User(
+                userData.getId(),
+                userData.getUsername(),
+                userData.getEmail(),
+                userData.getRoles());
     }
 
     private void saveRefreshToken(String token, User user) {

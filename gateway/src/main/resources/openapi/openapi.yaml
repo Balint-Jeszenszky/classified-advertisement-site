@@ -12,6 +12,25 @@ servers:
 tags:
   - name: auth
 paths:
+  /api/auth/login:
+    post:
+      summary: ''
+      operationId: post-auth-login
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+      description: Log in user
+      tags:
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
   /api/auth/refresh:
     post:
       summary: ''
@@ -51,6 +70,53 @@ paths:
               $ref: '#/components/schemas/LogoutRequest'
 components:
   schemas:
+    LoginRequest:
+      title: LoginRequest
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+      description: ''
+    UserDetailsResponse:
+      title: UserDetailsResponse
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+      required:
+        - id
+        - username
+        - email
+        - roles
+    LoginResponse:
+      title: LoginResponse
+      x-stoplight:
+        id: rkbfkb7quha0d
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/UserDetailsResponse'
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+      required:
+        - user
+        - accessToken
+        - refreshToken
     LogoutRequest:
       title: LogoutRequest
       x-stoplight:
