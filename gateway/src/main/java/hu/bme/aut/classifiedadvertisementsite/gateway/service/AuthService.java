@@ -1,6 +1,10 @@
 package hu.bme.aut.classifiedadvertisementsite.gateway.service;
 
 import hu.bme.aut.classifiedadvertisementsite.gateway.api.model.RefreshResponse;
+import hu.bme.aut.classifiedadvertisementsite.gateway.client.userservice.api.UsersApi;
+import hu.bme.aut.classifiedadvertisementsite.gateway.client.userservice.api.model.UserDataResponse;
+import hu.bme.aut.classifiedadvertisementsite.gateway.controller.exception.InternalServerErrorException;
+import hu.bme.aut.classifiedadvertisementsite.gateway.controller.exception.UnauthorizedException;
 import hu.bme.aut.classifiedadvertisementsite.gateway.model.RefreshToken;
 import hu.bme.aut.classifiedadvertisementsite.gateway.repository.RefreshTokenRepository;
 import hu.bme.aut.classifiedadvertisementsite.gateway.security.jwt.JwtUtils;
@@ -28,6 +32,7 @@ import java.util.Optional;
 public class AuthService {
     private final JwtUtils jwtUtils;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UsersApi usersApi;
 
     @Transactional
     public void logout(String refreshToken) {
@@ -39,7 +44,7 @@ public class AuthService {
     @Transactional
     public RefreshResponse refreshLogin(String refreshToken) {
         if (!jwtUtils.validateJwtRefreshToken(refreshToken)) {
-            throw new RuntimeException("Wrong refresh token"); // TODO error handling
+            throw new UnauthorizedException("Wrong refresh token");
         }
 
         String hashOfJwtToken = getHashOfJwtToken(refreshToken);
@@ -48,13 +53,18 @@ public class AuthService {
 
         if (storedToken.isEmpty()) {
             log.error("Token not found for user id({}), hash: {}", userId, hashOfJwtToken);
-            throw new RuntimeException("Wrong refresh token"); // TODO error handling
+            throw new UnauthorizedException("Wrong refresh token");
         }
 
         refreshTokenRepository.delete(storedToken.get());
 
-        // TODO get user from User microservice
-        User user = new User(1, "user", "mail@test.local", List.of("ROLE_USER"));
+        UserDataResponse userData = usersApi.getUsersUserId(userId);
+
+        User user = new User(
+                userData.getId(),
+                userData.getUsername(),
+                userData.getEmail(),
+                userData.getRoles());
 
         String jwt = jwtUtils.generateJwtToken(user);
         String refreshJwt = jwtUtils.generateJwtRefreshToken(user);
@@ -98,7 +108,7 @@ public class AuthService {
             return String.copyValueOf(Hex.encode(hash));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-            throw new RuntimeException(e.getMessage()); // TODO error handling
+            throw new InternalServerErrorException(e.getMessage());
         }
     }
 

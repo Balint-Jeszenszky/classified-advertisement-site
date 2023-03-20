@@ -115,6 +115,7 @@
 				<version>${openapi-generator-version}</version>
 				<executions>
 					<execution>
+						<id>auth-api</id>
 						<goals>
 							<goal>generate</goal>
 						</goals>
@@ -133,6 +134,28 @@
 							</configOptions>
 							<apiPackage>hu.bme.aut.classifiedadvertisementsite.gateway.api</apiPackage>
 							<modelPackage>hu.bme.aut.classifiedadvertisementsite.gateway.api.model</modelPackage>
+						</configuration>
+					</execution>
+					<execution>
+						<id>user-service-internal-client</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>
+								${project.basedir}/../userservice/src/main/resources/openapi/internal.yaml
+							</inputSpec>
+							<generatorName>java</generatorName>
+							<library>resttemplate</library>
+							<apiPackage>hu.bme.aut.classifiedadvertisementsite.gateway.client.userservice.api</apiPackage>
+							<modelPackage>hu.bme.aut.classifiedadvertisementsite.gateway.client.userservice.api.model</modelPackage>
+							<generateApis>true</generateApis>
+							<generateApiDocumentation>false</generateApiDocumentation>
+							<generateApiTests>false</generateApiTests>
+							<generateModels>true</generateModels>
+							<generateModelDocumentation>false</generateModelDocumentation>
+							<generateModelTests>false</generateModelTests>
+							<generateSupportingFiles>true</generateSupportingFiles>
 						</configuration>
 					</execution>
 				</executions>
