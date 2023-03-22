@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
-import { AuthService } from 'src/app/openapi/gateway';
 import { AuthenticationService } from 'src/app/openapi/userservice';
 import { LoggedInUserServiceService } from 'src/app/service/logged-in-user-service.service';
 

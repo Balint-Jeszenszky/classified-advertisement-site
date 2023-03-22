@@ -26,6 +26,7 @@ public class JwtUtils {
     private int jwtRefreshExpirationMs;
 
     private static final String ROLES = "roles";
+    private static final String USERNAME = "username";
     private static final String EMAIL = "email";
     private static final String ID = "id";
 
@@ -35,6 +36,7 @@ public class JwtUtils {
                 .setSubject((user.getUsername()))
                 .setIssuedAt(new Date())
                 .claim(ID, user.getId())
+                .claim(USERNAME, user.getUsername())
                 .claim(EMAIL, user.getEmail())
                 .claim(ROLES, user.getRoles())
                 .claim("type", "access")
