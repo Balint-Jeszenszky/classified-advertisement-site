@@ -14,3 +14,23 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .m-05 {
   margin: 0.5rem;
 }
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-size-2x {
+  font-size: 2rem;
+}
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  zoom: 0.5;
+  margin: 2rem;
+}

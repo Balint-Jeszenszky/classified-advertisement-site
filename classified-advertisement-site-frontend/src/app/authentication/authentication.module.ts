@@ -10,9 +10,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ConfirmEmailComponent } from './confirm-email/confirm-email.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 const routes: Routes = [
-  { path: '', component: AuthenticationComponent }
+  { path: '', component: AuthenticationComponent },
+  { path: 'confirmEmail/:key', component: ConfirmEmailComponent },
 ];
 
 @NgModule({
@@ -20,6 +23,7 @@ const routes: Routes = [
     AuthenticationComponent,
     LoginComponent,
     RegistrationComponent,
+    ConfirmEmailComponent,
   ],
   imports: [
     RouterModule.forChild(routes),
@@ -30,6 +34,7 @@ const routes: Routes = [
     MatInputModule,
     MatButtonModule,
     MatSnackBarModule,
+    MatProgressSpinnerModule,
   ]
 })
 export class AuthenticationModule { }
