@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 import { AuthenticationService } from 'src/app/openapi/userservice';
-import { LoggedInUserServiceService } from 'src/app/service/logged-in-user-service.service';
+import { LoggedInUserService } from 'src/app/service/logged-in-user.service';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +16,7 @@ export class LoginComponent implements OnInit {
   showHint: boolean = false;
 
   constructor(
-    private readonly loggedInUserServiceService: LoggedInUserServiceService,
+    private readonly loggedInUserService: LoggedInUserService,
     private readonly authenticationService: AuthenticationService,
     private readonly snackBar: MatSnackBar,
   ) { }
@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
   }
 
   onLogin() {
-    this.loggedInUserServiceService.login(this.username, this.password).subscribe({
+    this.loggedInUserService.login(this.username, this.password).subscribe({
       error: err => this.snackBar.open(err.error, 'OK', { duration: 5000 }),
     });
   }

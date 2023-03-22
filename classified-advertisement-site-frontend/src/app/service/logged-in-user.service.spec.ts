@@ -1,10 +1,10 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import { LoggedInUserServiceService } from './logged-in-user-service.service';
+import { LoggedInUserService } from './logged-in-user.service';
 
 describe('LoggedInUserServiceService', () => {
-  let service: LoggedInUserServiceService;
+  let service: LoggedInUserService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -12,7 +12,7 @@ describe('LoggedInUserServiceService', () => {
         HttpClientTestingModule,
       ]
     });
-    service = TestBed.inject(LoggedInUserServiceService);
+    service = TestBed.inject(LoggedInUserService);
   });
 
   it('should be created', () => {

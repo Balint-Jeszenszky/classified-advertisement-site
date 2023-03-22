@@ -11,31 +11,43 @@ type TokenPayload = UserDetailsResponse & {
 @Injectable({
   providedIn: 'root'
 })
-export class LoggedInUserServiceService {
+export class LoggedInUserService {
   private tokens?: RefreshResponse;
   private loggedIn: ReplaySubject<boolean> = new ReplaySubject();
+  private currentUser: ReplaySubject<UserDetailsResponse> = new ReplaySubject();
 
   constructor(
     private readonly authService: AuthService,
   ) {
     const tokens = localStorage.getItem(TOKEN_KEY);
 
-    if (tokens) {
-      const parsedTokens = JSON.parse(tokens) as RefreshResponse;
-
-      if (!parsedTokens) {
-        this.loggedIn.next(false);
+    if (!tokens) {
+      this.loggedIn.next(false);
         return;
-      }
-
-      if (!this.isExpired(parsedTokens.accessToken)) {
-        this.setTokens(parsedTokens);
-      } else if (!this.isExpired(parsedTokens.refreshToken)) {
-        this.refresh(parsedTokens.refreshToken);
-      } else {
-        this.logout();
-      }
     }
+
+    const parsedTokens = JSON.parse(tokens) as RefreshResponse;
+
+    if (!parsedTokens) {
+      this.loggedIn.next(false);
+      return;
+    }
+
+    if (!this.isExpired(parsedTokens.accessToken)) {
+      this.setTokens(parsedTokens);
+    } else if (!this.isExpired(parsedTokens.refreshToken)) {
+      this.refresh(parsedTokens.refreshToken);
+    } else {
+      this.logout();
+    }
+  }
+
+  get isLoggedIn(): Observable<boolean> {
+    return this.loggedIn.asObservable();
+  }
+
+  get user(): Observable<UserDetailsResponse> {
+    return this.currentUser.asObservable();
   }
 
   login(username: string, password: string): Observable<LoginResponse> {
@@ -50,10 +62,6 @@ export class LoggedInUserServiceService {
         error: err => subscriber.error(err),
       });
     });
-  }
-
-  get isLoggedIn(): Observable<boolean> {
-    return this.loggedIn.asObservable();
   }
 
   logout(): void {
@@ -90,7 +98,9 @@ export class LoggedInUserServiceService {
   private setTokens(tokens: RefreshResponse): void {
     this.tokens = tokens;
     this.loggedIn.next(true);
-    const expiration = this.getTokenPayload(tokens.accessToken).exp * 1000;
+    const { id, username, email, roles, exp } = this.getTokenPayload(tokens.accessToken);
+    this.currentUser.next({ id, username, email, roles });
+    const expiration = exp * 1000;
     localStorage.setItem(TOKEN_KEY, JSON.stringify(tokens));
     if (tokens.refreshToken) {
       setTimeout(() => this.refresh(tokens.refreshToken), expiration - Date.now() - 10000);
