@@ -1,10 +1,9 @@
-import { CommonModule } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -26,6 +25,7 @@ describe('AuthenticationComponent', () => {
         MatTabsModule,
         MatFormFieldModule,
         MatInputModule,
+        MatSnackBarModule,
       ]
     })
     .compileComponents();

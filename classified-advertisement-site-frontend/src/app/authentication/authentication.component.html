@@ -1,10 +1,10 @@
 <div class="center">
-  <mat-tab-group mat-stretch-tabs>
-      <mat-tab label="Login">
-          <app-login></app-login>
-      </mat-tab>
-      <mat-tab label="Register">
-          <app-registration></app-registration>
-      </mat-tab>
+  <mat-tab-group mat-stretch-tabs [(selectedIndex)]="selectedTabIndex">
+    <mat-tab label="Login">
+      <app-login [usernameChange]="usernameAsObservable"></app-login>
+    </mat-tab>
+    <mat-tab label="Register">
+      <app-registration (registered)="showLogin($event)"></app-registration>
+    </mat-tab>
   </mat-tab-group>
 </div>

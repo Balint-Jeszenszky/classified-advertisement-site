@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { RegistrationComponent } from './registration.component';
@@ -22,6 +23,7 @@ describe('RegistrationComponent', () => {
         MatFormFieldModule,
         MatInputModule,
         MatButtonModule,
+        MatSnackBarModule,
       ]
     })
     .compileComponents();

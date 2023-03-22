@@ -20,6 +20,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -81,7 +82,13 @@ public class AuthService {
     }
 
     public LoginResponse login(String username, String password) {
-        UserDataResponse userData = authenticationApi.postAuthLogin(new LoginRequest().username(username).password(password));
+        UserDataResponse userData;
+        try {
+            userData = authenticationApi.postAuthLogin(new LoginRequest().username(username).password(password));
+        } catch (RestClientException e) {
+            throw new UnauthorizedException("Wrong username or password");
+        }
+
         User user = userDataResponseToUser(userData);
 
         String jwt = jwtUtils.generateJwtToken(user);

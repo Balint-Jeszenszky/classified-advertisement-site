@@ -3,6 +3,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { LoginComponent } from './login.component';
 import { FormsModule } from '@angular/forms';
@@ -22,6 +23,7 @@ describe('LoginComponent', () => {
         MatFormFieldModule,
         MatInputModule,
         MatButtonModule,
+        MatSnackBarModule,
       ]
     })
     .compileComponents();
