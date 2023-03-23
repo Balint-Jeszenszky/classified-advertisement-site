@@ -50,6 +50,10 @@ export class LoggedInUserService {
     return this.currentUser.asObservable();
   }
 
+  get accessToken(): string | undefined {
+    return this.tokens?.accessToken;
+  }
+
   login(username: string, password: string): Observable<LoginResponse> {
     const response = this.authService.postAuthLogin({ username, password });
 

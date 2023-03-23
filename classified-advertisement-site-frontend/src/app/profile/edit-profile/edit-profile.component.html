@@ -1,0 +1,20 @@
+<h1>Edit profile</h1>
+<form (ngSubmit)="onSubmit()" class="center">
+  <mat-form-field appearance="fill" class="w-100">
+    <mat-label>Email</mat-label>
+    <input matInput placeholder="Email" name="email" [(ngModel)]="email">
+  </mat-form-field>
+  <mat-form-field appearance="fill" class="w-100">
+    <mat-label>Old password</mat-label>
+    <input matInput="password" type="password" placeholder="Old password" name="oldPassword" [(ngModel)]="oldPassword">
+  </mat-form-field>
+  <mat-form-field appearance="fill" class="w-100">
+    <mat-label>New password</mat-label>
+    <input matInput="password" type="password" placeholder="New password" name="password" [(ngModel)]="newPassword">
+  </mat-form-field>
+  <mat-form-field appearance="fill" class="w-100">
+    <mat-label>Confirm new password</mat-label>
+    <input matInput="password" type="password" placeholder="Confirm new password" name="confirmPassword" [(ngModel)]="confirmNewPassword">
+  </mat-form-field>
+  <button mat-raised-button color="primary">Save</button>
+</form>

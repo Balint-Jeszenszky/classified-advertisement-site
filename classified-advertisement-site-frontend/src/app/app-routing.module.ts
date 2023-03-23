@@ -9,6 +9,12 @@ const routes: Routes = [
     data: { login: false },
     canActivate: [loginGuard],
   },
+  {
+    path: 'profile',
+    loadChildren: () => import('./profile/profile.module').then(m => m.ProfileModule),
+    data: { login: true },
+    canActivate: [loginGuard],
+  },
 ];
 
 @NgModule({
