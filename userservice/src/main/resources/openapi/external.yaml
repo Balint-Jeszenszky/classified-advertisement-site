@@ -278,3 +278,9 @@ components:
           type: string
       required:
         - email
+  securitySchemes:
+    JWT:
+      type: http
+      scheme: bearer
+security:
+  - JWT: []

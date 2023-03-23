@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
+import { CredentialsService } from '../openapi/credentials.service';
 import { AuthService, LoginResponse, RefreshResponse, UserDetailsResponse } from '../openapi/gateway';
 
 const TOKEN_KEY = 'tokens';
@@ -18,6 +19,7 @@ export class LoggedInUserService {
 
   constructor(
     private readonly authService: AuthService,
+    private readonly credentialsService: CredentialsService,
   ) {
     const tokens = localStorage.getItem(TOKEN_KEY);
 
@@ -48,10 +50,6 @@ export class LoggedInUserService {
 
   get user(): Observable<UserDetailsResponse> {
     return this.currentUser.asObservable();
-  }
-
-  get accessToken(): string | undefined {
-    return this.tokens?.accessToken;
   }
 
   login(username: string, password: string): Observable<LoginResponse> {
@@ -100,6 +98,7 @@ export class LoggedInUserService {
   }
 
   private setTokens(tokens: RefreshResponse): void {
+    this.credentialsService.updateCredentials(tokens.accessToken);
     this.tokens = tokens;
     this.loggedIn.next(true);
     const { id, username, email, roles, exp } = this.getTokenPayload(tokens.accessToken);
