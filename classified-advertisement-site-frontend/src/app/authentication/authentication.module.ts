@@ -12,10 +12,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ConfirmEmailComponent } from './confirm-email/confirm-email.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ResetPasswordDialogComponent } from './reset-password-dialog/reset-password-dialog.component';
 
 const routes: Routes = [
   { path: '', component: AuthenticationComponent },
   { path: 'confirmEmail/:key', component: ConfirmEmailComponent },
+  { path: 'resetPassword/:key', component: ResetPasswordComponent },
 ];
 
 @NgModule({
@@ -24,6 +28,8 @@ const routes: Routes = [
     LoginComponent,
     RegistrationComponent,
     ConfirmEmailComponent,
+    ResetPasswordComponent,
+    ResetPasswordDialogComponent,
   ],
   imports: [
     RouterModule.forChild(routes),
@@ -35,6 +41,7 @@ const routes: Routes = [
     MatButtonModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
+    MatDialogModule,
   ]
 })
 export class AuthenticationModule { }

@@ -1,8 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 import { AuthenticationService } from 'src/app/openapi/userservice';
 import { LoggedInUserService } from 'src/app/service/logged-in-user.service';
+import { ResetPasswordDialogComponent } from '../reset-password-dialog/reset-password-dialog.component';
 
 @Component({
   selector: 'app-login',
@@ -19,6 +21,7 @@ export class LoginComponent implements OnInit {
     private readonly loggedInUserService: LoggedInUserService,
     private readonly authenticationService: AuthenticationService,
     private readonly snackBar: MatSnackBar,
+    private readonly dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -35,6 +38,16 @@ export class LoginComponent implements OnInit {
   }
 
   onResetPassword() {
-    this.authenticationService.postAuthResetPassword();
+    const dialogRef = this.dialog.open(ResetPasswordDialogComponent, {
+      width: '300px',
+    });
+
+    dialogRef.afterClosed().subscribe((email: string) => {
+      if (email) {
+        this.authenticationService.postAuthResetPassword({ email }).subscribe(() => {
+          this.snackBar.open('Reset email sent', 'OK', { duration: 5000 });
+        })
+      }
+    });
   }
 }
