@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthenticationService } from 'src/app/openapi/userservice';
 import { LoggedInUserService } from 'src/app/service/logged-in-user.service';
@@ -22,6 +23,7 @@ export class LoginComponent implements OnInit {
     private readonly authenticationService: AuthenticationService,
     private readonly snackBar: MatSnackBar,
     private readonly dialog: MatDialog,
+    private readonly router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -33,6 +35,7 @@ export class LoginComponent implements OnInit {
 
   onLogin() {
     this.loggedInUserService.login(this.username, this.password).subscribe({
+      next: () => this.router.navigate(['/']),
       error: err => this.snackBar.open(err.error, 'OK', { duration: 5000 }),
     });
   }

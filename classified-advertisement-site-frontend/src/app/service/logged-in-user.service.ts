@@ -14,8 +14,8 @@ type TokenPayload = UserDetailsResponse & {
 })
 export class LoggedInUserService {
   private tokens?: RefreshResponse;
-  private loggedIn: ReplaySubject<boolean> = new ReplaySubject();
-  private currentUser: ReplaySubject<UserDetailsResponse> = new ReplaySubject();
+  private loggedIn: ReplaySubject<boolean> = new ReplaySubject(1);
+  private currentUser: ReplaySubject<UserDetailsResponse | undefined> = new ReplaySubject(1);
 
   constructor(
     private readonly authService: AuthService,
@@ -48,7 +48,7 @@ export class LoggedInUserService {
     return this.loggedIn.asObservable();
   }
 
-  get user(): Observable<UserDetailsResponse> {
+  get user(): Observable<UserDetailsResponse | undefined> {
     return this.currentUser.asObservable();
   }
 
@@ -71,6 +71,7 @@ export class LoggedInUserService {
     localStorage.removeItem(TOKEN_KEY);
     this.tokens = undefined;
     this.loggedIn.next(false);
+    this.currentUser.next(undefined);
 
     if (!refreshToken) {
       return;

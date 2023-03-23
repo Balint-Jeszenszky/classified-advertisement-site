@@ -21,9 +21,9 @@ export const loginGuard: CanActivateFn = async (route: ActivatedRouteSnapshot): 
 export const roleGuard: CanActivateFn = async (route: ActivatedRouteSnapshot): Promise<boolean | UrlTree> => {
   const loggedInUserService = inject(LoggedInUserService);
   const router = inject(Router);
-  const roles = await firstValueFrom(loggedInUserService.user.pipe(timeout(TIMEOUT), map(u => u.roles))).catch(() => [] as Role[]);
+  const roles = await firstValueFrom(loggedInUserService.user.pipe(timeout(TIMEOUT), map(u => u?.roles))).catch(() => [] as Role[]);
 
-  if (roles.includes(route.data['role'])) {
+  if (roles?.includes(route.data['role'])) {
     return true;
   }
 

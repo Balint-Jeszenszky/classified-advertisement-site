@@ -1,0 +1,12 @@
+<mat-toolbar color="primary">
+  <div class="container w-100 d-flex justify-between">
+    <span>Classified advertisements</span>
+    <div>
+      <a routerLink="/" class="nav-item">Home</a>
+      <a *ngIf="admin" routerLink="/admin" class="nav-item">Admin</a>
+      <a *ngIf="loggedIn" routerLink="/profile" class="nav-item">Profile</a>
+      <a *ngIf="!loggedIn" routerLink="/auth" class="nav-item">Login</a>
+      <span *ngIf="loggedIn" class="cursor-pointer nav-item" (click)="logout()">Logout</span>
+    </div>
+  </div>
+</mat-toolbar>

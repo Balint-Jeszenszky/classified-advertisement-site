@@ -33,6 +33,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   margin-right: 1rem;
 }
 
+.mt-2 {
+  margin-top: 2rem;
+}
+
 .text-center {
   text-align: center;
 }
@@ -60,4 +64,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .pb-1 {
   padding-bottom: 1rem;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
