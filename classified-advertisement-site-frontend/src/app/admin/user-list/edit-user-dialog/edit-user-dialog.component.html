@@ -1,0 +1,24 @@
+<h1 mat-dialog-title>Edit user</h1>
+<div mat-dialog-content>
+  <mat-form-field appearance="fill" class="w-100">
+    <mat-label>Email</mat-label>
+    <input matInput [(ngModel)]="email">
+  </mat-form-field>
+  <div>
+    <ul>
+      <li *ngFor="let role of allRoles">
+        <mat-checkbox [checked]="hasRole(role)" color="primary" (change)="toggleRole(role)">
+          {{ role }}
+        </mat-checkbox>
+      </li>
+    </ul>
+  </div>
+  <div class="pb-1">
+    <mat-label class="pr-1">Enabled</mat-label>
+    <mat-slide-toggle [(ngModel)]="enabled"></mat-slide-toggle>
+  </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button color="primary" [mat-dialog-close]="{email, roles, enabled}" cdkFocusInitial>Save</button>
+  <button mat-raised-button (click)="onNoClick()">Cancel</button>
+</div>
