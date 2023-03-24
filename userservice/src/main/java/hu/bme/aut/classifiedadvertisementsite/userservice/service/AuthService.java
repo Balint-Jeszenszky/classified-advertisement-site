@@ -2,7 +2,6 @@ package hu.bme.aut.classifiedadvertisementsite.userservice.service;
 
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.RegistrationRequest;
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.ResetPasswordRequest;
-import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.UserDetailsResponse;
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.internal.model.LoginRequest;
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.internal.model.UserDataResponse;
 import hu.bme.aut.classifiedadvertisementsite.userservice.controller.exceptions.*;
