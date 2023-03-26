@@ -1,19 +1,25 @@
 package hu.bme.aut.classifiedadvertisementsite.userservice.unit.service;
 
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.RegistrationRequest;
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.internal.model.LoginRequest;
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.internal.model.UserDataResponse;
 import hu.bme.aut.classifiedadvertisementsite.userservice.controller.exceptions.BadRequestException;
+import hu.bme.aut.classifiedadvertisementsite.userservice.controller.exceptions.UnauthorizedException;
 import hu.bme.aut.classifiedadvertisementsite.userservice.model.ERole;
 import hu.bme.aut.classifiedadvertisementsite.userservice.model.Role;
 import hu.bme.aut.classifiedadvertisementsite.userservice.model.User;
 import hu.bme.aut.classifiedadvertisementsite.userservice.repository.PasswordResetRepository;
 import hu.bme.aut.classifiedadvertisementsite.userservice.repository.RoleRepository;
 import hu.bme.aut.classifiedadvertisementsite.userservice.repository.UserRepository;
+import hu.bme.aut.classifiedadvertisementsite.userservice.security.UserDetailsImpl;
 import hu.bme.aut.classifiedadvertisementsite.userservice.service.AuthService;
 import hu.bme.aut.classifiedadvertisementsite.userservice.service.EmailVerificationService;
 import hu.bme.aut.classifiedadvertisementsite.userservice.service.NotificationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
@@ -169,5 +175,36 @@ public class AuthServiceTests {
                 .username("user")
                 .password("password")
                 .confirmPassword("password");
+    }
+
+    @Test
+    void loginRequestFailsWithWrongCredentials() {
+        LoginRequest loginRequest = new LoginRequest().username("user").password("pass");
+        when(authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsername().toLowerCase().trim(),
+                        loginRequest.getPassword()))).thenThrow(BadCredentialsException.class);
+
+        Exception exception = assertThrows(
+                UnauthorizedException.class,
+                () -> authService.login(loginRequest));
+        assertEquals(exception.getClass(), UnauthorizedException.class);
+    }
+
+    @Test
+    void loginRequestSuccessful() {
+        LoginRequest loginRequest = new LoginRequest().username("user").password("pass");
+        when(authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsername().toLowerCase().trim(),
+                        loginRequest.getPassword())))
+                .thenReturn(
+                        new UsernamePasswordAuthenticationToken(
+                                UserDetailsImpl.build(User.builder().username(loginRequest.getUsername()).build()),
+                                loginRequest));
+
+        UserDataResponse userDataResponse = authService.login(loginRequest);
+
+        assertEquals(userDataResponse.getUsername(), loginRequest.getUsername());
     }
 }
