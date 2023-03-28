@@ -9,6 +9,10 @@
 			"path": "userservice"
 		},
 		{
+			"name": "Advertisement service",
+			"path": "advertisementservice"
+		},
+		{
 			"name": "Frontend",
 			"path": "classified-advertisement-site-frontend"
 		},
