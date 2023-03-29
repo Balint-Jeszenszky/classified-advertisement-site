@@ -1,4 +1,4 @@
-package hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller
+package hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.external
 
 import org.springframework.web.bind.annotation.RequestMapping
 

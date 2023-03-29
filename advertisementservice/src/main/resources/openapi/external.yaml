@@ -187,6 +187,8 @@ components:
         updatedAt:
           type: string
           format: date-time
+        price:
+          type: number
       required:
         - id
         - title
@@ -194,6 +196,7 @@ components:
         - advertiserId
         - createdAt
         - updatedAt
+        - price
     AdvertisementRequest:
       title: AdvertisementRequest
       x-stoplight:
@@ -204,9 +207,12 @@ components:
           type: string
         description:
           type: string
+        price:
+          type: number
       required:
         - title
         - description
+        - price
     CommentResponse:
       title: CommentResponse
       x-stoplight:
