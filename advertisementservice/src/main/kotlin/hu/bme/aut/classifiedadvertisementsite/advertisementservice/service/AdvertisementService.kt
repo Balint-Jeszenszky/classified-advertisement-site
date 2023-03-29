@@ -12,6 +12,7 @@ class AdvertisementService(
     private val advertisementRepository: AdvertisementRepository
 ) {
     private val advertisementMapper: AdvertisementMapper = Mappers.getMapper(AdvertisementMapper::class.java)
+
     fun getAdvertisementById(id: Int): AdvertisementResponse {
         val advertisement = advertisementRepository.findById(id).orElseThrow { NotFoundException("Advertisement not found") }
         return advertisementMapper.advertisementToAdvertisementResponse(advertisement)
