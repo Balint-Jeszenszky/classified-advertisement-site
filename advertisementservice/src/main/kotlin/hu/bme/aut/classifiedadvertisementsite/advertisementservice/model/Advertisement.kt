@@ -2,6 +2,7 @@ package hu.bme.aut.classifiedadvertisementsite.advertisementservice.model
 
 import jakarta.persistence.*
 import java.time.OffsetDateTime
+import java.util.Date
 
 @Entity(name = "Advertisement")
 @Table(name = "advertisement")
@@ -15,14 +16,14 @@ class Advertisement (
     @Column(name = "advertiser_id", nullable = false, updatable = false)
     var advertiserId: Int,
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    var createdAt: OffsetDateTime,
-
-    @Column(name = "updated_at", nullable = false)
-    var updatedAt: OffsetDateTime,
-
     @Column(name = "price", nullable = false)
     var price: Double,
+
+    @Column(name = "updated_at", nullable = false)
+    var updatedAt: OffsetDateTime = OffsetDateTime.now(),
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    var createdAt: OffsetDateTime = OffsetDateTime.now(),
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "advertisement_seq")

@@ -17,7 +17,7 @@ class UserDetailsImpl(
     init {
         val authorities = roles.map { role: String? ->
             SimpleGrantedAuthority(role)
-        }.toList()
+        }
         this.authorities = authorities
     }
 

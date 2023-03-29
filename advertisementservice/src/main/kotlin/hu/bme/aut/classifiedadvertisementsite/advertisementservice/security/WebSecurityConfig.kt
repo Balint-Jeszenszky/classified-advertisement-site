@@ -36,7 +36,8 @@ class WebSecurityConfig {
             .authorizeHttpRequests()
             .requestMatchers(
                 HttpMethod.GET,
-                "/external/advertisement/*"
+                "/external/advertisement/*",
+                "/external/advertisements"
             )
             .permitAll()
             .anyRequest().authenticated()

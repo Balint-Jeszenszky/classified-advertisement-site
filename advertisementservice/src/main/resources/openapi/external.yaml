@@ -60,6 +60,8 @@ paths:
       responses:
         '204':
           description: No Content
+        '403':
+          description: Forbidden
       description: Delete an advertisement by id
       tags:
         - advertisement
@@ -90,6 +92,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AdvertisementResponse'
+        '400':
+          description: Bad Request
       requestBody:
         content:
           application/json:
