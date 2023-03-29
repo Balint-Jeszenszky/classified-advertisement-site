@@ -1,0 +1,248 @@
+openapi: 3.0.0
+x-stoplight:
+  id: 9weg4btfsgusa
+info:
+  title: external
+  version: '1.0'
+  contact:
+    name: Balint Jeszenszky
+  description: Classified advertisement site advertisement microservice external api
+servers:
+  - url: 'http://localhost:8082/api/advertisement'
+paths:
+  '/advertisement/{id}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - advertisement
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdvertisementResponse'
+        '404':
+          description: Not Found
+      operationId: get-advertisement-id
+      description: Get a single advertisement by id
+    put:
+      summary: ''
+      operationId: put-advertisement-id
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdvertisementResponse'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+      description: Edit an advertisement by id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdvertisementRequest'
+      tags:
+        - advertisement
+    delete:
+      summary: ''
+      operationId: delete-advertisement-id
+      responses:
+        '204':
+          description: No Content
+      description: Delete an advertisement by id
+      tags:
+        - advertisement
+  /advertisements:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - advertisement
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdvertisementResponse'
+      operationId: get-advertisements
+      description: List all advertisements
+    parameters: []
+    post:
+      summary: ''
+      operationId: post-advertisements
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdvertisementResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdvertisementRequest'
+      description: Create a new advertisement
+      tags:
+        - advertisement
+  '/advertisement/{id}/comments':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - comment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CommentResponse'
+        '404':
+          description: Not Found
+      operationId: get-advertisement-id-comment
+      description: get all comments for an advertisement
+    post:
+      summary: ''
+      operationId: post-advertisement-id-comment
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResponse'
+        '400':
+          description: Bad Request
+      tags:
+        - comment
+      description: Create a comment for an advertisement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentRequest'
+  '/advertisement/{adId}/comment/{commentId}':
+    parameters:
+      - schema:
+          type: integer
+        name: adId
+        in: path
+        required: true
+      - schema:
+          type: integer
+        name: commentId
+        in: path
+        required: true
+    delete:
+      summary: ''
+      operationId: delete-advertisement-adId-comment-commentId
+      responses:
+        '204':
+          description: No Content
+        '403':
+          description: Forbidden
+      tags:
+        - comment
+      description: Delete a comment by id
+components:
+  schemas:
+    AdvertisementResponse:
+      title: AdvertisementResponse
+      x-stoplight:
+        id: v8km5zj6k0ca3
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        advertiserId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - description
+        - advertiserId
+        - createdAt
+        - updatedAt
+    AdvertisementRequest:
+      title: AdvertisementRequest
+      x-stoplight:
+        id: dqpzl662jttxm
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+      required:
+        - title
+        - description
+    CommentResponse:
+      title: CommentResponse
+      x-stoplight:
+        id: saht1la8hw3wq
+      type: object
+      properties:
+        id:
+          type: integer
+        creatorId:
+          type: integer
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - creatorId
+        - content
+        - createdAt
+    CommentRequest:
+      title: CommentRequest
+      x-stoplight:
+        id: erwlyj1ia1chl
+      type: object
+      properties:
+        content:
+          type: string
+      required:
+        - content
+  securitySchemes:
+    JWT:
+      type: http
+      scheme: bearer
+tags:
+  - name: advertisement
+  - name: comment
+security:
+  - JWT: []

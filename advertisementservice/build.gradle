@@ -6,6 +6,7 @@ plugins {
 	id 'org.jetbrains.kotlin.jvm' version '1.7.22'
 	id 'org.jetbrains.kotlin.plugin.spring' version '1.7.22'
 	id 'org.jetbrains.kotlin.plugin.jpa' version '1.7.22'
+	id 'org.openapi.generator' version '6.4.0'
 }
 
 group = 'hu.bme.aut.classifiedadvertisementsite'
@@ -37,6 +38,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.amqp:spring-rabbit-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	implementation "org.openapitools:openapi-generator-gradle-plugin:6.4.0"
+	implementation "io.swagger.parser.v3:swagger-parser:2.1.12"
+	implementation "javax.servlet:servlet-api:2.5"
 }
 
 tasks.withType(KotlinCompile) {
@@ -49,3 +53,26 @@ tasks.withType(KotlinCompile) {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.openApiGenerate {
+	generatorName = "kotlin-spring"
+	inputSpec = "$rootDir/src/main/resources/openapi/external.yaml".toString()
+	outputDir = "$buildDir/generated-sources/openapi".toString()
+	apiPackage = "hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external"
+	modelPackage = "hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.model"
+	configOptions = [
+			useTags: "true",
+			interfaceOnly: "true",
+			skipDefaultInterface: "true" // TODO update openapi generator when 6.5.0 released https://github.com/OpenAPITools/openapi-generator/pull/14662
+	]
+}
+
+sourceSets {
+	main {
+		kotlin {
+			srcDir("$buildDir/generated-sources/openapi/src/main/kotlin")
+		}
+	}
+}
+
+compileKotlin.dependsOn tasks.openApiGenerate
