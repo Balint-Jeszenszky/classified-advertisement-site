@@ -2,7 +2,6 @@ package hu.bme.aut.classifiedadvertisementsite.advertisementservice.model
 
 import jakarta.persistence.*
 import java.time.OffsetDateTime
-import java.util.Date
 
 @Entity(name = "Advertisement")
 @Table(name = "advertisement")
@@ -24,6 +23,10 @@ class Advertisement (
 
     @Column(name = "created_at", nullable = false, updatable = false)
     var createdAt: OffsetDateTime = OffsetDateTime.now(),
+
+    @OneToMany(cascade = [CascadeType.ALL])
+    @JoinColumn(name = "advertisement_id")
+    var comments: List<Comment> = mutableListOf(),
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "advertisement_seq")

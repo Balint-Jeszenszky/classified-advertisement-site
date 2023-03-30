@@ -146,16 +146,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CommentRequest'
-  '/advertisement/{adId}/comment/{commentId}':
+  '/comment/{id}':
     parameters:
       - schema:
           type: integer
-        name: adId
-        in: path
-        required: true
-      - schema:
-          type: integer
-        name: commentId
+        name: id
         in: path
         required: true
     delete:
