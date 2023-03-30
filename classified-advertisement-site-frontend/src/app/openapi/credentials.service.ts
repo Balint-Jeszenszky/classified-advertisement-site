@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { AdvertisementService, CommentService } from './advertisementservice';
 import { UserManagementService, UserProfileService } from './userservice';
 
 @Injectable({
@@ -10,10 +11,14 @@ export class CredentialsService {
   constructor(
     userManagementService: UserManagementService,
     userProfileService: UserProfileService,
+    advertisementService: AdvertisementService,
+    commentService: CommentService,
   ) {
     this.services = [
       userManagementService,
       userProfileService,
+      advertisementService,
+      commentService,
     ];
   }
 

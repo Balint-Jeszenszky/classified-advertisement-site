@@ -10,7 +10,8 @@
     "test:headless": "ng test --watch=false --browsers=ChromeHeadless",
     "openapi:generate-gateway": "openapi-generator-cli generate -i ../gateway/src/main/resources/openapi/openapi.yaml -g typescript-angular -o src/app/openapi/gateway",
     "openapi:generate-userservice": "openapi-generator-cli generate -i ../userservice/src/main/resources/openapi/external.yaml -g typescript-angular -o src/app/openapi/userservice",
-    "openapi:generate": "npm run openapi:generate-gateway && npm run openapi:generate-userservice"
+    "openapi:generate-advertisementservice": "openapi-generator-cli generate -i ../advertisementservice/src/main/resources/openapi/external.yaml -g typescript-angular -o src/app/openapi/advertisementservice",
+    "openapi:generate": "npm run openapi:generate-gateway && npm run openapi:generate-userservice && npm run openapi:generate-advertisementservice"
   },
   "private": true,
   "dependencies": {
