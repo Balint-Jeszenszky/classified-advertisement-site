@@ -7,6 +7,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   width: 100%;
 }
 
+.w-50 {
+  width: 50%;
+}
+
+.m-1 {
+  margin: 1rem;
+}
+
 .ml-05 {
   margin-left: 0.5rem;
 }
@@ -37,8 +45,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   margin-top: 2rem;
 }
 
+.mb-1 {
+  margin-bottom: 1rem;
+}
+
 .text-center {
   text-align: center;
+}
+
+.text-right {
+  text-align: right;
 }
 
 .text-size-2x {
@@ -56,6 +72,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
+  padding: 1rem;
 }
 
 .pr-1 {
@@ -72,6 +89,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .justify-between {
   justify-content: space-between;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
 }
 
 .cursor-pointer {

@@ -5,6 +5,10 @@ import { Role } from './service/types';
 
 const routes: Routes = [
   {
+    path: '',
+    loadChildren: () => import('./advertisement/advertisement.module').then(m => m.AdvertisementModule),
+  },
+  {
     path: 'auth',
     loadChildren: () => import('./authentication/authentication.module').then(m => m.AuthenticationModule),
     data: { login: false },

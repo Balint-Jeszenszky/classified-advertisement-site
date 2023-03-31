@@ -1,0 +1,9 @@
+<form (submit)="onComment()">
+  <mat-form-field class="w-100">
+    <mat-label>Leave a comment</mat-label>
+    <textarea matInput placeholder="Write something here..." [(ngModel)]="content" name="comment"></textarea>
+  </mat-form-field>
+  <div class="text-right">
+    <button mat-raised-button color="primary" type="submit" [disabled]="disabled">Send</button>
+  </div>
+</form>

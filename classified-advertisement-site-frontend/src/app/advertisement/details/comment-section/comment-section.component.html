@@ -1,0 +1,6 @@
+<div>
+  <h2>Comments</h2>
+  <app-new-comment [advertisementId]="advertisementId" (newCommentEvent)="addNewComment($event)"></app-new-comment>
+  <hr>
+  <app-comment *ngFor="let comment of comments" [comment]="comment"></app-comment>
+</div>

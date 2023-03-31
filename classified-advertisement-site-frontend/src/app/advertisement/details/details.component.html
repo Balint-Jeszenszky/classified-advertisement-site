@@ -1,0 +1,13 @@
+<p>Mainpage > Category > TODO</p>
+<div class="d-flex flex-wrap">
+  <div class="content">
+    <app-gallery></app-gallery>
+  </div>
+  <div>
+    <h1>{{ advertisement?.title }}</h1>
+    <p>{{ advertisement?.description }}</p>
+    <h2>{{ advertisement?.price | currency: 'HUF' : 'symbol' }}</h2>
+    <p>Advertiser: TODO User</p>
+  </div>
+</div>
+<app-comment-section *ngIf="advertisement" [advertisementId]="advertisement.id"></app-comment-section>

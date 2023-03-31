@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import hu.bme.aut.classifiedadvertisementsite.gateway.security.jwt.JwtUtils;
 import hu.bme.aut.classifiedadvertisementsite.gateway.security.model.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -15,10 +16,10 @@ import reactor.core.publisher.Mono;
 import java.util.Base64;
 
 @Component
+@RequiredArgsConstructor
 public class JwtParserGlobalPreFilter implements GlobalFilter {
 
-    @Autowired
-    private JwtUtils jwtUtils;
+    private final JwtUtils jwtUtils;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
