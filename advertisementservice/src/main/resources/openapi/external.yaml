@@ -275,6 +275,13 @@ components:
           type: number
         categoryId:
           type: integer
+        status:
+          type: string
+          enum:
+            - AVAILABLE
+            - FREEZED
+            - SOLD
+            - ARCHIVED
       required:
         - id
         - title
@@ -283,6 +290,7 @@ components:
         - createdAt
         - updatedAt
         - price
+        - status
     AdvertisementRequest:
       title: AdvertisementRequest
       x-stoplight:
@@ -297,6 +305,13 @@ components:
           type: number
         categoryId:
           type: integer
+        status:
+          type: string
+          enum:
+            - AVAILABLE
+            - FREEZED
+            - SOLD
+            - ARCHIVED
       required:
         - title
         - description

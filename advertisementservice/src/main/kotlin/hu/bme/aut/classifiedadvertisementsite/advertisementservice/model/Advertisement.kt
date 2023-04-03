@@ -21,6 +21,10 @@ class Advertisement (
     @ManyToOne
     var category: Category,
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    var status: AdvertisementStatus,
+
     @Column(name = "updated_at", nullable = false)
     var updatedAt: OffsetDateTime = OffsetDateTime.now(),
 

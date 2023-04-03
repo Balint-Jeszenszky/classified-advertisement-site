@@ -7,6 +7,7 @@ import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.ex
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.NotFoundException
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.mapper.AdvertisementMapper
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.model.Advertisement
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.model.AdvertisementStatus
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.model.Category
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.repository.AdvertisementRepository
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.repository.CategoryRepository
@@ -52,7 +53,8 @@ class AdvertisementService(
             advertisementRequest.description,
             user.getId(),
             advertisementRequest.price.toDouble(),
-            category)
+            category,
+            AdvertisementStatus.AVAILABLE)
 
         advertisementRepository.save(advertisement)
 
@@ -83,9 +85,24 @@ class AdvertisementService(
         advertisement.price = advertisementRequest.price.toDouble()
         advertisement.updatedAt = OffsetDateTime.now()
         advertisement.category = category
+        if (advertisementRequest.status != null) {
+            val newStatus = AdvertisementStatus.valueOf(advertisementRequest.status.value)
+            if (!validStateTransition(advertisement.status, newStatus)) {
+                throw BadRequestException("Invalid status transition")
+            }
+            advertisement.status = newStatus
+        }
 
         advertisementRepository.save(advertisement)
 
         return advertisementMapper.advertisementToAdvertisementResponse(advertisement)
+    }
+
+    private fun validStateTransition(from: AdvertisementStatus, to: AdvertisementStatus): Boolean {
+        return when (from) {
+            AdvertisementStatus.AVAILABLE -> true
+            AdvertisementStatus.FREEZED -> listOf(AdvertisementStatus.AVAILABLE, AdvertisementStatus.SOLD).contains(to)
+            else -> false
+        }
     }
 }
