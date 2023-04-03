@@ -66,21 +66,6 @@ paths:
       tags:
         - advertisement
   /advertisements:
-    get:
-      summary: Your GET endpoint
-      tags:
-        - advertisement
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AdvertisementResponse'
-      operationId: get-advertisements
-      description: List all advertisements
     parameters: []
     post:
       summary: ''
@@ -102,6 +87,30 @@ paths:
       description: Create a new advertisement
       tags:
         - advertisement
+  '/advertisements/{categoryId}':
+    parameters:
+      - schema:
+          type: integer
+        name: categoryId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - advertisement
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdvertisementResponse'
+        '404':
+          description: Not Found
+      operationId: get-advertisements
+      description: List all advertisements by id
   '/advertisement/{id}/comments':
     parameters:
       - schema:

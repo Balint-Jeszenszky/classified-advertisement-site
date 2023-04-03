@@ -37,7 +37,7 @@ class WebSecurityConfig {
             .requestMatchers(
                 HttpMethod.GET,
                 "/external/advertisement/*",
-                "/external/advertisements",
+                "/external/advertisements/*",
                 "/external/categories"
             )
             .permitAll()

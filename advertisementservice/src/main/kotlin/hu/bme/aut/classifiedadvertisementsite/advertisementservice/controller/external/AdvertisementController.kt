@@ -26,8 +26,8 @@ class AdvertisementController(
         return ResponseEntity(advertisementResponse, HttpStatus.OK)
     }
 
-    override fun getAdvertisements(): ResponseEntity<List<AdvertisementResponse>> {
-        val advertisements: List<AdvertisementResponse> = advertisementService.getAllAdvertisements()
+    override fun getAdvertisements(categoryId: Int): ResponseEntity<List<AdvertisementResponse>> {
+        val advertisements: List<AdvertisementResponse> = advertisementService.getAdvertisementsByCategory(categoryId)
         return ResponseEntity(advertisements, HttpStatus.OK)
     }
 

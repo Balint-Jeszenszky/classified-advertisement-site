@@ -7,6 +7,7 @@ import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.ex
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.NotFoundException
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.mapper.AdvertisementMapper
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.model.Advertisement
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.model.Category
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.repository.AdvertisementRepository
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.repository.CategoryRepository
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.security.LoggedInUserService
@@ -27,9 +28,18 @@ class AdvertisementService(
         return advertisementMapper.advertisementToAdvertisementResponse(advertisement)
     }
 
-    fun getAllAdvertisements(): List<AdvertisementResponse> {
-        val advertisements = advertisementRepository.findAll()
+    fun getAdvertisementsByCategory(categoryId: Int): List<AdvertisementResponse> {
+        val category = categoryRepository.findById(categoryId).orElseThrow { NotFoundException("Category not found") }
+        val categories : List<Category> = getSubcategories(category)
+        val advertisements = advertisementRepository.findByCategoryIn(categories)
         return advertisements.map { advertisementMapper.advertisementToAdvertisementResponse(it) }
+    }
+
+    private fun getSubcategories(category: Category): List<Category> {
+        val subcategories = category.childrenCategory.map {
+            getSubcategories(it)
+        }.flatten()
+        return listOf(category, *subcategories.toTypedArray())
     }
 
     fun createAdvertisement(advertisementRequest: AdvertisementRequest): AdvertisementResponse {
