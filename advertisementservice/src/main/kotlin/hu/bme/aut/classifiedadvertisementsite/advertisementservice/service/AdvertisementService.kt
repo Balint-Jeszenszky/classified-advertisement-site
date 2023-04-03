@@ -45,8 +45,13 @@ class AdvertisementService(
 
     fun deleteById(id: Int) {
         val user = loggedInUserService.getLoggedInUser() ?: throw ForbiddenException("User not found")
-        val advertisement = advertisementRepository.findByIdAndAdvertiserId(id, user.getId())
+        val advertisement = advertisementRepository.findById(id)
             .orElseThrow { ForbiddenException("Advertisement not found") }
+
+        if (!loggedInUserService.isAdmin() && advertisement.advertiserId != user.getId()) {
+            throw ForbiddenException("Can not delete advertisement")
+        }
+
         advertisementRepository.delete(advertisement)
     }
 

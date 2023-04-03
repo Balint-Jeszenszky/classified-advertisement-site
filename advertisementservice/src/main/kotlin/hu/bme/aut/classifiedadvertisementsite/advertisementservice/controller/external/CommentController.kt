@@ -7,12 +7,15 @@ import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.ex
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.service.CommentService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class CommentController(
     private val commentService: CommentService
 ) : ExternalApi, CommentApi {
+
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     override fun deleteAdvertisementAdIdCommentCommentId(id: Int): ResponseEntity<Unit> {
         commentService.deleteById(id)
         return ResponseEntity(HttpStatus.NO_CONTENT)
@@ -23,6 +26,7 @@ class CommentController(
         return ResponseEntity(comments, HttpStatus.OK)
     }
 
+    @PreAuthorize("hasRole('USER')")
     override fun postAdvertisementIdComment(id: Int, commentRequest: CommentRequest?): ResponseEntity<CommentResponse> {
         if (commentRequest == null) {
             throw BadRequestException("Invalid data")
