@@ -18,6 +18,9 @@ class Advertisement (
     @Column(name = "price", nullable = false)
     var price: Double,
 
+    @ManyToOne
+    var category: Category,
+
     @Column(name = "updated_at", nullable = false)
     var updatedAt: OffsetDateTime = OffsetDateTime.now(),
 

@@ -164,6 +164,82 @@ paths:
       tags:
         - comment
       description: Delete a comment by id
+  /categories:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - category
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryResponse'
+      operationId: get-categories
+      description: get all categories
+    post:
+      summary: ''
+      operationId: post-categories
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryResponse'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+      tags:
+        - category
+      description: create a new category
+  '/categories/{id}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    put:
+      summary: ''
+      operationId: put-categories
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryResponse'
+        '400':
+          description: Bad Request
+      tags:
+        - category
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+      description: Edit a category by id
+    delete:
+      summary: ''
+      operationId: delete-categories
+      responses:
+        '204':
+          description: No Content
+        '403':
+          description: Forbidden
+      tags:
+        - category
+      description: Delete a category by id
 components:
   schemas:
     AdvertisementResponse:
@@ -188,6 +264,8 @@ components:
           format: date-time
         price:
           type: number
+        categoryId:
+          type: integer
       required:
         - id
         - title
@@ -208,10 +286,13 @@ components:
           type: string
         price:
           type: number
+        categoryId:
+          type: integer
       required:
         - title
         - description
         - price
+        - categoryId
     CommentResponse:
       title: CommentResponse
       x-stoplight:
@@ -242,12 +323,40 @@ components:
           type: string
       required:
         - content
+    CategoryRequest:
+      title: CategoryRequest
+      x-stoplight:
+        id: ol9xijsdgeknm
+      type: object
+      properties:
+        name:
+          type: string
+        parentCategoryId:
+          type: integer
+      required:
+        - name
+    CategoryResponse:
+      title: CategoryResponse
+      x-stoplight:
+        id: 0nf5jdhjm9kt3
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        parentCategoryId:
+          type: integer
+      required:
+        - id
+        - name
   securitySchemes:
     JWT:
       type: http
       scheme: bearer
 tags:
   - name: advertisement
+  - name: category
   - name: comment
 security:
   - JWT: []

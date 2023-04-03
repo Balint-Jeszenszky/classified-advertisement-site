@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <changeSet author="Balint-Jeszenszky" id="3">
+        <createTable tableName="category_seq">
+            <column name="next_val" type="INTEGER">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
+        <insert tableName="category_seq">
+            <column name="next_val" value="1"/>
+        </insert>
+
+        <createSequence schemaName="public" startValue="1" incrementBy="1" sequenceName="category_seq"/>
+
+        <createTable tableName="category">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parent_category_id" type="INTEGER"/>
+        </createTable>
+
+        <addColumn tableName="advertisement">
+            <column name="category_id" type="INTEGER"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>
