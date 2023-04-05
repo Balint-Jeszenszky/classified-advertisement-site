@@ -20,7 +20,8 @@ import java.time.OffsetDateTime
 class AdvertisementService(
     private val advertisementRepository: AdvertisementRepository,
     private val loggedInUserService: LoggedInUserService,
-    private val categoryRepository: CategoryRepository
+    private val categoryRepository: CategoryRepository,
+    private val fileUploadService: FileUploadService
 ) {
     private val advertisementMapper: AdvertisementMapper = Mappers.getMapper(AdvertisementMapper::class.java)
 
@@ -52,11 +53,13 @@ class AdvertisementService(
             advertisementRequest.title,
             advertisementRequest.description,
             user.getId(),
-            advertisementRequest.price.toDouble(),
+            advertisementRequest.price,
             category,
             AdvertisementStatus.AVAILABLE)
 
         advertisementRepository.save(advertisement)
+
+        fileUploadService.uploadFile(advertisementRequest.image, advertisement.id!!)
 
         return advertisementMapper.advertisementToAdvertisementResponse(advertisement)
     }
@@ -82,7 +85,7 @@ class AdvertisementService(
 
         advertisement.title = advertisementRequest.title
         advertisement.description = advertisementRequest.description
-        advertisement.price = advertisementRequest.price.toDouble()
+        advertisement.price = advertisementRequest.price
         advertisement.updatedAt = OffsetDateTime.now()
         advertisement.category = category
         if (advertisementRequest.status != null) {

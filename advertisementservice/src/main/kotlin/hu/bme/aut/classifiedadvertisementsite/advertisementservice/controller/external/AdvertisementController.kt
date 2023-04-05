@@ -5,9 +5,11 @@ import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.model.AdvertisementResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.BadRequestException
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.service.AdvertisementService
+import org.springframework.core.io.Resource
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -32,11 +34,15 @@ class AdvertisementController(
     }
 
     @PreAuthorize("hasRole('USER')")
-    override fun postAdvertisements(advertisementRequest: AdvertisementRequest?): ResponseEntity<AdvertisementResponse> {
-        if (advertisementRequest == null) {
-            throw BadRequestException("Invalid advertisement")
-        }
-
+    override fun postAdvertisements(
+        title: String,
+        description: String,
+        price: Double,
+        categoryId: Int,
+        @RequestPart("image") image: Resource,
+        status: String?
+    ): ResponseEntity<AdvertisementResponse> {
+        val advertisementRequest = AdvertisementRequest(title, description, price, categoryId, image)
         val advertisement: AdvertisementResponse = advertisementService.createAdvertisement(advertisementRequest)
         return ResponseEntity(advertisement, HttpStatus.CREATED)
     }

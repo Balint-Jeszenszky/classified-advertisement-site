@@ -13,12 +13,12 @@ class GlobalExceptionHandler {
     private val log = LoggerFactory.getLogger(javaClass)
 
     @ExceptionHandler(AbstractException::class)
-    fun handleExceptions(e: AbstractException): ResponseEntity<String?>? {
+    fun handleExceptions(e: AbstractException): ResponseEntity<String?> {
         return ResponseEntity(e.message, e.getHttpStatus())
     }
 
     @ExceptionHandler(Exception::class)
-    fun handleUnknownExceptions(e: Exception): ResponseEntity<String?>? {
+    fun handleUnknownExceptions(e: Exception): ResponseEntity<String?> {
         log.error("Unknown exception handled: {}: {}", e.message, e.stackTrace)
         return ResponseEntity(HttpStatus.FORBIDDEN)
     }

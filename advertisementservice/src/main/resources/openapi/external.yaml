@@ -81,7 +81,7 @@ paths:
           description: Bad Request
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/AdvertisementRequest'
       description: Create a new advertisement
@@ -303,6 +303,7 @@ components:
           type: string
         price:
           type: number
+          format: double
         categoryId:
           type: integer
         status:
@@ -312,11 +313,15 @@ components:
             - FREEZED
             - SOLD
             - ARCHIVED
+        image:
+          type: string
+          format: binary
       required:
         - title
         - description
         - price
         - categoryId
+        - image
     CommentResponse:
       title: CommentResponse
       x-stoplight:
