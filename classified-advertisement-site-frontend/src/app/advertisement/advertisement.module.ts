@@ -11,11 +11,16 @@ import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { SharedModule } from '../shared/shared.module';
+import { AdvertisementListComponent } from './advertisement-list/advertisement-list.component';
+import { AdvertisementListItemComponent } from './advertisement-list/advertisement-list-item/advertisement-list-item.component';
+import { SearchComponent } from './components/search/search.component';
 
 const routes: Routes = [
   { path: 'advertisement/:id', component: DetailsComponent },
   { path: 'advertisement/:id/:title', component: DetailsComponent },
+  { path: 'category/:id', component: AdvertisementListComponent },
 ];
 
 @NgModule({
@@ -24,7 +29,10 @@ const routes: Routes = [
     GalleryComponent,
     CommentSectionComponent,
     NewCommentComponent,
-    CommentComponent
+    CommentComponent,
+    AdvertisementListComponent,
+    AdvertisementListItemComponent,
+    SearchComponent
   ],
   imports: [
     RouterModule.forChild(routes),
@@ -34,6 +42,7 @@ const routes: Routes = [
     MatInputModule,
     MatButtonModule,
     MatCardModule,
+    MatIconModule,
     SharedModule,
   ]
 })

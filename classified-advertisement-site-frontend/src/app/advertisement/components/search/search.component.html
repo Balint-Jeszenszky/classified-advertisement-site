@@ -1,0 +1,9 @@
+<form (ngSubmit)="search()">
+  <mat-form-field class="w-100">
+    <mat-label>Search</mat-label>
+    <input matInput type="text" [(ngModel)]="term" name="term">
+    <button matSuffix mat-icon-button aria-label="Search" (click)="search">
+      <mat-icon>search</mat-icon>
+    </button>
+  </mat-form-field>
+</form>

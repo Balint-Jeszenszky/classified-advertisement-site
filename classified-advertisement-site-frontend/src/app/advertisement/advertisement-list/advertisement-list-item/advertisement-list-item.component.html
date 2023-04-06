@@ -1,0 +1,18 @@
+<mat-card *ngIf="advertisement" class="mb-2">
+  <mat-card-content>
+    <div class="d-flex justify-content-between">
+      <div class="d-flex">
+        <div class="thumbnail me-2">
+          <img class="img-fluid" src="https://dummyimage.com/600x400/aaa/fff" alt="placeholder">
+        </div>
+        <div>
+          <h1><a [routerLink]="'/advertisement/' + advertisement.id">{{ advertisement.title }}</a></h1>
+          <p>{{ advertisement.description }}</p>
+        </div>
+      </div>
+      <div>
+        <p class="text-right price">{{ advertisement.price | currency: 'HUF' }}</p>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
