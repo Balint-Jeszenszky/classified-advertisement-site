@@ -40,10 +40,10 @@ class FileUploadService(
             .`object`("raw/$name")
             .stream(file.inputStream, file.contentLength(), -1)
             .build())
-        sendImageProcessingMesage(name, advertisementId)
+        sendImageProcessingMessage(name, advertisementId)
     }
 
-    private fun sendImageProcessingMesage(name: String, advertisementId: Int) {
+    private fun sendImageProcessingMessage(name: String, advertisementId: Int) {
         val mapper = ObjectMapper()
         val node = mapper.createObjectNode()
 

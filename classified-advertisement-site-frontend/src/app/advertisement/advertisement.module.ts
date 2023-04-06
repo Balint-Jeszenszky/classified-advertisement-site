@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { SharedModule } from '../shared/shared.module';
 
 const routes: Routes = [
   { path: 'advertisement/:id', component: DetailsComponent },
@@ -33,6 +34,7 @@ const routes: Routes = [
     MatInputModule,
     MatButtonModule,
     MatCardModule,
+    SharedModule,
   ]
 })
 export class AdvertisementModule { }

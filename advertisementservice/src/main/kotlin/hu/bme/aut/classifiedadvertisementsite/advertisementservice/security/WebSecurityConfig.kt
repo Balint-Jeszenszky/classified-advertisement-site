@@ -38,7 +38,8 @@ class WebSecurityConfig {
                 HttpMethod.GET,
                 "/external/advertisement/*",
                 "/external/advertisements/*",
-                "/external/categories"
+                "/external/categories",
+                "/external/advertisement/*/comments"
             )
             .permitAll()
             .anyRequest().authenticated()

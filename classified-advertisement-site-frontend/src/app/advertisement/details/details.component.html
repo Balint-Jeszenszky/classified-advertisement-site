@@ -1,13 +1,16 @@
 <p>Mainpage > Category > TODO</p>
 <div class="d-flex flex-wrap">
-  <div class="content">
+  <div class="images me-3">
     <app-gallery></app-gallery>
   </div>
-  <div>
-    <h1>{{ advertisement?.title }}</h1>
-    <p>{{ advertisement?.description }}</p>
-    <h2>{{ advertisement?.price | currency: 'HUF' : 'symbol' }}</h2>
+  <div *ngIf="advertisement">
+    <h1>{{ advertisement.title }}</h1>
+    <p class="date">Published: {{ advertisement.createdAt | localeDateTime }}</p>
+    <p>{{ advertisement.description }}</p>
+    <h2>{{ advertisement.price | currency: 'HUF' : 'symbol' }}</h2>
     <p>Advertiser: TODO User</p>
   </div>
 </div>
-<app-comment-section *ngIf="advertisement" [advertisementId]="advertisement.id"></app-comment-section>
+<div class="pt-3">
+  <app-comment-section *ngIf="advertisement" [advertisementId]="advertisement.id"></app-comment-section>
+</div>
