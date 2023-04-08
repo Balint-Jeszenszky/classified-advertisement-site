@@ -6,8 +6,12 @@
     </app-category-tree>
   </div>
   <div class="w-50">
+    <div class="mb-3 text-end">
+      <button mat-raised-button color="primary" (click)="createNewCategoy()">New category</button>
+    </div>
+    <hr *ngIf="newCategory || selectedCategoryId">
     <app-edit-category
-      *ngIf="selectedCategoryId"
+      *ngIf="selectedCategoryId || newCategory"
       [categoriesObservable]="categoriesObservable"
       [categoryIdObservable]="selectedCategoryIdObservable"
       (deleteEvent)="deleteCategory($event)"

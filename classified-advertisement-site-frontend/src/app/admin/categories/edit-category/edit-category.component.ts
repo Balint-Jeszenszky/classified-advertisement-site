@@ -31,10 +31,8 @@ export class EditCategoryComponent implements OnInit {
 
   private setData() {
     const category = this.categories?.find(c => c.id === this.categoryId);
-    if (category) {
-      this.categoryName = category.name;
-      this.parentCategoryId = category.parentCategoryId;
-    }
+    this.categoryName = category?.name || '';
+    this.parentCategoryId = category?.parentCategoryId;
   }
 
   saveCategory() {

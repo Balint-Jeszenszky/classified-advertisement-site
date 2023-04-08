@@ -12,6 +12,7 @@ export class CategoriesComponent implements OnInit {
   selectedCategoryId?: number;
   private categoriesSubject: ReplaySubject<CategoryResponse[]> = new ReplaySubject(1);
   private selectedCategoryIdSubject: ReplaySubject<number | undefined> = new ReplaySubject(1);
+  newCategory: boolean = false;
 
   get categoriesObservable() {
     return this.categoriesSubject.asObservable();
@@ -38,7 +39,7 @@ export class CategoriesComponent implements OnInit {
   }
 
   saveCategory(category: CategoryRequest | CategoryResponse) {
-    if ('id' in category) {
+    if ('id' in category && category.id) {
       this.categoryService.putCategories(category.id, {
         name: category.name,
         parentCategoryId: category.parentCategoryId,
@@ -66,12 +67,18 @@ export class CategoriesComponent implements OnInit {
     });
   }
 
+  createNewCategoy() {
+    this.updateCategoryId();
+    this.newCategory = true;
+  }
+
   private updateCategories(categories: CategoryResponse[]) {
     this.categories = categories;
     this.categoriesSubject.next(categories);
   }
 
   private updateCategoryId(id?: number) {
+    this.newCategory = false;
     this.selectedCategoryId = id;
     this.selectedCategoryIdSubject.next(id);
   }
