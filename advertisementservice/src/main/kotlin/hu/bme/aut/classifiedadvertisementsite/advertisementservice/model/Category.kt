@@ -12,7 +12,7 @@ class Category(
     @ManyToOne
     var parentCategory: Category?,
 
-    @OneToMany
+    @OneToMany(cascade = [CascadeType.ALL])
     @JoinColumn(name = "parent_category_id")
     var childrenCategory: List<Category> = mutableListOf(),
 

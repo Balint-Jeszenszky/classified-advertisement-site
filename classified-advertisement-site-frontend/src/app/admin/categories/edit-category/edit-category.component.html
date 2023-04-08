@@ -1,0 +1,17 @@
+<form (submit)="saveCategory()">
+  <mat-form-field appearance="fill" class="w-100">
+    <mat-label>Parent category</mat-label>
+    <mat-select [(ngModel)]="parentCategoryId" name="parent">
+      <mat-option>None</mat-option>
+      <mat-option *ngFor="let category of categories" [value]="category.id">
+        {{ category.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="w-100">
+    <mat-label>Category name</mat-label>
+    <input matInput placeholder="Category name" name="name" [(ngModel)]="categoryName">
+  </mat-form-field>
+  <button mat-raised-button color="primary" type="submit">Save</button>
+  <button mat-raised-button type="button" class="ms-3" (click)="cancel()">Cancel</button>
+</form>

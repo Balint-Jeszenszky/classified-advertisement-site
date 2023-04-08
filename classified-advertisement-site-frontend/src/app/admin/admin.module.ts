@@ -13,15 +13,26 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTreeModule } from '@angular/material/tree';
+import { MatSelectModule } from '@angular/material/select';
+import { AdminComponent } from './admin.component';
+import { CategoryTreeComponent } from './categories/category-tree/category-tree.component';
+import { CategoriesComponent } from './categories/categories.component';
+import { EditCategoryComponent } from './categories/edit-category/edit-category.component';
 
 const routes: Routes = [
-  { path: '', component: UserListComponent },
+  { path: '', component: AdminComponent },
 ];
 
 @NgModule({
   declarations: [
     UserListComponent,
-    EditUserDialogComponent
+    EditUserDialogComponent,
+    AdminComponent,
+    CategoryTreeComponent,
+    CategoriesComponent,
+    EditCategoryComponent
   ],
   imports: [
     RouterModule.forChild(routes),
@@ -36,6 +47,9 @@ const routes: Routes = [
     MatInputModule,
     MatSlideToggleModule,
     MatCheckboxModule,
+    MatTabsModule,
+    MatTreeModule,
+    MatSelectModule,
   ]
 })
 export class AdminModule { }
