@@ -11,11 +11,14 @@ import { ApiModule as AdvertisementserviceApiModule, Configuration as Advertisem
 import { NavbarComponent } from './components/navbar/navbar.component';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatMenuModule } from '@angular/material/menu';
+import { SubmenuComponent } from './components/navbar/submenu/submenu.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavbarComponent
+    NavbarComponent,
+    SubmenuComponent
   ],
   imports: [
     BrowserModule,
@@ -26,6 +29,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     UserserviceApiModule.forRoot(() => new UserserviceApiConfiguration({ basePath: '/api/user' })),
     AdvertisementserviceApiModule.forRoot(() => new AdvertisementserviceApiConfiguration({ basePath: '/api/advertisement' })),
     MatToolbarModule,
+    MatMenuModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
