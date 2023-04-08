@@ -14,4 +14,5 @@
   </mat-form-field>
   <button mat-raised-button color="primary" type="submit">Save</button>
   <button mat-raised-button type="button" class="ms-3" (click)="cancel()">Cancel</button>
+  <button *ngIf="categoryId" mat-raised-button color="warn" type="button" class="ms-3" (click)="deleteCategory()">Delete</button>
 </form>

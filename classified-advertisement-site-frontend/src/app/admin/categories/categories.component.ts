@@ -57,6 +57,15 @@ export class CategoriesComponent implements OnInit {
     }
   }
 
+  deleteCategory(id: number) {
+    this.categoryService.deleteCategories(id).subscribe({
+      next: () => {
+        if (this.categories) this.updateCategories(this.categories.filter(c => c.id !== id));
+        this.updateCategoryId();
+      },
+    });
+  }
+
   private updateCategories(categories: CategoryResponse[]) {
     this.categories = categories;
     this.categoriesSubject.next(categories);

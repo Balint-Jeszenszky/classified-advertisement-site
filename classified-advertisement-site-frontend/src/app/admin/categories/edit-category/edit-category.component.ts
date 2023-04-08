@@ -12,7 +12,8 @@ export class EditCategoryComponent implements OnInit {
   @Input() categoryIdObservable?: Observable<number | undefined>;
   @Output() saveEvent: EventEmitter<CategoryRequest | CategoryResponse>= new EventEmitter();
   @Output() cancelEvent: EventEmitter<void>= new EventEmitter();
-  private categoryId?: number;
+  @Output() deleteEvent: EventEmitter<number>= new EventEmitter();
+  categoryId?: number;
   categories?: CategoryResponse[];
   categoryName: string = '';
   parentCategoryId?: number;
@@ -46,5 +47,11 @@ export class EditCategoryComponent implements OnInit {
 
   cancel() {
     this.cancelEvent.emit();
+  }
+
+  deleteCategory() {
+    if (confirm(`Delete "${this.categoryName}" and all subcategories?`)) {
+      this.deleteEvent.emit(this.categoryId);
+    }
   }
 }

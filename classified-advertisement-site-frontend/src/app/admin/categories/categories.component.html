@@ -1,4 +1,18 @@
 <div class="d-flex">
-  <div class="w-50"><app-category-tree [categories]="categoriesObservable" (selectCategoryEvent)="editCategory($event)"></app-category-tree></div>
-  <div class="w-50"><app-edit-category *ngIf="selectedCategoryId" [categoriesObservable]="categoriesObservable" [categoryIdObservable]="selectedCategoryIdObservable" (cancelEvent)="editCategory()" (saveEvent)="saveCategory($event)"></app-edit-category></div>
+  <div class="w-50">
+    <app-category-tree
+      [categories]="categoriesObservable"
+      (selectCategoryEvent)="editCategory($event)">
+    </app-category-tree>
+  </div>
+  <div class="w-50">
+    <app-edit-category
+      *ngIf="selectedCategoryId"
+      [categoriesObservable]="categoriesObservable"
+      [categoryIdObservable]="selectedCategoryIdObservable"
+      (deleteEvent)="deleteCategory($event)"
+      (cancelEvent)="editCategory()"
+      (saveEvent)="saveCategory($event)">
+    </app-edit-category>
+  </div>
 </div>
