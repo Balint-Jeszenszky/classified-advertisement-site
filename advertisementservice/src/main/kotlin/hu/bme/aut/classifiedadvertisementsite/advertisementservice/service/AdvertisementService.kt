@@ -109,4 +109,11 @@ class AdvertisementService(
             else -> false
         }
     }
+
+    fun searchByCategoryId(id: Int, query: String): List<AdvertisementResponse> {
+        val category = categoryRepository.findById(id).orElseThrow { NotFoundException("Category not found") }
+        val categories : List<Category> = getSubcategories(category)
+        val advertisements = advertisementRepository.findByCategoryInAndTitleContainsOrDescriptionContains(categories, query)
+        return advertisements.map { advertisementMapper.advertisementToAdvertisementResponse(it) }
+    }
 }

@@ -249,6 +249,33 @@ paths:
       tags:
         - category
       description: Delete a category by id
+  '/category/{id}/search/{query}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: query
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - advertisement
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdvertisementResponse'
+      operationId: get-category-id-search-query
+      description: search in a category
 components:
   schemas:
     AdvertisementResponse:

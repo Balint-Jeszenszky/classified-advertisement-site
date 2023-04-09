@@ -39,7 +39,8 @@ class WebSecurityConfig {
                 "/external/advertisement/*",
                 "/external/advertisements/*",
                 "/external/categories",
-                "/external/advertisement/*/comments"
+                "/external/advertisement/*/comments",
+                "/external/category/*/search/**"
             )
             .permitAll()
             .anyRequest().authenticated()

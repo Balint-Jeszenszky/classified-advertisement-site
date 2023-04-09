@@ -8,6 +8,7 @@ import { AdvertisementResponse, AdvertisementService, CategoryResponse, Category
   styleUrls: ['./advertisement-list.component.scss']
 })
 export class AdvertisementListComponent implements OnInit {
+  private categoryId?: number;
   advertisements?: AdvertisementResponse[];
   category: CategoryResponse[] = [];
 
@@ -19,14 +20,26 @@ export class AdvertisementListComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      const id = +params['id'];
-      this.advertisementService.getAdvertisements(id).subscribe({
+      this.categoryId = +params['id'];
+      this.advertisementService.getAdvertisements(this.categoryId).subscribe({
         next: advertisements => this.advertisements = advertisements,
       });
       this.categoryService.getCategories().subscribe({
-        next: res => this.setCategory(res, id),
+        next: res => { 
+          if (this.categoryId) {
+            this.setCategory(res, this.categoryId);
+          }
+        },
       });
     });
+  }
+
+  search(query: string) {
+    if (this.categoryId && query.length > 2) {
+      this.advertisementService.getCategoryIdSearchQuery(this.categoryId, query).subscribe({
+        next: res => this.advertisements = res,
+      });
+    }
   }
 
   private setCategory(categories: CategoryResponse[], id: number) {
