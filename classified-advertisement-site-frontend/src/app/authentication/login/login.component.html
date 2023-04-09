@@ -1,6 +1,6 @@
 <div class="m-05">
   <form (ngSubmit)="onLogin()">
-    <div class="hint m-05" *ngIf="showHint">
+    <div *ngIf="showHint" class="alert alert-primary" role="alert">
       We sent an activation email to your address.<br>
       Click the activation link to activate your account, then you can log in.
     </div>
