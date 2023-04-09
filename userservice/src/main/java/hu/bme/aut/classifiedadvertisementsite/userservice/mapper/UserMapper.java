@@ -1,5 +1,6 @@
 package hu.bme.aut.classifiedadvertisementsite.userservice.mapper;
 
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.PublicUserDetailsResponse;
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.internal.model.UserDataResponse;
 import hu.bme.aut.classifiedadvertisementsite.userservice.model.ERole;
 import hu.bme.aut.classifiedadvertisementsite.userservice.model.Role;
@@ -28,6 +29,8 @@ public interface UserMapper {
     UserDetailsResponse userDataToUserDetailsResponse(UserData user);
 
     UserDataResponse userDataToUserDataResponse(UserData user);
+
+    PublicUserDetailsResponse userToPublicUserDetailsResponse(User user);
 
     @Mapping(source = "authorities", target = "roles")
     User userDetailsToUser(UserDetailsImpl userDetails);

@@ -2,6 +2,7 @@ package hu.bme.aut.classifiedadvertisementsite.userservice.service;
 
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.ModifyProfileRequest;
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.ModifyUserRequest;
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.PublicUserDetailsResponse;
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.UserDetailsResponse;
 import hu.bme.aut.classifiedadvertisementsite.userservice.controller.exceptions.BadRequestException;
 import hu.bme.aut.classifiedadvertisementsite.userservice.controller.exceptions.NotFoundException;
@@ -124,5 +125,11 @@ public class UserService {
         userRepository.save(user);
 
         log.info("Admin {} successfully modified {} id({})", loggedInUser.getUsername(), user.getUsername(), user.getId());
+    }
+
+    public List<PublicUserDetailsResponse> getPublicUserDetailsById(List<Integer> ids) {
+        List<User> users = userRepository.findAllById(ids);
+
+        return users.stream().map(UserMapper.INSTANCE::userToPublicUserDetailsResponse).toList();
     }
 }

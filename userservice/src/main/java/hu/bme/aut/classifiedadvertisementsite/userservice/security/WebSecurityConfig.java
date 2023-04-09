@@ -53,6 +53,10 @@ public class WebSecurityConfig {
                         HttpMethod.PUT,
                         "/external/auth/resetPassword")
                 .permitAll()
+                .requestMatchers(
+                        HttpMethod.GET,
+                        "/external/publicUser")
+                .permitAll()
                 .requestMatchers("/internal/**")
                 .permitAll()
                 .anyRequest().authenticated();

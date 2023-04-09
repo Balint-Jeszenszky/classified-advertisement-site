@@ -9,6 +9,7 @@ servers:
   - url: 'http://localhost:8081/api/user/external'
 tags:
   - name: authentication
+  - name: publicUser
   - name: userManagement
   - name: userProfile
 paths:
@@ -167,6 +168,28 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ModifyProfileRequest'
+  /publicUser:
+    parameters: []
+    get:
+      summary: Your GET endpoint
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicUserDetailsResponse'
+      operationId: get-user-id
+      description: public user details
+      tags:
+        - publicUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicUserDetailsRequest'
 components:
   schemas:
     UserDetailsResponse:
@@ -278,6 +301,31 @@ components:
           type: string
       required:
         - email
+    PublicUserDetailsResponse:
+      title: PublicUserDetailsResponse
+      x-stoplight:
+        id: v8lpk3nhn6qks
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+      required:
+        - id
+        - username
+    PublicUserDetailsRequest:
+      title: PublicUserDetailsRequest
+      x-stoplight:
+        id: 6odbu23ttmi1r
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+      required:
+        - ids
   securitySchemes:
     JWT:
       type: http
