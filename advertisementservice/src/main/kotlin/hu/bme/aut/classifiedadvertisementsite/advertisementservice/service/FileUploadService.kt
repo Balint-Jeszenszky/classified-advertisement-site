@@ -43,10 +43,20 @@ class FileUploadService(
         sendImageProcessingMessage(name, advertisementId)
     }
 
+    fun deleteImagesForAd(advertisementId: Int) {
+        val mapper = ObjectMapper()
+        val node = mapper.createObjectNode()
+
+        node.put("type", "DELETE")
+        node.put("advertisementId", advertisementId)
+        rabbitTemplate.convertAndSend(queue.name, node.toString())
+    }
+
     private fun sendImageProcessingMessage(name: String, advertisementId: Int) {
         val mapper = ObjectMapper()
         val node = mapper.createObjectNode()
 
+        node.put("type", "PROCESS")
         node.put("name", name)
         node.put("advertisementId", advertisementId)
         rabbitTemplate.convertAndSend(queue.name, node.toString())

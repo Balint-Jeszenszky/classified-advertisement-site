@@ -73,6 +73,7 @@ class AdvertisementService(
             throw ForbiddenException("Can not delete advertisement")
         }
 
+        fileUploadService.deleteImagesForAd(id)
         advertisementRepository.delete(advertisement)
     }
 
