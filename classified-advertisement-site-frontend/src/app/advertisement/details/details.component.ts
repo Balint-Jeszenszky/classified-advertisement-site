@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdvertisementResponse, AdvertisementService, CategoryResponse, CategoryService } from 'src/app/openapi/advertisementservice';
+import { PublicUserDetailsResponse, PublicUserService } from 'src/app/openapi/userservice';
 import { LoggedInUserService } from 'src/app/service/logged-in-user.service';
 import { Role } from 'src/app/service/types';
 
@@ -13,8 +14,8 @@ export class DetailsComponent implements OnInit {
   id?: number;
   advertisement?: AdvertisementResponse;
   category: CategoryResponse[] = [];
+  advertiser?: PublicUserDetailsResponse;
   admin: boolean = false;
-  owner: boolean = false;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -22,6 +23,7 @@ export class DetailsComponent implements OnInit {
     private readonly advertisementService: AdvertisementService,
     private readonly categoryService: CategoryService,
     private readonly loggedInUserService: LoggedInUserService,
+    private readonly publicUserService: PublicUserService,
   ) { }
 
   ngOnInit(): void {
@@ -33,11 +35,11 @@ export class DetailsComponent implements OnInit {
           next: cat => this.setCategory(cat, ad.categoryId),
         });
         this.loggedInUserService.user.subscribe(user => {
-          if (user) {
-            this.owner = user.id === ad.advertiserId;
-            this.admin = user.roles.includes(Role.ROLE_ADMIN);
-          }
-        })
+          this.admin = !!user?.roles.includes(Role.ROLE_ADMIN);
+        });
+        this.publicUserService.getUserId([ad.advertiserId]).subscribe({
+          next: users => this.advertiser = users[0],
+        });
       });
     });
   }

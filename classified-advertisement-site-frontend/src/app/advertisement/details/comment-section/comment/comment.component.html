@@ -2,7 +2,7 @@
   <mat-card-header class="flex-grow-1">
     <div class="d-flex justify-content-between flex-grow-1">
       <div>
-        <mat-card-title>{{ comment.creatorId }}</mat-card-title>
+        <mat-card-title>{{ getUsername(comment.creatorId) }}</mat-card-title>
         <mat-card-subtitle>{{ comment.createdAt | localeDateTime }}</mat-card-subtitle>
       </div>
       <div>

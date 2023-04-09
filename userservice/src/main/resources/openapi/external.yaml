@@ -168,8 +168,15 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ModifyProfileRequest'
-  /publicUser:
-    parameters: []
+  '/publicUser/{ids}':
+    parameters:
+      - schema:
+          type: array
+          items:
+            type: integer
+        name: ids
+        in: path
+        required: true
     get:
       summary: Your GET endpoint
       responses:
@@ -185,11 +192,7 @@ paths:
       description: public user details
       tags:
         - publicUser
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PublicUserDetailsRequest'
+      parameters: []
 components:
   schemas:
     UserDetailsResponse:
@@ -314,18 +317,6 @@ components:
       required:
         - id
         - username
-    PublicUserDetailsRequest:
-      title: PublicUserDetailsRequest
-      x-stoplight:
-        id: 6odbu23ttmi1r
-      type: object
-      properties:
-        ids:
-          type: array
-          items:
-            type: integer
-      required:
-        - ids
   securitySchemes:
     JWT:
       type: http

@@ -10,7 +10,7 @@
     <div class="d-flex justify-content-between">
       <h1>{{ advertisement.title }}</h1>
       <div>
-        <button *ngIf="admin || owner" mat-icon-button (click)="onDelete()">
+        <button *ngIf="admin || advertiser?.id === advertisement.id" mat-icon-button (click)="onDelete()">
           <mat-icon>delete</mat-icon>
         </button>
       </div>
@@ -18,7 +18,7 @@
     <p class="date">Published: {{ advertisement.createdAt | localeDateTime }}</p>
     <p>{{ advertisement.description }}</p>
     <h2>{{ advertisement.price | currency: 'HUF' : 'symbol' }}</h2>
-    <p>Advertiser: TODO User</p>
+    <p>Advertiser: {{ advertiser?.username }}</p>
   </div>
 </div>
 <div class="pt-3">

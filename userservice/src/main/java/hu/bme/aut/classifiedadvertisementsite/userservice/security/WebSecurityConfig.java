@@ -55,7 +55,7 @@ public class WebSecurityConfig {
                 .permitAll()
                 .requestMatchers(
                         HttpMethod.GET,
-                        "/external/publicUser")
+                        "/external/publicUser/*")
                 .permitAll()
                 .requestMatchers("/internal/**")
                 .permitAll()

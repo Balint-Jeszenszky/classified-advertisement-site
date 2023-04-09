@@ -1,7 +1,6 @@
 package hu.bme.aut.classifiedadvertisementsite.userservice.controller.external;
 
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.PublicUserApi;
-import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.PublicUserDetailsRequest;
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.PublicUserDetailsResponse;
 import hu.bme.aut.classifiedadvertisementsite.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +16,8 @@ public class PublicUserController implements PublicUserApi, ExternalApi {
     private final UserService userService;
 
     @Override
-    public ResponseEntity<List<PublicUserDetailsResponse>> getUserId(PublicUserDetailsRequest publicUserDetailsRequest) {
-        List<PublicUserDetailsResponse> userDetails = userService.getPublicUserDetailsById(publicUserDetailsRequest.getIds());
+    public ResponseEntity<List<PublicUserDetailsResponse>> getUserId(List<Integer> ids) {
+        List<PublicUserDetailsResponse> userDetails = userService.getPublicUserDetailsById(ids);
         return new ResponseEntity<>(userDetails, HttpStatus.OK);
     }
 }

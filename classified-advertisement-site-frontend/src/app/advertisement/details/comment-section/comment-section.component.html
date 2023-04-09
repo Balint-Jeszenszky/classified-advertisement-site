@@ -1,6 +1,6 @@
 <div>
   <h2>Comments</h2>
-  <app-new-comment [advertisementId]="advertisementId" (newCommentEvent)="addNewComment($event)"></app-new-comment>
+  <app-new-comment *ngIf="user" [advertisementId]="advertisementId" (newCommentEvent)="addNewComment($event)"></app-new-comment>
   <hr>
-  <app-comment *ngFor="let comment of comments" [comment]="comment" [deletable]="admin || comment.creatorId === userId" (deleteEvent)="deleteComment($event)"></app-comment>
+  <app-comment *ngFor="let comment of comments" [comment]="comment" [deletable]="admin || comment.creatorId === user?.id" [users]="users" (deleteEvent)="deleteComment($event)"></app-comment>
 </div>
