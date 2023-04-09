@@ -16,7 +16,7 @@ class CommentController(
 ) : ExternalApi, CommentApi {
 
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    override fun deleteAdvertisementAdIdCommentCommentId(id: Int): ResponseEntity<Unit> {
+    override fun deleteCommentId(id: Int): ResponseEntity<Unit> {
         commentService.deleteById(id)
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }

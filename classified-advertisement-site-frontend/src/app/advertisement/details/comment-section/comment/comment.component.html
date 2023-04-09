@@ -1,9 +1,18 @@
 <mat-card *ngIf="comment" class="mb-1">
-  <mat-card-header>
-    <mat-card-title>{{ comment.creatorId }}</mat-card-title>
-    <mat-card-subtitle>{{ comment.createdAt | localeDateTime }}</mat-card-subtitle>
+  <mat-card-header class="flex-grow-1">
+    <div class="d-flex justify-content-between flex-grow-1">
+      <div>
+        <mat-card-title>{{ comment.creatorId }}</mat-card-title>
+        <mat-card-subtitle>{{ comment.createdAt | localeDateTime }}</mat-card-subtitle>
+      </div>
+      <div>
+        <button *ngIf="deletable" mat-icon-button (click)="onDelete()">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
   </mat-card-header>
   <mat-card-content>
-    <p>{{ comment.content }}</p>
+    <p *ngFor="let line of comment.content | multipleLineText" class="comment-text">{{ line }}</p>
   </mat-card-content>
 </mat-card>

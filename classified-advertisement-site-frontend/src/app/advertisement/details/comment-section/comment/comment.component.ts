@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommentResponse } from 'src/app/openapi/advertisementservice';
 
 @Component({
@@ -8,4 +8,12 @@ import { CommentResponse } from 'src/app/openapi/advertisementservice';
 })
 export class CommentComponent {
   @Input() comment?: CommentResponse;
+  @Input() deletable: boolean = false;
+  @Output() deleteEvent: EventEmitter<number> = new EventEmitter();
+
+  onDelete() {
+    if (this.comment) {
+      this.deleteEvent.emit(this.comment.id);
+    }
+  }
 }

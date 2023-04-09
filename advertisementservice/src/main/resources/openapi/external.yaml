@@ -164,7 +164,7 @@ paths:
         required: true
     delete:
       summary: ''
-      operationId: delete-advertisement-adId-comment-commentId
+      operationId: delete-comment-id
       responses:
         '204':
           description: No Content
