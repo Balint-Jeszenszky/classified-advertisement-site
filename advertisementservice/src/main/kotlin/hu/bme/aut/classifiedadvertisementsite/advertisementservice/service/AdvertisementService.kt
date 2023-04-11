@@ -2,10 +2,12 @@ package hu.bme.aut.classifiedadvertisementsite.advertisementservice.service
 
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.model.AdvertisementRequest
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.model.AdvertisementResponse
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.model.NewAdvertisementsResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.BadRequestException
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.ForbiddenException
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.NotFoundException
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.mapper.AdvertisementMapper
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.mapper.CategoryMapper
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.model.Advertisement
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.model.AdvertisementStatus
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.model.Category
@@ -24,6 +26,7 @@ class AdvertisementService(
     private val fileUploadService: FileUploadService
 ) {
     private val advertisementMapper: AdvertisementMapper = Mappers.getMapper(AdvertisementMapper::class.java)
+    private val categoryMapper: CategoryMapper = Mappers.getMapper(CategoryMapper::class.java)
 
     fun getAdvertisementById(id: Int): AdvertisementResponse {
         val advertisement = advertisementRepository.findById(id).orElseThrow { NotFoundException("Advertisement not found") }
@@ -115,5 +118,18 @@ class AdvertisementService(
         val categories : List<Category> = getSubcategories(category)
         val advertisements = advertisementRepository.findByCategoryInAndTitleContainsOrDescriptionContains(categories, query)
         return advertisements.map { advertisementMapper.advertisementToAdvertisementResponse(it) }
+    }
+
+    fun getNewestAdvertisements(): List<NewAdvertisementsResponse> {
+        val newAdvertisements = advertisementRepository.getNewAdvertisements(5)
+        return newAdvertisements.groupBy {
+            it.category
+        }.map {
+            NewAdvertisementsResponse(
+                categoryMapper.categoryToCategoryResponse(it.key),
+                it.value.map {
+                    advertisementMapper.advertisementToAdvertisementResponse(it)
+                })
+        }
     }
 }

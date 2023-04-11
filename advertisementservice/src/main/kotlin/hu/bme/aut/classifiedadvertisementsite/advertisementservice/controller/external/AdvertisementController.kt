@@ -3,6 +3,7 @@ package hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.e
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.AdvertisementApi
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.model.AdvertisementRequest
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.model.AdvertisementResponse
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.model.NewAdvertisementsResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.BadRequestException
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.service.AdvertisementService
 import org.springframework.core.io.Resource
@@ -30,6 +31,11 @@ class AdvertisementController(
 
     override fun getAdvertisements(categoryId: Int): ResponseEntity<List<AdvertisementResponse>> {
         val advertisements: List<AdvertisementResponse> = advertisementService.getAdvertisementsByCategory(categoryId)
+        return ResponseEntity(advertisements, HttpStatus.OK)
+    }
+
+    override fun getAdvertisementsNew(): ResponseEntity<List<NewAdvertisementsResponse>> {
+        val advertisements: List<NewAdvertisementsResponse> = advertisementService.getNewestAdvertisements()
         return ResponseEntity(advertisements, HttpStatus.OK)
     }
 

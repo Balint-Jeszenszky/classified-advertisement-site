@@ -16,8 +16,11 @@ import { SharedModule } from '../shared/shared.module';
 import { AdvertisementListComponent } from './advertisement-list/advertisement-list.component';
 import { AdvertisementListItemComponent } from './advertisement-list/advertisement-list-item/advertisement-list-item.component';
 import { SearchComponent } from './components/search/search.component';
+import { HomeComponent } from './home/home.component';
+import { AdvertisementCardComponent } from './home/advertisement-card/advertisement-card.component';
 
 const routes: Routes = [
+  { path: '', component: HomeComponent },
   { path: 'advertisement/:id', component: DetailsComponent },
   { path: 'advertisement/:id/:title', component: DetailsComponent },
   { path: 'category/:id', component: AdvertisementListComponent },
@@ -32,7 +35,9 @@ const routes: Routes = [
     CommentComponent,
     AdvertisementListComponent,
     AdvertisementListItemComponent,
-    SearchComponent
+    SearchComponent,
+    HomeComponent,
+    AdvertisementCardComponent
   ],
   imports: [
     RouterModule.forChild(routes),

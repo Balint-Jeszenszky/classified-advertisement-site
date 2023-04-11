@@ -111,6 +111,22 @@ paths:
           description: Not Found
       operationId: get-advertisements
       description: List all advertisements by id
+  /advertisements/new:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - advertisement
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NewAdvertisementsResponse'
+      operationId: get-advertisements-new
+      description: Get the newest ads from every main category
   '/advertisement/{id}/comments':
     parameters:
       - schema:
@@ -406,6 +422,21 @@ components:
       required:
         - id
         - name
+    NewAdvertisementsResponse:
+      title: NewAdvertisementsResponse
+      x-stoplight:
+        id: l2lcwu24czvtn
+      type: object
+      properties:
+        category:
+          $ref: '#/components/schemas/CategoryResponse'
+        advertisements:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdvertisementResponse'
+      required:
+        - category
+        - advertisements
   securitySchemes:
     JWT:
       type: http
