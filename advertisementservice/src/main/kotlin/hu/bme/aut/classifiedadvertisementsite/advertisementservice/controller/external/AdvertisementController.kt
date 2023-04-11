@@ -39,6 +39,11 @@ class AdvertisementController(
         return ResponseEntity(advertisements, HttpStatus.OK)
     }
 
+    override fun getAdvertisementsSearchQuery(query: String): ResponseEntity<List<AdvertisementResponse>> {
+        val advertisements: List<AdvertisementResponse> = advertisementService.search(query)
+        return ResponseEntity(advertisements, HttpStatus.OK)
+    }
+
     override fun getCategoryIdSearchQuery(id: Int, query: String): ResponseEntity<List<AdvertisementResponse>> {
         val advertisements: List<AdvertisementResponse> = advertisementService.searchByCategoryId(id, query)
         return ResponseEntity(advertisements, HttpStatus.OK)

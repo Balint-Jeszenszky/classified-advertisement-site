@@ -38,6 +38,7 @@ class WebSecurityConfig {
                 HttpMethod.GET,
                 "/external/advertisement/*",
                 "/external/advertisements/*",
+                "/external/advertisements/search/*",
                 "/external/categories",
                 "/external/advertisement/*/comments",
                 "/external/category/*/search/**"

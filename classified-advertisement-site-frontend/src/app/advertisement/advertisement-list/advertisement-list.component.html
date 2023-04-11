@@ -1,8 +1,9 @@
-<div>
+<div *ngIf="categoryId">
   <h1 class="category d-inline"><a routerLink="/" class="unformatted-link">Home</a></h1>
-  <h1 class="category d-inline" *ngFor="let cat of category"> ⮞ <a [routerLink]="'/category/' + cat.id">{{ cat.name }}</a></h1>
+  <h1 class="category d-inline" *ngFor="let cat of category"> ⮞ <a [routerLink]="'/category/' + cat.id" class="unformatted-link">{{ cat.name }}</a></h1>
 </div>
 <div class="d-flex mt-3">
-  <app-search class="mx-auto search" (searchEvent)="search($event)"></app-search>
+  <app-search class="mx-auto search" (searchEvent)="search($event)" [term]="searchTerm"></app-search>
 </div>
+<h2 *ngIf="searchTerm">Results for "{{ searchTerm }}"</h2>
 <app-advertisement-list-item *ngFor="let advertisement of advertisements" [advertisement]="advertisement"></app-advertisement-list-item>

@@ -127,6 +127,28 @@ paths:
                   $ref: '#/components/schemas/NewAdvertisementsResponse'
       operationId: get-advertisements-new
       description: Get the newest ads from every main category
+  '/advertisements/search/{query}':
+    parameters:
+      - schema:
+          type: string
+        name: query
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - advertisement
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdvertisementResponse'
+      operationId: get-advertisements-search-query
+      description: Search in all advertisements
   '/advertisement/{id}/comments':
     parameters:
       - schema:

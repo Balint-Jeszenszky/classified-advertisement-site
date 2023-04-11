@@ -24,6 +24,8 @@ const routes: Routes = [
   { path: 'advertisement/:id', component: DetailsComponent },
   { path: 'advertisement/:id/:title', component: DetailsComponent },
   { path: 'category/:id', component: AdvertisementListComponent },
+  { path: 'category/:id/:query', component: AdvertisementListComponent },
+  { path: 'search/:query', component: AdvertisementListComponent },
 ];
 
 @NgModule({

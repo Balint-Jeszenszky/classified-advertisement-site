@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AdvertisementService, NewAdvertisementsResponse } from 'src/app/openapi/advertisementservice';
 
 @Component({
@@ -11,11 +12,16 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private readonly advertisementService: AdvertisementService,
+    private readonly router: Router,
   ) { }
 
   ngOnInit(): void {
     this.advertisementService.getAdvertisementsNew().subscribe({
       next: res => this.advertisementGroups = res,
     });
+  }
+
+  onSearch(query: string) {
+    this.router.navigate(['/search/', query]);
   }
 }

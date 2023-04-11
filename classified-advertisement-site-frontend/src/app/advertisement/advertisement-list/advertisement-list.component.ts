@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AdvertisementResponse, AdvertisementService, CategoryResponse, CategoryService } from 'src/app/openapi/advertisementservice';
 
 @Component({
@@ -8,12 +8,14 @@ import { AdvertisementResponse, AdvertisementService, CategoryResponse, Category
   styleUrls: ['./advertisement-list.component.scss']
 })
 export class AdvertisementListComponent implements OnInit {
-  private categoryId?: number;
+  categoryId?: number;
   advertisements?: AdvertisementResponse[];
   category: CategoryResponse[] = [];
+  searchTerm: string = '';
 
   constructor(
-    private route: ActivatedRoute,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
     private readonly advertisementService: AdvertisementService,
     private readonly categoryService: CategoryService,
   ) { }
@@ -21,25 +23,68 @@ export class AdvertisementListComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.categoryId = +params['id'];
-      this.advertisementService.getAdvertisements(this.categoryId).subscribe({
-        next: advertisements => this.advertisements = advertisements,
-      });
-      this.categoryService.getCategories().subscribe({
-        next: res => { 
-          if (this.categoryId) {
-            this.setCategory(res, this.categoryId);
-          }
-        },
-      });
+      this.searchTerm = params['query'] || '';
+
+      if (this.categoryId) {
+        this.categoryService.getCategories().subscribe({
+          next: res => { 
+            if (this.categoryId) {
+              this.setCategory(res, this.categoryId);
+            }
+          },
+        });
+      }
+
+      if (this.searchTerm) {
+        this.search(this.searchTerm);
+      } else {
+        this.loadAdvertisementByCategory();
+      }
     });
   }
 
   search(query: string) {
-    if (this.categoryId && query.length > 2) {
-      this.advertisementService.getCategoryIdSearchQuery(this.categoryId, query).subscribe({
-        next: res => this.advertisements = res,
-      });
+    this.searchTerm = query;
+
+    if (this.searchTerm.length < 3) {
+      return;
     }
+
+    if (this.categoryId) {
+      this.searchByCategory();
+    } else {
+      this.searchAll();
+    }
+  }
+
+  loadAdvertisementByCategory() {
+    if (!this.categoryId) {
+      return;
+    }
+
+    this.advertisementService.getAdvertisements(this.categoryId).subscribe({
+      next: advertisements => this.advertisements = advertisements,
+    });
+  }
+
+  searchAll() {
+    this.router.navigate(['/search/', this.searchTerm]);
+
+    this.advertisementService.getAdvertisementsSearchQuery(this.searchTerm).subscribe({
+      next: res => this.advertisements = res,
+    });
+  }
+
+  searchByCategory() {
+    if (!this.categoryId) {
+      return;
+    }
+
+    this.router.navigate(['/category/', this.categoryId, this.searchTerm]);
+
+    this.advertisementService.getCategoryIdSearchQuery(this.categoryId, this.searchTerm).subscribe({
+      next: res => this.advertisements = res,
+    });
   }
 
   private setCategory(categories: CategoryResponse[], id: number) {

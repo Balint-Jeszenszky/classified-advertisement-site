@@ -132,4 +132,9 @@ class AdvertisementService(
                 })
         }
     }
+
+    fun search(query: String): List<AdvertisementResponse> {
+        val advertisements = advertisementRepository.findByTitleContainsOrDescriptionContains(query, query)
+        return advertisements.map { advertisementMapper.advertisementToAdvertisementResponse(it) }
+    }
 }
