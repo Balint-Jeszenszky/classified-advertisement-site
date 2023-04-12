@@ -5,8 +5,8 @@
         <img class="img-fluid" src="https://dummyimage.com/400x400/aaa/fff" alt="placeholder">
       </div>
       <div class="details">
-        <h2><a [routerLink]="'/advertisement/' + advertisement?.id" class="unformatted-link">{{ advertisement?.title }}</a></h2>
-        <p class="description">{{ advertisement?.description }}</p>
+        <h2 class="single-line"><a [routerLink]="'/advertisement/' + advertisement?.id" class="unformatted-link">{{ advertisement?.title }}</a></h2>
+        <p class="single-line">{{ advertisement?.description }}</p>
         <p>{{ advertisement?.price | currency: 'HUF' }}</p>
       </div>
     </div>

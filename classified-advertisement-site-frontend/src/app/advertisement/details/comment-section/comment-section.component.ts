@@ -27,9 +27,11 @@ export class CommentSectionComponent implements OnInit {
     if (this.advertisementId) {
       this.commentService.getAdvertisementIdComment(this.advertisementId).subscribe(comments => {
         this.comments = comments;
-        this.publicUserService.getUserId([...new Set(comments.map(c => c.creatorId))]).subscribe({
-          next: users => this.users = users,
-        });
+        if (comments.length) {
+          this.publicUserService.getUserId([...new Set(comments.map(c => c.creatorId))]).subscribe({
+            next: users => this.users = users,
+          });
+        }
       });
     }
     this.loggedInUserService.user.subscribe(user => {

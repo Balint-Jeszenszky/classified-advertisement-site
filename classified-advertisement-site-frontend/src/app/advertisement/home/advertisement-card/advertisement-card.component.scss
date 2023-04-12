@@ -11,10 +11,8 @@ p {
   width: 14rem;
 }
 
-.description {
+.single-line {
   text-overflow: ellipsis;
-  word-wrap: break-word;
+  white-space: nowrap;
   overflow: hidden;
-  max-height: 2rem;
-  line-height: 1rem;
 }
