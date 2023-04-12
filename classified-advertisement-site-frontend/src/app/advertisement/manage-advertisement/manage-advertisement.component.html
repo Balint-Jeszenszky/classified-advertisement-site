@@ -1,0 +1,15 @@
+<mat-stepper #stepper>
+  <mat-step label="Advertisement details">
+    <app-edit-advertisement *ngIf="!newAdvertisement" [advertisementId]="advertisementId" (saved)="nextStep(stepper)"></app-edit-advertisement>
+    <app-new-advertisement *ngIf="newAdvertisement"></app-new-advertisement>
+  </mat-step>
+  <mat-step label="Upload images">
+    <app-image-upload></app-image-upload>
+    <div class="text-end">
+      <button mat-button matStepperNext>Next</button>
+    </div>
+  </mat-step>
+  <mat-step label="Done">
+    <p>You are now done. <a [routerLink]="'/advertisement/' + advertisementId">Click here to see your advertisement.</a></p>
+  </mat-step>
+</mat-stepper>

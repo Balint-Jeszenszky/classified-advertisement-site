@@ -386,7 +386,6 @@ components:
         - description
         - price
         - categoryId
-        - image
     CommentResponse:
       title: CommentResponse
       x-stoplight:

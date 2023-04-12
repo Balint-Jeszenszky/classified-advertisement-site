@@ -7,6 +7,7 @@
       <mat-menu #categoriesMenu="matMenu">
         <app-submenu [tree]="categoryTree" path="/category/"></app-submenu>
       </mat-menu>
+      <a *ngIf="loggedIn" routerLink="/advertisement/new" class="nav-item">New ad</a>
       <a *ngIf="admin" routerLink="/admin" class="nav-item">Admin</a>
       <a *ngIf="loggedIn" routerLink="/profile" class="nav-item">Profile</a>
       <a *ngIf="!loggedIn" routerLink="/auth" class="nav-item">Login</a>

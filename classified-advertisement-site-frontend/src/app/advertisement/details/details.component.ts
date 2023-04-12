@@ -16,6 +16,7 @@ export class DetailsComponent implements OnInit {
   category: CategoryResponse[] = [];
   advertiser?: PublicUserDetailsResponse;
   admin: boolean = false;
+  userId?: number;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -36,6 +37,7 @@ export class DetailsComponent implements OnInit {
         });
         this.loggedInUserService.user.subscribe(user => {
           this.admin = !!user?.roles.includes(Role.ROLE_ADMIN);
+          this.userId = user?.id;
         });
         this.publicUserService.getUserId([ad.advertiserId]).subscribe({
           next: users => this.advertiser = users[0],

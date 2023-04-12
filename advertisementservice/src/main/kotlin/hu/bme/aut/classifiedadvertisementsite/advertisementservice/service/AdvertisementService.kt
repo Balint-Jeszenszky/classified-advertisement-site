@@ -62,7 +62,7 @@ class AdvertisementService(
 
         advertisementRepository.save(advertisement)
 
-        fileUploadService.uploadFile(advertisementRequest.image, advertisement.id!!)
+//        fileUploadService.uploadFile(advertisementRequest.image, advertisement.id!!)
 
         return advertisementMapper.advertisementToAdvertisementResponse(advertisement)
     }
@@ -92,7 +92,7 @@ class AdvertisementService(
         advertisement.price = advertisementRequest.price
         advertisement.updatedAt = OffsetDateTime.now()
         advertisement.category = category
-        if (advertisementRequest.status != null) {
+        if (advertisementRequest.status != null && advertisement.status.value != advertisementRequest.status.value) {
             val newStatus = AdvertisementStatus.valueOf(advertisementRequest.status.value)
             if (!validStateTransition(advertisement.status, newStatus)) {
                 throw BadRequestException("Invalid status transition")

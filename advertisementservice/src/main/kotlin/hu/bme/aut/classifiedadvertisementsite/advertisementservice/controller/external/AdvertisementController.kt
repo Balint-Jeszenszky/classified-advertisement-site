@@ -55,10 +55,10 @@ class AdvertisementController(
         description: String,
         price: Double,
         categoryId: Int,
-        @RequestPart("image") image: Resource,
-        status: String?
+        status: String?,
+        @RequestPart("image") image: Resource?
     ): ResponseEntity<AdvertisementResponse> {
-        val advertisementRequest = AdvertisementRequest(title, description, price, categoryId, image)
+        val advertisementRequest = AdvertisementRequest(title, description, price, categoryId)
         val advertisement: AdvertisementResponse = advertisementService.createAdvertisement(advertisementRequest)
         return ResponseEntity(advertisement, HttpStatus.CREATED)
     }

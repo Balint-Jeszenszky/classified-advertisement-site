@@ -10,6 +10,9 @@
     <div class="d-flex justify-content-between">
       <h1>{{ advertisement.title }}</h1>
       <div>
+        <a *ngIf="advertisement.advertiserId === userId" mat-icon-button [routerLink]="'/advertisement/edit/' + advertisement.id" class="edit-icon">
+          <mat-icon>edit</mat-icon>
+        </a>
         <button *ngIf="admin || advertiser?.id === advertisement.id" mat-icon-button (click)="onDelete()">
           <mat-icon>delete</mat-icon>
         </button>
