@@ -24,7 +24,11 @@ export class ManageAdvertisementComponent implements OnInit {
     });
   }
 
-  nextStep(stepper: MatStepper) {
+  nextStep(stepper: MatStepper, advertisementId?: number) {
+    if (advertisementId) {
+      this.advertisementId = advertisementId;
+    }
+
     stepper.next();
   }
 }

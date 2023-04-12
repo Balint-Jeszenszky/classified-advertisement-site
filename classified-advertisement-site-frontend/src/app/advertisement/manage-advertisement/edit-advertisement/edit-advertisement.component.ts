@@ -51,5 +51,5 @@ export class EditAdvertisementComponent implements OnInit {
         next: () => this.saved.emit(),
       });
     }
-  } 
+  }
 }

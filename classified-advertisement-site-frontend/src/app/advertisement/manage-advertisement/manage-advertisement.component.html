@@ -1,10 +1,10 @@
 <mat-stepper #stepper>
   <mat-step label="Advertisement details">
     <app-edit-advertisement *ngIf="!newAdvertisement" [advertisementId]="advertisementId" (saved)="nextStep(stepper)"></app-edit-advertisement>
-    <app-new-advertisement *ngIf="newAdvertisement"></app-new-advertisement>
+    <app-new-advertisement *ngIf="newAdvertisement" (saved)="nextStep(stepper, $event)"></app-new-advertisement>
   </mat-step>
   <mat-step label="Upload images">
-    <app-image-upload></app-image-upload>
+    <app-image-upload [advertisementId]="advertisementId"></app-image-upload>
     <div class="text-end">
       <button mat-button matStepperNext>Next</button>
     </div>
