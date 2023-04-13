@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ImageUploadComponent } from './image-upload.component';
+import { MatIconModule } from '@angular/material/icon';
 
 describe('ImageUploadComponent', () => {
   let component: ImageUploadComponent;
@@ -8,7 +9,10 @@ describe('ImageUploadComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ImageUploadComponent ]
+      declarations: [ ImageUploadComponent ],
+      imports: [
+        MatIconModule,
+      ],
     })
     .compileComponents();
 

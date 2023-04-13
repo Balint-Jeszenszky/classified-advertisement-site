@@ -6,7 +6,12 @@
           <img class="img-fluid" src="https://dummyimage.com/600x400/aaa/fff" alt="placeholder">
         </div>
         <div>
-          <h1><a [routerLink]="'/advertisement/' + advertisement.id" class="unformatted-link">{{ advertisement.title }}</a></h1>
+          <div class="d-flex">
+            <h1 class="me-2"><a [routerLink]="'/advertisement/' + advertisement.id" class="unformatted-link">{{ advertisement.title }}</a></h1>
+            <div>
+              <mat-chip>{{ advertisement.status }}</mat-chip>
+            </div>
+          </div>
           <p>{{ advertisement.description }}</p>
         </div>
       </div>

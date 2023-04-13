@@ -19,6 +19,9 @@
       </div>
     </div>
     <p class="date">Published: {{ advertisement.createdAt | localeDateTime }}</p>
+    <div>
+      <mat-chip>{{ advertisement.status }}</mat-chip>
+    </div>
     <p>{{ advertisement.description }}</p>
     <h2>{{ advertisement.price | currency: 'HUF' : 'symbol' }}</h2>
     <p>Advertiser: {{ advertiser?.username }}</p>

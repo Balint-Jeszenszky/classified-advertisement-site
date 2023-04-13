@@ -24,6 +24,7 @@ import { EditAdvertisementComponent } from './manage-advertisement/edit-advertis
 import { ImageUploadComponent } from './manage-advertisement/image-upload/image-upload.component';
 import { loginGuard } from '../auth.guard';
 import { MatSelectModule } from '@angular/material/select';
+import { MatChipsModule } from '@angular/material/chips';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -63,6 +64,7 @@ const routes: Routes = [
     MatIconModule,
     MatStepperModule,
     MatSelectModule,
+    MatChipsModule,
     SharedModule,
   ]
 })
