@@ -1,17 +1,14 @@
 package hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.external
 
-import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.AdvertisementApi
-import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.model.AdvertisementRequest
-import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.model.AdvertisementResponse
-import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.model.NewAdvertisementsResponse
-import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.BadRequestException
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.AdvertisementApi
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.AdvertisementResponse
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.NewAdvertisementsResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.service.AdvertisementService
-import org.springframework.core.io.Resource
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 
 @RestController
 class AdvertisementController(
@@ -19,7 +16,7 @@ class AdvertisementController(
 ) : ExternalApi, AdvertisementApi {
 
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    override fun deleteAdvertisementId(id: Int): ResponseEntity<Unit> {
+    override fun deleteAdvertisementId(id: Int): ResponseEntity<Void> {
         advertisementService.deleteById(id)
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }
@@ -55,24 +52,37 @@ class AdvertisementController(
         description: String,
         price: Double,
         categoryId: Int,
-        status: String?,
-        @RequestPart("image") image: Resource?
+        images: MutableList<MultipartFile>?
     ): ResponseEntity<AdvertisementResponse> {
-        val advertisementRequest = AdvertisementRequest(title, description, price, categoryId)
-        val advertisement: AdvertisementResponse = advertisementService.createAdvertisement(advertisementRequest)
+        val advertisement: AdvertisementResponse = advertisementService.createAdvertisement(
+            title,
+            description,
+            price,
+            categoryId,
+            images)
         return ResponseEntity(advertisement, HttpStatus.CREATED)
     }
 
     @PreAuthorize("hasRole('USER')")
     override fun putAdvertisementId(
         id: Int,
-        advertisementRequest: AdvertisementRequest?
+        title: String,
+        description: String,
+        price: Double,
+        categoryId: Int,
+        status: String,
+        images: MutableList<MultipartFile>?,
+        deletedImages: MutableList<Int>?
     ): ResponseEntity<AdvertisementResponse> {
-        if (advertisementRequest == null) {
-            throw BadRequestException("Invalid advertisement")
-        }
-
-        val advertisement = advertisementService.updateAdvertisement(id, advertisementRequest)
+        val advertisement = advertisementService.updateAdvertisement(
+            id,
+            title,
+            description,
+            price,
+            categoryId,
+            status,
+            images,
+            deletedImages)
         return ResponseEntity(advertisement, HttpStatus.ACCEPTED)
     }
 }

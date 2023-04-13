@@ -1,13 +1,14 @@
 package hu.bme.aut.classifiedadvertisementsite.advertisementservice.service
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.minio.*
 import org.apache.commons.io.FilenameUtils
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 @Service
@@ -32,15 +33,17 @@ class FileUploadService(
         }
     }
 
-    fun uploadFile(file: Resource, advertisementId: Int) {
+    fun uploadFiles(files: MutableList<MultipartFile>, advertisementId: Int) {
         createBucketIfNotExists()
-        val name = "${UUID.randomUUID()}.${FilenameUtils.getExtension(file.filename)}"
-        minioClient.putObject(PutObjectArgs.builder()
-            .bucket(bucket)
-            .`object`("raw/$name")
-            .stream(file.inputStream, file.contentLength(), -1)
-            .build())
-        sendImageProcessingMessage(name, advertisementId)
+        files.forEach {
+            val name = "${UUID.randomUUID()}.${FilenameUtils.getExtension(it.name)}"
+            minioClient.putObject(PutObjectArgs.builder()
+                .bucket(bucket)
+                .`object`("raw/$name")
+                .stream(it.inputStream, it.size, -1)
+                .build())
+            sendImageProcessingMessage(name, advertisementId)
+        }
     }
 
     fun deleteImagesForAd(advertisementId: Int) {
@@ -59,6 +62,17 @@ class FileUploadService(
         node.put("type", "PROCESS")
         node.put("name", name)
         node.put("advertisementId", advertisementId)
+        rabbitTemplate.convertAndSend(queue.name, node.toString())
+    }
+
+    fun deleteImagesById(deletedImages: MutableList<Int>) {
+        val mapper = ObjectMapper()
+        val node = mapper.createObjectNode()
+
+        node.put("type", "DELETE")
+        val arrayNode = mapper.createArrayNode()
+        deletedImages.forEach(arrayNode::add)
+        node.set<JsonNode>("imageIds", arrayNode)
         rabbitTemplate.convertAndSend(queue.name, node.toString())
     }
 }

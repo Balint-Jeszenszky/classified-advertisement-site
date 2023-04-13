@@ -49,9 +49,9 @@ paths:
       description: Edit an advertisement by id
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: '#/components/schemas/AdvertisementRequest'
+              $ref: '#/components/schemas/EditAdvertisementRequest'
       tags:
         - advertisement
     delete:
@@ -83,7 +83,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/AdvertisementRequest'
+              $ref: '#/components/schemas/CreateAdvertisementRequest'
       description: Create a new advertisement
       tags:
         - advertisement
@@ -356,10 +356,36 @@ components:
         - updatedAt
         - price
         - status
-    AdvertisementRequest:
-      title: AdvertisementRequest
+    CreateAdvertisementRequest:
+      title: CreateAdvertisementRequest
       x-stoplight:
-        id: dqpzl662jttxm
+        id: 543368d782377
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: double
+        categoryId:
+          type: integer
+        images:
+          type: array
+          format: binary
+          items:
+            type: string
+            format: binary
+      required:
+        - title
+        - description
+        - price
+        - categoryId
+    EditAdvertisementRequest:
+      title: EditAdvertisementRequest
+      x-stoplight:
+        id: pjkx34r6cyowt
       type: object
       properties:
         title:
@@ -378,14 +404,22 @@ components:
             - FREEZED
             - SOLD
             - ARCHIVED
-        image:
-          type: string
+        images:
+          type: array
           format: binary
+          items:
+            type: string
+            format: binary
+        deletedImages:
+          type: array
+          items:
+            type: integer
       required:
         - title
         - description
         - price
         - categoryId
+        - status
     CommentResponse:
       title: CommentResponse
       x-stoplight:

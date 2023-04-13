@@ -1,8 +1,7 @@
 package hu.bme.aut.classifiedadvertisementsite.advertisementservice.service
 
-import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.model.AdvertisementRequest
-import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.model.AdvertisementResponse
-import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.model.NewAdvertisementsResponse
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.AdvertisementResponse
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.NewAdvertisementsResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.BadRequestException
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.ForbiddenException
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.NotFoundException
@@ -16,6 +15,8 @@ import hu.bme.aut.classifiedadvertisementsite.advertisementservice.repository.Ca
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.security.LoggedInUserService
 import org.mapstruct.factory.Mappers
 import org.springframework.stereotype.Service
+import org.springframework.util.MultiValueMap
+import org.springframework.web.multipart.MultipartFile
 import java.time.OffsetDateTime
 
 @Service
@@ -47,22 +48,29 @@ class AdvertisementService(
         return listOf(category, *subcategories.toTypedArray())
     }
 
-    fun createAdvertisement(advertisementRequest: AdvertisementRequest): AdvertisementResponse {
+    fun createAdvertisement(
+        title: String,
+        description: String,
+        price: Double,
+        categoryId: Int,
+        images: MutableList<MultipartFile>?
+    ): AdvertisementResponse {
         val user = loggedInUserService.getLoggedInUser() ?: throw ForbiddenException("User not found")
-        val category = categoryRepository.findById(advertisementRequest.categoryId)
-            .orElseThrow { BadRequestException("Category not found") }
+        val category = categoryRepository.findById(categoryId).orElseThrow { BadRequestException("Category not found") }
 
         val advertisement = Advertisement(
-            advertisementRequest.title,
-            advertisementRequest.description,
+            title,
+            description,
             user.getId(),
-            advertisementRequest.price,
+            price,
             category,
             AdvertisementStatus.AVAILABLE)
 
         advertisementRepository.save(advertisement)
 
-//        fileUploadService.uploadFile(advertisementRequest.image, advertisement.id!!)
+        if (!images.isNullOrEmpty()) {
+            fileUploadService.uploadFiles(images, advertisement.id!!)
+        }
 
         return advertisementMapper.advertisementToAdvertisementResponse(advertisement)
     }
@@ -80,20 +88,29 @@ class AdvertisementService(
         advertisementRepository.delete(advertisement)
     }
 
-    fun updateAdvertisement(id: Int, advertisementRequest: AdvertisementRequest): AdvertisementResponse {
+    fun updateAdvertisement(
+        id: Int,
+        title: String,
+        description: String,
+        price: Double,
+        categoryId: Int,
+        status: String,
+        images: MutableList<MultipartFile>?,
+        deletedImages: MutableList<Int>?
+    ): AdvertisementResponse {
         val user = loggedInUserService.getLoggedInUser() ?: throw ForbiddenException("User not found")
         val advertisement = advertisementRepository.findByIdAndAdvertiserId(id, user.getId())
             .orElseThrow { ForbiddenException("Advertisement not found") }
-        val category = categoryRepository.findById(advertisementRequest.categoryId)
+        val category = categoryRepository.findById(categoryId)
             .orElseThrow { BadRequestException("Category not found") }
 
-        advertisement.title = advertisementRequest.title
-        advertisement.description = advertisementRequest.description
-        advertisement.price = advertisementRequest.price
+        advertisement.title = title
+        advertisement.description = description
+        advertisement.price = price
         advertisement.updatedAt = OffsetDateTime.now()
         advertisement.category = category
-        if (advertisementRequest.status != null && advertisement.status.value != advertisementRequest.status.value) {
-            val newStatus = AdvertisementStatus.valueOf(advertisementRequest.status.value)
+        if (advertisement.status.value != status) {
+            val newStatus = AdvertisementStatus.valueOf(status)
             if (!validStateTransition(advertisement.status, newStatus)) {
                 throw BadRequestException("Invalid status transition")
             }
@@ -101,6 +118,13 @@ class AdvertisementService(
         }
 
         advertisementRepository.save(advertisement)
+
+        if (!images.isNullOrEmpty()) {
+            fileUploadService.uploadFiles(images, advertisement.id!!)
+        }
+        if (!deletedImages.isNullOrEmpty()) {
+            fileUploadService.deleteImagesById(deletedImages)
+        }
 
         return advertisementMapper.advertisementToAdvertisementResponse(advertisement)
     }
@@ -126,7 +150,7 @@ class AdvertisementService(
             it.category
         }.map {
             NewAdvertisementsResponse(
-                categoryMapper.categoryToCategoryResponse(it.key),
+                categoryMapper.categoryToJavaCategoryResponse(it.key),
                 it.value.map {
                     advertisementMapper.advertisementToAdvertisementResponse(it)
                 })
