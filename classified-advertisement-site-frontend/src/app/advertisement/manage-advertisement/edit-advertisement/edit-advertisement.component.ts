@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AdvertisementRequest, AdvertisementService, CategoryResponse, CategoryService } from 'src/app/openapi/advertisementservice';
+import { AdvertisementResponse, CategoryResponse } from 'src/app/openapi/advertisementservice';
+import { EditAdvertisement } from '../manage-advertisement.component';
 
 @Component({
   selector: 'app-edit-advertisement',
@@ -7,49 +8,36 @@ import { AdvertisementRequest, AdvertisementService, CategoryResponse, CategoryS
   styleUrls: ['./edit-advertisement.component.scss']
 })
 export class EditAdvertisementComponent implements OnInit {
-  @Input() advertisementId?: number;
-  @Output() saved: EventEmitter<void> = new EventEmitter();
+  @Input() advertisement?: EditAdvertisement;
+  @Input() categories?: CategoryResponse[];
+  @Output() next: EventEmitter<EditAdvertisement> = new EventEmitter();
   title: string = '';
   description: string = '';
   price: number = 0;
   categoryId?: number;
-  categories: CategoryResponse[] = [];
-  status: AdvertisementRequest.StatusEnum = AdvertisementRequest.StatusEnum.Available;
-  allStatuses = Object.values(AdvertisementRequest.StatusEnum);
-
-  constructor(
-    private readonly categoryService: CategoryService,
-    private readonly advertisementService: AdvertisementService,
-  ) { }
+  status?: AdvertisementResponse.StatusEnum;
+  allStatuses = Object.values(AdvertisementResponse.StatusEnum);
 
   ngOnInit(): void {
-    this.categoryService.getCategories().subscribe({
-      next: res => this.categories = res,
-    });
-    if (this.advertisementId) {
-      this.advertisementService.getAdvertisementId(this.advertisementId).subscribe({
-        next: res => {
-          this.title = res.title;
-          this.description = res.description;
-          this.price = res.price;
-          this.categoryId = res.categoryId;
-          this.status = res.status;
-        },
-      });
+    if (this.advertisement) {
+      this.title = this.advertisement.title;
+      this.description = this.advertisement.description;
+      this.price = this.advertisement.price;
+      this.categoryId = this.advertisement.categoryId;
+      if (this.advertisement.status) {
+        this.status = this.advertisement.status;
+      }
     }
   }
 
-  save() {
-    if (this.advertisementId && this.categoryId) {
-      this.advertisementService.putAdvertisementId(this.advertisementId, {
-        title: this.title,
-        description: this.description,
-        price: this.price,
-        categoryId: this.categoryId,
-        status: this.status,
-      }).subscribe({
-        next: () => this.saved.emit(),
-      });
-    }
+  onNext() {
+    this.next.emit({
+      id: this.advertisement?.id,
+      title: this.title,
+      description: this.description,
+      price: this.price,
+      categoryId: this.categoryId,
+      status: this.status,
+    });
   }
 }

@@ -19,7 +19,7 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field appearance="fill" class="w-100">
+  <mat-form-field *ngIf="advertisement?.id" appearance="fill" class="w-100">
     <mat-label>Status</mat-label>
     <mat-select [(ngModel)]="status" name="status">
       <mat-option *ngFor="let status of allStatuses" [value]="status">
@@ -28,6 +28,6 @@
     </mat-select>
   </mat-form-field>
   <div class="text-end">
-    <button mat-button (click)="save()">Next</button>
+    <button mat-button (click)="onNext()">Next</button>
   </div>
 </form>

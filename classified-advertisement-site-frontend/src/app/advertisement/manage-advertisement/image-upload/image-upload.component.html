@@ -1,1 +1,26 @@
-<p>image-upload works! {{ advertisementId }}</p>
+<p>image-upload works!</p>
+<input type="file" class="d-none" (change)="onFileSelected($event)" #fileUpload multiple [accept]="acceptedExtensions">
+<div class="file-upload">
+  <div>
+    <div class="mb-3 d-flex flex-wrap">
+      <div *ngFor="let file of files" class="d-inline-block position-relative m-2 image-container">
+        <div class="d-flex flex-wrap align-items-center h-100">
+          <img [src]="file | imageSource | async" [alt]="file.name" class="image-preview mx-auto">
+          <span class="position-absolute top-0 start-100 translate-middle" (click)="remove(file)">
+            <mat-icon class="remove-image">cancel</mat-icon>
+          </span>
+        </div>
+      </div>
+    </div>
+    <p  *ngIf="!files?.length">
+      Select images for your advertisement
+    </p>
+  </div>
+  <button mat-raised-button color="primary" class="upload-btn" (click)="fileUpload.click()">
+    <mat-icon>attach_file</mat-icon> Upload images
+  </button>
+</div>
+<div class="text-end">
+  <button mat-button (click)="onBack()">Back</button>
+  <button mat-button (click)="onNext()">Next</button>
+</div>

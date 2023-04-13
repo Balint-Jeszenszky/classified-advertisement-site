@@ -36,7 +36,10 @@ class FileUploadService(
     fun uploadFiles(files: MutableList<MultipartFile>, advertisementId: Int) {
         createBucketIfNotExists()
         files.forEach {
-            val name = "${UUID.randomUUID()}.${FilenameUtils.getExtension(it.name)}"
+            if (!listOf("image/jpeg", "image/png").contains(it.contentType)) {
+                return
+            }
+            val name = "${UUID.randomUUID()}.${FilenameUtils.getExtension(it.originalFilename)}"
             minioClient.putObject(PutObjectArgs.builder()
                 .bucket(bucket)
                 .`object`("raw/$name")

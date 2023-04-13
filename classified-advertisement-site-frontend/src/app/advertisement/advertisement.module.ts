@@ -20,7 +20,6 @@ import { SearchComponent } from './components/search/search.component';
 import { HomeComponent } from './home/home.component';
 import { AdvertisementCardComponent } from './home/advertisement-card/advertisement-card.component';
 import { ManageAdvertisementComponent } from './manage-advertisement/manage-advertisement.component';
-import { NewAdvertisementComponent } from './manage-advertisement/new-advertisement/new-advertisement.component';
 import { EditAdvertisementComponent } from './manage-advertisement/edit-advertisement/edit-advertisement.component';
 import { ImageUploadComponent } from './manage-advertisement/image-upload/image-upload.component';
 import { loginGuard } from '../auth.guard';
@@ -50,7 +49,6 @@ const routes: Routes = [
     HomeComponent,
     AdvertisementCardComponent,
     ManageAdvertisementComponent,
-    NewAdvertisementComponent,
     EditAdvertisementComponent,
     ImageUploadComponent
   ],

@@ -1,0 +1,20 @@
+$border-size: 1px;
+$image-size: 12rem;
+
+.image-preview {
+  max-width: calc($image-size - ($border-size * 2));
+  max-height: calc($image-size - ($border-size * 2));
+}
+
+.image-container {
+  width: $image-size;
+  height: $image-size;
+  border: $border-size solid #a5a5a5;
+  border-radius: 5px;
+  background-color: #ececec;
+}
+
+.remove-image {
+  color: #000000;
+  cursor: pointer;
+}

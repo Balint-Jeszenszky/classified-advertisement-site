@@ -1,15 +1,11 @@
 <mat-stepper #stepper>
   <mat-step label="Advertisement details">
-    <app-edit-advertisement *ngIf="!newAdvertisement" [advertisementId]="advertisementId" (saved)="nextStep(stepper)"></app-edit-advertisement>
-    <app-new-advertisement *ngIf="newAdvertisement" (saved)="nextStep(stepper, $event)"></app-new-advertisement>
+    <app-edit-advertisement *ngIf="advertisement" [advertisement]="advertisement" [categories]="categories" (next)="imageUpload(stepper, $event)"></app-edit-advertisement>
   </mat-step>
   <mat-step label="Upload images">
-    <app-image-upload [advertisementId]="advertisementId"></app-image-upload>
-    <div class="text-end">
-      <button mat-button matStepperNext>Next</button>
-    </div>
+    <app-image-upload [files]="files" (next)="save(stepper, $event)" (back)="editDetails(stepper, $event)"></app-image-upload>
   </mat-step>
   <mat-step label="Done">
-    <p>You are now done. <a [routerLink]="'/advertisement/' + advertisementId">Click here to see your advertisement.</a></p>
+    <p *ngIf="advertisement?.id">You are now done. <a [routerLink]="'/advertisement/' + advertisement!.id">Click here to see your advertisement.</a></p>
   </mat-step>
 </mat-stepper>
