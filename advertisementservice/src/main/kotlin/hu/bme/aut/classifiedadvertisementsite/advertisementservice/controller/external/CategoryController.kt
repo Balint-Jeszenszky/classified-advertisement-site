@@ -32,7 +32,7 @@ class CategoryController(
             throw BadRequestException("Invalid data")
         }
         val category = categoryService.createCategory(categoryRequest)
-        return ResponseEntity(category, HttpStatus.OK)
+        return ResponseEntity(category, HttpStatus.CREATED)
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -41,6 +41,6 @@ class CategoryController(
             throw BadRequestException("Invalid data")
         }
         val category = categoryService.modifyCategory(id, categoryRequest)
-        return ResponseEntity(category, HttpStatus.OK)
+        return ResponseEntity(category, HttpStatus.ACCEPTED)
     }
 }
