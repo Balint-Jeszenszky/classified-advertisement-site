@@ -42,8 +42,8 @@ class CategoryService(
 
     fun modifyCategory(id: Int, categoryRequest: CategoryRequest): CategoryResponse {
         val parentCategory = if (categoryRequest.parentCategoryId == null) null
-        else categoryRepository.findById(categoryRequest.parentCategoryId)
-            .orElseThrow { BadRequestException("Parent category not exists") }
+            else categoryRepository.findById(categoryRequest.parentCategoryId)
+                .orElseThrow { BadRequestException("Parent category not exists") }
         val category = categoryRepository.findById(id).orElseThrow { NotFoundException("Category not found") }
 
         category.name = categoryRequest.name
