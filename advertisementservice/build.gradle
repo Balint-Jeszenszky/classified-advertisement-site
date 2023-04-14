@@ -34,6 +34,7 @@ dependencies {
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	implementation 'org.liquibase:liquibase-core'
 	runtimeOnly 'com.mysql:mysql-connector-j'
+	testImplementation 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.amqp:spring-rabbit-test'
 	testImplementation 'org.springframework.security:spring-security-test'
@@ -99,3 +100,7 @@ java.sourceSets["main"].java {
 }
 
 compileKotlin.dependsOn('kotlinApi', 'javaApi')
+
+test {
+	systemProperty 'spring.profiles.active', 'test'
+}

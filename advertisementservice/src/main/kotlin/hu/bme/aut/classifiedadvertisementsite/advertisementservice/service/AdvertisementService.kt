@@ -15,7 +15,6 @@ import hu.bme.aut.classifiedadvertisementsite.advertisementservice.repository.Ca
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.security.LoggedInUserService
 import org.mapstruct.factory.Mappers
 import org.springframework.stereotype.Service
-import org.springframework.util.MultiValueMap
 import org.springframework.web.multipart.MultipartFile
 import java.time.OffsetDateTime
 
