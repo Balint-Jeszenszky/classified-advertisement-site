@@ -1,0 +1,14 @@
+openapi: 3.0.0
+x-stoplight:
+  id: gddqkglokhyj4
+info:
+  title: external
+  version: '1.0'
+  contact:
+    name: Balint Jeszenszky
+  description: Classified advertisement site image processing microservice external api
+servers:
+  - url: 'http://localhost:8083/api/images/external'
+paths: {}
+components:
+  schemas: {}
