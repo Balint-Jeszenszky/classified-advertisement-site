@@ -9,6 +9,76 @@ info:
   description: Classified advertisement site image processing microservice external api
 servers:
   - url: 'http://localhost:8083/api/images/external'
-paths: {}
+paths:
+  '/imageList/{advertisementId}':
+    parameters:
+      - schema:
+          type: integer
+        name: advertisementId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - images
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '404':
+          description: Not Found
+      operationId: get-imageList-advertisementId
+      description: List of image names for an advertisement
+  '/thumbnail/{advertisementId}':
+    parameters:
+      - schema:
+          type: integer
+        name: advertisementId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - images
+      responses:
+        '200':
+          description: OK
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Not Found
+      operationId: get-thumbnail-advertisementId
+      description: Get the thumbnail for an advertisement
+  '/image/{name}':
+    parameters:
+      - schema:
+          type: string
+        name: name
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - images
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                format: binary
+      operationId: get-image-name
+      description: Get an image by name
 components:
   schemas: {}
+tags:
+  - name: images
