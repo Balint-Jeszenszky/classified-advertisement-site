@@ -9,5 +9,5 @@ public interface ImageProcessingService {
     Resource getThumbnailByName(String name);
     void deleteImagesById(List<Integer> imageIds);
     void deleteImagesByAdvertisementId(int advertisementId);
-    void processImage(String name, int advertisementId);
+    void processImage(String name, int advertisementId) throws Exception;
 }
