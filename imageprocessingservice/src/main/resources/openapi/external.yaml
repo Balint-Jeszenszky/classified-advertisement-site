@@ -72,7 +72,7 @@ paths:
         '200':
           description: OK
           content:
-            application/json:
+            image/jpeg:
               schema:
                 type: string
                 format: binary

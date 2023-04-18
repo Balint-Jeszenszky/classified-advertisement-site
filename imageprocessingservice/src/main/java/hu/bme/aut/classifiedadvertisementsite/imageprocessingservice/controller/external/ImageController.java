@@ -17,7 +17,7 @@ public class ImageController implements ExternalApi, ImagesApi {
 
     @Override
     public ResponseEntity<List<String>> getImageListAdvertisementId(Integer advertisementId) {
-        List<String> imageList = imageService.getImageListByAdcertisementId(advertisementId);
+        List<String> imageList = imageService.getImageListByAdvertisementId(advertisementId);
         return new ResponseEntity<>(imageList, HttpStatus.OK);
     }
 
