@@ -43,23 +43,27 @@ public class ImageProcessingServiceImpl implements ImageProcessingService {
 
     @Override
     public Resource getImageByName(String name) {
+        return getImageByPath(IMAGE_PATH + name);
+    }
+
+    @Override
+    public Resource getThumbnailByName(String name) {
+        return getImageByPath(THUMBNAIL_PATH + name);
+    }
+
+    private Resource getImageByPath(String path) {
         GetObjectResponse object;
         try {
             object = minioClient.getObject(
                     GetObjectArgs.builder()
                             .bucket(bucket)
-                            .object(IMAGE_PATH + name)
+                            .object(path)
                             .build());
         } catch (MinioException | InvalidKeyException | IOException | NoSuchAlgorithmException e) {
             throw new RuntimeException(e); // TODO
         }
 
         return new InputStreamResource(object);
-    }
-
-    @Override
-    public Resource getThumbnailByName(String name) {
-        return null;
     }
 
     @Override

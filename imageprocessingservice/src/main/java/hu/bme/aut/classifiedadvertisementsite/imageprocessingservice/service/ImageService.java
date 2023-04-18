@@ -4,12 +4,11 @@ import hu.bme.aut.classifiedadvertisementsite.imageprocessingservice.model.Image
 import hu.bme.aut.classifiedadvertisementsite.imageprocessingservice.repository.ImageDataRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +26,12 @@ public class ImageService {
     }
 
     public Resource getThumbnailByAdvertisementId(Integer advertisementId) {
-        return new FileSystemResource(new File(""));
+        Optional<ImageData> thumbnail = imageDataRepository.findByAdvertisementIdAndThumbnailIsTrue(advertisementId);
+
+        if (thumbnail.isEmpty()) {
+            throw new RuntimeException(); // TODO 404
+        }
+
+        return imageProcessingService.getThumbnailByName(thumbnail.get().getName());
     }
 }
