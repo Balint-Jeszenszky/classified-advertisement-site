@@ -24,4 +24,7 @@ public class ImageData {
 
     @Column(name = "name", unique = true, updatable = false, nullable = false)
     private String name;
+
+    @Column(name = "thumbnail", nullable = false)
+    private Boolean thumbnail = Boolean.FALSE;
 }

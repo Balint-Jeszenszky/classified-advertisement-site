@@ -13,6 +13,10 @@
 			"path": "advertisementservice"
 		},
 		{
+			"name": "Image processing service",
+			"path": "imageprocessingservice"
+		},
+		{
 			"name": "Frontend",
 			"path": "classified-advertisement-site-frontend"
 		},

@@ -55,7 +55,7 @@ class FileUploadServiceImpl(
         val mapper = ObjectMapper()
         val node = mapper.createObjectNode()
 
-        node.put("type", "DELETE")
+        node.put("type", "DELETE_AD")
         node.put("advertisementId", advertisementId)
         rabbitTemplate.convertAndSend(queue.name, node.toString())
     }
