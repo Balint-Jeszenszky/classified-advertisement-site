@@ -1,8 +1,9 @@
 <mat-card class="mb-2">
   <mat-card-content>
     <div class="d-flex">
-      <div class="me-2 thumbnail">
-        <img class="img-fluid" src="https://dummyimage.com/400x400/aaa/fff" alt="placeholder">
+      <div class="me-2 thumbnail d-flex justify-content-center align-items-center">
+        <img *ngIf="thumbnail" class="img-fluid w-100" [src]="thumbnail | imageSource | async" alt="placeholder">
+        <div *ngIf="!thumbnail" alt="placeholder"><mat-icon>image</mat-icon></div>
       </div>
       <div class="details">
         <h2 class="single-line"><a [routerLink]="'/advertisement/' + advertisement?.id" class="unformatted-link">{{ advertisement?.title }}</a></h2>

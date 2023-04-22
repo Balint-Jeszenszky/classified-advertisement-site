@@ -2,8 +2,9 @@
   <mat-card-content>
     <div class="d-flex justify-content-between">
       <div class="d-flex">
-        <div class="thumbnail me-2">
-          <img class="img-fluid" src="https://dummyimage.com/600x400/aaa/fff" alt="placeholder">
+        <div class="thumbnail me-2 d-flex justify-content-center align-items-center">
+          <img *ngIf="thumbnail" class="img-fluid w-100" [src]="thumbnail | imageSource | async" alt="placeholder">
+          <div *ngIf="!thumbnail" alt="placeholder"><mat-icon>image</mat-icon></div>
         </div>
         <div>
           <div class="d-flex">

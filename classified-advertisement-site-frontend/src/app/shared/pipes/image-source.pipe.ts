@@ -5,12 +5,11 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class ImageSourcePipe implements PipeTransform {
 
-  transform(value: File, ...args: unknown[]): Promise<string | ArrayBuffer | null> {
+  transform(value: File | Blob): Promise<string | ArrayBuffer | null> {
     return new Promise(r => {
       const reader = new FileReader();
-      reader.addEventListener('loadend', e => {
-        const res = reader.result;
-        r(res);
+      reader.addEventListener('loadend', () => {
+        r(reader.result);
       });
       reader.readAsDataURL(value);
     });

@@ -5,7 +5,7 @@
       <p *ngIf="!currentImage" class="no-images">No images</p>
     </div>
   </div>
-  <div class="d-flex image-list">
+  <div class="d-flex image-list" *ngIf="imageUrls?.length">
     <img *ngFor="let imageUrl of imageUrls" class="img-fluid mini-image cursor-pointer" [src]="'/api/images/image/' + imageUrl" alt="image" (click)="showImage(imageUrl)">
   </div>
 </div>
