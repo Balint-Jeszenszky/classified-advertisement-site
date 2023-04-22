@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdvertisementResponse, AdvertisementService, CategoryResponse, CategoryService } from 'src/app/openapi/advertisementservice';
+import { ImagesService } from 'src/app/openapi/imageprocessingservice';
 import { PublicUserDetailsResponse, PublicUserService } from 'src/app/openapi/userservice';
 import { LoggedInUserService } from 'src/app/service/logged-in-user.service';
 import { Role } from 'src/app/service/types';
@@ -17,6 +18,7 @@ export class DetailsComponent implements OnInit {
   advertiser?: PublicUserDetailsResponse;
   admin: boolean = false;
   userId?: number;
+  imageUrls?: string[];
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -25,6 +27,7 @@ export class DetailsComponent implements OnInit {
     private readonly categoryService: CategoryService,
     private readonly loggedInUserService: LoggedInUserService,
     private readonly publicUserService: PublicUserService,
+    private readonly imagesService: ImagesService,
   ) { }
 
   ngOnInit(): void {
@@ -42,6 +45,9 @@ export class DetailsComponent implements OnInit {
         this.publicUserService.getUserId([ad.advertiserId]).subscribe({
           next: users => this.advertiser = users[0],
         });
+      });
+      this.imagesService.getImageListAdvertisementId(this.id).subscribe({
+        next: urls => this.imageUrls = urls,
       });
     });
   }

@@ -4,7 +4,7 @@
 </div>
 <div class="d-flex flex-wrap">
   <div class="images me-3">
-    <app-gallery></app-gallery>
+    <app-gallery *ngIf="imageUrls" [imageUrls]="imageUrls"></app-gallery>
   </div>
   <div *ngIf="advertisement" class="flex-grow-1">
     <div class="d-flex justify-content-between">

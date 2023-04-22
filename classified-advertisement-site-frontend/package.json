@@ -11,7 +11,8 @@
     "openapi:generate-gateway": "openapi-generator-cli generate -i ../gateway/src/main/resources/openapi/openapi.yaml -g typescript-angular -o src/app/openapi/gateway",
     "openapi:generate-userservice": "openapi-generator-cli generate -i ../userservice/src/main/resources/openapi/external.yaml -g typescript-angular -o src/app/openapi/userservice",
     "openapi:generate-advertisementservice": "openapi-generator-cli generate -i ../advertisementservice/src/main/resources/openapi/external.yaml -g typescript-angular -o src/app/openapi/advertisementservice",
-    "openapi:generate": "npm run openapi:generate-gateway && npm run openapi:generate-userservice && npm run openapi:generate-advertisementservice"
+    "openapi:generate-imageprocessingservice": "openapi-generator-cli generate -i ../imageprocessingservice/src/main/resources/openapi/external.yaml -g typescript-angular -o src/app/openapi/imageprocessingservice",
+    "openapi:generate": "npm run openapi:generate-gateway && npm run openapi:generate-userservice && npm run openapi:generate-advertisementservice && npm run openapi:generate-imageprocessingservice"
   },
   "private": true,
   "dependencies": {

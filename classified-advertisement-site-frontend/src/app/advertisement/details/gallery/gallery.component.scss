@@ -1,5 +1,22 @@
+.product-image-container {
+  border: 1px solid #cfcfcf;
+  border-radius: 3px;
+}
+
+.product-image {
+  height: 18rem;
+}
+
+.no-images {
+  margin-top: 8rem;
+}
+
+.image-list {
+  overflow-x: scroll;
+}
+
 .mini-image {
-  width: 7.5rem;
-  margin-top: 1rem;
-  margin-right: 1rem;
+  max-width: 7.5rem;
+  height: 4rem;
+  margin: 1rem;
 }

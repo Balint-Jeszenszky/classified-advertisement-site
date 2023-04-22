@@ -1,7 +1,11 @@
 <div>
-  <img class="img-fluid" src="https://dummyimage.com/600x400/aaa/fff" alt="placeholder">
-  <div class="d-flex">
-    <img class="img-fluid mini-image" src="https://dummyimage.com/600x400/aaa/fff" alt="placeholder">
-    <img class="img-fluid mini-image" src="https://dummyimage.com/600x400/aaa/fff" alt="placeholder">
+  <div class="product-image-container d-flex justify-content-center align-items-center">
+    <img *ngIf="currentImage" class="img-fluid product-image" [src]="'/api/images/image/' + currentImage" alt="image">
+    <div class="product-image">
+      <p *ngIf="!currentImage" class="no-images">No images</p>
+    </div>
+  </div>
+  <div class="d-flex image-list">
+    <img *ngFor="let imageUrl of imageUrls" class="img-fluid mini-image cursor-pointer" [src]="'/api/images/image/' + imageUrl" alt="image" (click)="showImage(imageUrl)">
   </div>
 </div>

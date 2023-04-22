@@ -79,6 +79,15 @@ paths:
       operationId: get-image-name
       description: Get an image by name
 components:
-  schemas: {}
+  schemas:
+    image:
+      title: image
+      x-stoplight:
+        id: 1hmu5zhlr5npk
+      type: object
+      format: binary
+      properties:
+        name:
+          type: string
 tags:
   - name: images
