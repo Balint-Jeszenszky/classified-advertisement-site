@@ -104,3 +104,7 @@ compileKotlin.dependsOn('kotlinApi', 'javaApi')
 test {
 	systemProperty 'spring.profiles.active', 'test'
 }
+
+jar {
+	enabled = false
+}

@@ -1,0 +1,11 @@
+FROM eclipse-temurin:17-jdk-alpine
+ARG DATABASE_URL
+ENV DATABASE_URL $DATABASE_URL
+ARG DB_PASS
+ENV DB_PASS $DB_PASS
+ARG DB_USER
+ENV DB_USER $DB_USER
+ARG PORT
+ENV PORT $PORT
+COPY target/*.jar app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
