@@ -16,6 +16,7 @@ import hu.bme.aut.classifiedadvertisementsite.gateway.security.model.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.codec.Hex;
@@ -38,6 +39,8 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UsersApi usersApi;
     private final AuthenticationApi authenticationApi;
+    @Value("${gateway.services.userservice}")
+    private String userServiceUri;
 
     @Transactional
     public void logout(String refreshToken) {
@@ -84,6 +87,7 @@ public class AuthService {
     public LoginResponse login(String username, String password) {
         UserDataResponse userData;
         try {
+            authenticationApi.getApiClient().setBasePath(userServiceUri + "/api/user/internal");
             userData = authenticationApi.postAuthLogin(new LoginRequest().username(username).password(password));
         } catch (RestClientException e) {
             throw new UnauthorizedException("Wrong username or password");

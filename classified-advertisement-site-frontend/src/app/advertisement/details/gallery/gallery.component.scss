@@ -12,11 +12,11 @@
 }
 
 .image-list {
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 .mini-image {
   max-width: 7.5rem;
   height: 4rem;
-  margin: 1rem;
+  margin: 0.5rem 0.25rem;
 }
