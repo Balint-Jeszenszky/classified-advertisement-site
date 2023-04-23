@@ -1,5 +1,6 @@
 package hu.bme.aut.classifiedadvertisementsite.imageprocessingservice.service;
 
+import hu.bme.aut.classifiedadvertisementsite.imageprocessingservice.controller.exceptions.NotFoundException;
 import hu.bme.aut.classifiedadvertisementsite.imageprocessingservice.model.ImageData;
 import hu.bme.aut.classifiedadvertisementsite.imageprocessingservice.repository.ImageDataRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class ImageService {
         Optional<ImageData> thumbnail = imageDataRepository.findByAdvertisementIdAndThumbnailIsTrue(advertisementId);
 
         if (thumbnail.isEmpty()) {
-            throw new RuntimeException(); // TODO 404
+            throw new NotFoundException("Thumbnail not found");
         }
 
         return imageProcessingService.getThumbnailByName(thumbnail.get().getName());

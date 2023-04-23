@@ -3,7 +3,7 @@
     <div class="d-flex justify-content-between">
       <div class="d-flex">
         <div class="thumbnail me-2 d-flex justify-content-center align-items-center">
-          <img *ngIf="thumbnail" class="img-fluid w-100" [src]="thumbnail | imageSource | async" alt="placeholder">
+          <img *ngIf="thumbnail" [src]="thumbnail | imageSource | async" alt="placeholder">
           <div *ngIf="!thumbnail" alt="placeholder"><mat-icon>image</mat-icon></div>
         </div>
         <div>

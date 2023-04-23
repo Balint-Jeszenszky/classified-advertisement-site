@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
 import hu.bme.aut.classifiedadvertisementsite.imageprocessingservice.service.ImageProcessingService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 import org.springframework.stereotype.Component;
@@ -15,13 +16,12 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class ImageProcessingMessageReceiver implements ChannelAwareMessageListener {
     private final ImageProcessingService imageProcessingService;
 
     @Override
     public void onMessage(Message message, Channel channel) throws IOException {
-        System.out.println("Received <" + new String(message.getBody()) + ">");
-
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode node = mapper.readTree(message.getBody());
@@ -33,7 +33,7 @@ public class ImageProcessingMessageReceiver implements ChannelAwareMessageListen
                 case "DELETE":
                     List<Integer> imageIds = new ArrayList<>();
                     if (node.get("imageIds").isArray()) {
-                        for (final JsonNode objNode : node) {
+                        for (final JsonNode objNode : node.get("imageIds")) {
                             imageIds.add(objNode.asInt());
                         }
                     }
@@ -48,7 +48,7 @@ public class ImageProcessingMessageReceiver implements ChannelAwareMessageListen
             }
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
             channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
         }
     }

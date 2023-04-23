@@ -1,9 +1,17 @@
+$thumbnail-size: 4rem;
+
 .thumbnail {
-  width: 4rem;
-  height: 4rem;
+  width: $thumbnail-size;
+  height: $thumbnail-size;
   border: 1px solid #cfcfcf;
   border-radius: 2px;
   background-color: #f5f5f5;
+
+  img {
+    object-fit: cover;
+    width: $thumbnail-size;
+    height: $thumbnail-size;
+  }
 }
 
 h1 {

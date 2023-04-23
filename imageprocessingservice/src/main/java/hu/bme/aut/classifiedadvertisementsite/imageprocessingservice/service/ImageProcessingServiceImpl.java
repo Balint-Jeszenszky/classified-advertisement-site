@@ -1,11 +1,13 @@
 package hu.bme.aut.classifiedadvertisementsite.imageprocessingservice.service;
 
+import hu.bme.aut.classifiedadvertisementsite.imageprocessingservice.controller.exceptions.NotFoundException;
 import hu.bme.aut.classifiedadvertisementsite.imageprocessingservice.model.ImageData;
 import hu.bme.aut.classifiedadvertisementsite.imageprocessingservice.repository.ImageDataRepository;
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.messages.DeleteError;
 import io.minio.messages.DeleteObject;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.FileNameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -22,18 +24,20 @@ import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.Math.max;
 
 @Service
+@Slf4j
 public class ImageProcessingServiceImpl implements ImageProcessingService {
     private static final String IMAGE_PATH = "processed/images/";
     private static final String THUMBNAIL_PATH = "processed/thumbnails/";
     private static final String RAW_PATH = "raw/";
     private static final String JPG_EXTENSION = ".jpg";
-    private String bucket;
-    private MinioClient minioClient;
-    private ImageDataRepository imageDataRepository;
+    private final String bucket;
+    private final MinioClient minioClient;
+    private final ImageDataRepository imageDataRepository;
 
     ImageProcessingServiceImpl(
             ImageDataRepository imageDataRepository,
@@ -68,7 +72,7 @@ public class ImageProcessingServiceImpl implements ImageProcessingService {
                             .object(path)
                             .build());
         } catch (MinioException | InvalidKeyException | IOException | NoSuchAlgorithmException e) {
-            throw new RuntimeException(e); // TODO
+            throw new NotFoundException("Image not found");
         }
 
         return new InputStreamResource(object);
@@ -83,15 +87,29 @@ public class ImageProcessingServiceImpl implements ImageProcessingService {
             removeImages(images
                     .stream()
                     .filter(ImageData::getThumbnail)
-                    .map(i -> new DeleteObject(IMAGE_PATH + i.getName()))
+                    .map(i -> new DeleteObject(THUMBNAIL_PATH + i.getName()))
                     .toList());
         } catch (Exception e) {
-            throw new RuntimeException(); // TODO
+            log.error("Error when deleting images by ids {}", imageIds);
+            log.error(e.getMessage());
         }
 
-        // TODO create new thumbnail if needed
-
         imageDataRepository.deleteAll(images);
+
+        for (ImageData imageData : images.stream().filter(ImageData::getThumbnail).toList()) {
+            Optional<ImageData> first = imageDataRepository.findAllByAdvertisementId(imageData.getAdvertisementId()).stream().findFirst();
+            if (first.isPresent()) {
+                ImageData image = first.get();
+
+                try {
+                    convertImage(getImageByPath(IMAGE_PATH + image.getName()), 100, THUMBNAIL_PATH + image.getName(), false);
+                    image.setThumbnail(true);
+                    imageDataRepository.save(image);
+                } catch (Exception e) {
+                    log.error("Creating thumbnail after image deletion failed for advertisement {}, image {}", image.getAdvertisementId(), image.getName());
+                }
+            }
+        }
     }
 
     @Override
@@ -102,7 +120,8 @@ public class ImageProcessingServiceImpl implements ImageProcessingService {
             removeImages(images.stream().map(i -> new DeleteObject(IMAGE_PATH + i.getName())).toList());
             removeImages(images.stream().map(i -> new DeleteObject(THUMBNAIL_PATH + i.getName())).toList());
         } catch (Exception e) {
-            throw new RuntimeException(); // TODO
+            log.error("Error when deleting images by advertisement {}", advertisementId);
+            log.error(e.getMessage());
         }
 
         imageDataRepository.deleteAll(images);
@@ -116,7 +135,7 @@ public class ImageProcessingServiceImpl implements ImageProcessingService {
                 .build());
         for (Result<DeleteError> result : results) {
             DeleteError error = result.get();
-            System.out.println("Error in deleting object " + error.objectName() + "; " + error.message());
+            log.error("Error in deleting object " + error.objectName() + "; " + error.message());
         }
     }
 
@@ -124,14 +143,14 @@ public class ImageProcessingServiceImpl implements ImageProcessingService {
     public void processImage(String name, int advertisementId) throws Exception {
         String newName = FileNameUtils.getBaseName(name) + JPG_EXTENSION;
 
-        convertImage(getImageByPath(RAW_PATH + name), 600, IMAGE_PATH + newName, true);
+        convertImage(getImageByPath(RAW_PATH + name), 1000, IMAGE_PATH + newName, true);
 
         ImageData imageData = new ImageData();
         imageData.setName(newName);
         imageData.setAdvertisementId(advertisementId);
 
         if (imageDataRepository.findByAdvertisementIdAndThumbnailIsTrue(advertisementId).isEmpty()) {
-            convertImage(getImageByPath(RAW_PATH + name), 50, THUMBNAIL_PATH + newName, false);
+            convertImage(getImageByPath(RAW_PATH + name), 100, THUMBNAIL_PATH + newName, false);
             imageData.setThumbnail(Boolean.TRUE);
         }
 
