@@ -38,15 +38,18 @@ public class ImageProcessingServiceImpl implements ImageProcessingService {
     private final String bucket;
     private final MinioClient minioClient;
     private final ImageDataRepository imageDataRepository;
+    private final String watermarkText;
 
     ImageProcessingServiceImpl(
             ImageDataRepository imageDataRepository,
             @Value("${minio.endpoint}") String endpoint,
             @Value("${minio.username}") String username,
             @Value("${minio.password}") String password,
-            @Value("${minio.bucket}") String bucket) {
+            @Value("${minio.bucket}") String bucket,
+            @Value("advertisement.image.watermark.text") String watermarkText) {
         this.imageDataRepository = imageDataRepository;
         this.bucket = bucket;
+        this.watermarkText = watermarkText;
         minioClient = MinioClient.builder()
                 .endpoint(endpoint)
                 .credentials(username, password)
@@ -166,9 +169,12 @@ public class ImageProcessingServiceImpl implements ImageProcessingService {
         int height = (int)(bufferedImage.getHeight() * scale);
         Image resultingImage = bufferedImage.getScaledInstance(width, height, Image.SCALE_DEFAULT);
         bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        bufferedImage.getGraphics().drawImage(resultingImage, 0, 0, null);
+        Graphics graphics = bufferedImage.getGraphics();
+        graphics.drawImage(resultingImage, 0, 0, null);
         if (watermark) {
-            bufferedImage.getGraphics().drawString("Watermark", 10, height - 50);
+            graphics.setColor(new Color(255, 255, 255, 128));
+            graphics.setFont(new Font("Roboto", Font.PLAIN, 80));
+            graphics.drawString("Watermark", 10, height);
         }
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "jpeg", os);

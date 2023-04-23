@@ -1,7 +1,7 @@
 <input type="file" class="d-none" (change)="onFileSelected($event)" #fileUpload multiple [accept]="acceptedExtensions">
 <div class="file-upload">
   <div>
-    <div class="mb-3 d-flex flex-wrap">
+    <div class="mb-3 mt-1 d-flex flex-wrap">
       <div *ngFor="let file of files" class="d-inline-block position-relative m-2 image-container">
         <div class="d-flex flex-wrap align-items-center h-100">
           <img [src]="file | imageSource | async" [alt]="file.name" class="image-preview mx-auto">
