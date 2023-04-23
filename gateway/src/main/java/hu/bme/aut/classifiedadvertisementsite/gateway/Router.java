@@ -15,6 +15,8 @@ public class Router {
     private String advertisementServiceUri;
     @Value("${gateway.services.imageService}")
     private String imageServiceUri;
+    @Value("${gateway.services.frontend}")
+    private String frontendUri;
 
     @Bean
     public RouteLocator myRoutes(RouteLocatorBuilder builder) {
@@ -31,6 +33,9 @@ public class Router {
                         .path("/api/images/**")
                         .filters(f -> f.rewritePath("/api/images/", "/api/images/external/"))
                         .uri(imageServiceUri))
+                .route(p -> p
+                        .path("/**")
+                        .uri(frontendUri))
                 .build();
     }
 }
