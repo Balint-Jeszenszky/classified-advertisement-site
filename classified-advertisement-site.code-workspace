@@ -17,6 +17,10 @@
 			"path": "imageprocessingservice"
 		},
 		{
+			"name": "Web scraping service",
+			"path": "web-scraping-service"
+		},
+		{
 			"name": "Frontend",
 			"path": "classified-advertisement-site-frontend"
 		},
