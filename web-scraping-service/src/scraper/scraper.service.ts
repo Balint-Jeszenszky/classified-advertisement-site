@@ -65,14 +65,17 @@ export class ScraperService {
   }
 
   addAdvertisement(advertisement: Advertisement): void {
+    this.logger.log(`New ad ${JSON.stringify(advertisement)}`);
     // TODO save to database
   }
 
   editAdvertisement(advertisement: Advertisement): void {
+    this.logger.log(`update ad ${JSON.stringify(advertisement)}`);
     // TODO save to database
   }
 
   deleteAdvertisement(advertisementId: number): void {
+    this.logger.log(`delete ad ${advertisementId}`);
     // TODO remove from database
   }
 
