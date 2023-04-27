@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ProductResponse } from './dto/ProductResponse.dto';
 import { SiteRequest } from './dto/SiteRequest.dto';
 import { SiteResponse } from './dto/SiteResponse.dto';
@@ -7,9 +7,14 @@ import { Site, SiteDocument } from './schemas/site.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Price } from './schemas/price.schema';
+import puppeteer from 'puppeteer-extra';
+import { Browser, executablePath } from 'puppeteer';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+import UserAgent from 'user-agents';
 
 @Injectable()
 export class ScraperService {
+  private readonly logger: Logger = new Logger(ScraperService.name);
 
   constructor(
     @InjectModel(Site.name) private readonly siteModel: Model<Site>,
@@ -68,6 +73,79 @@ export class ScraperService {
 
   deleteAdvertisement(advertisementId: number): void {
     // TODO remove from database
+  }
+
+  private async scrapePriceForAllAds() {
+    const categoryIds = await this.priceModel.distinct('categoryId').exec() as number[];
+
+    puppeteer.use(StealthPlugin());
+    const browser = await puppeteer.launch({ executablePath: executablePath() });
+
+    await Promise.all(categoryIds.map(async id => await this.scrapeCategory(id, browser)));
+
+    await browser.close();
+  }
+
+  private async scrapeCategory(categoryId: number, browser: Browser) {
+    const sites = await this.siteModel.find({ categoryId }).exec();
+    const advertisements = await this.priceModel.find({ categoryId }).exec();
+
+    const updatedAdvertisements = await Promise.all(advertisements.map(async advertisement => {
+
+      try {
+        const results = await this.scrapeSites(sites, advertisement.title, browser);
+        const bestResult = results.reduce((prev, curr) => prev.price < curr.price ? prev : curr);
+
+        advertisement.site = bestResult.site;
+        advertisement.image = bestResult.image;
+        advertisement.title = bestResult.title;
+        advertisement.url = bestResult.url;
+        advertisement.price = bestResult.price;
+      } catch {
+        this.logger.log(`No results for ${advertisement.title} (${advertisement.id})`);
+      }
+
+      return advertisement;
+    }));
+
+    this.priceModel.bulkSave(updatedAdvertisements);
+  }
+
+  private async scrapeSites(sites: Site[], searchTerm: string, browser: Browser) {
+    const page = await browser.newPage();
+    const userAgent = new UserAgent();
+    await page.setUserAgent(userAgent.toString());
+    await page.setViewport({ width: 1144, height: 969, isLandscape: true });
+
+    const results = await Promise.all(sites.map(async site => {
+      this.logger.log(`Scraping ${searchTerm} from ${site.name}`);
+
+      await page.goto(site.url.replace('{{searchTerm}}', searchTerm), { waitUntil: 'networkidle0' });
+    
+      return await page.evaluate(site => {
+        const product = document.querySelector(site.selector.base);
+    
+        if (!product) {
+          return undefined;
+        }
+
+        const getProperty = (element, property) =>  element[property] ?? element.getAttribute(property);
+    
+        const price = getProperty(product.querySelector(site.selector.price.selector), site.selector.price.property);
+    
+        return ({
+          site: site.name,
+          image: getProperty(product.querySelector(site.selector.image.selector), site.selector.image.property),
+          title: getProperty(product.querySelector(site.selector.title.selector), site.selector.title.property),
+          url: getProperty(product.querySelector(site.selector.title.selector), site.selector.url.property),
+          price: parseFloat(price.substring(price.search(/\d/)).replaceAll(' ', '').replaceAll('\u00a0', '')),
+        });
+      }, site);
+    }));
+
+    await page.close();
+
+    return results;
   }
 
   private mapSitesModelToDto(sites: SiteDocument[]): SiteResponse[] {

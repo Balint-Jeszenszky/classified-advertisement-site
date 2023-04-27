@@ -1,7 +1,7 @@
 export class ProductResponse {
-  site: string;
-  image: string;
+  site?: string;
+  image?: string;
   title: string;
-  url: string;
-  price: number;
+  url?: string;
+  price?: number;
 }

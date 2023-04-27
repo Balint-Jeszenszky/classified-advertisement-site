@@ -10,19 +10,22 @@ export class Price {
   advertisementId: number;
 
   @Prop({ required: true })
-  site: string;
+  categoryId: number;
 
-  @Prop({ required: true })
-  image: string;
+  @Prop()
+  site?: string;
+
+  @Prop()
+  image?: string;
   
   @Prop({ required: true })
   title: string;
   
-  @Prop({ required: true })
-  url: string;
+  @Prop()
+  url?: string;
   
-  @Prop({ required: true })
-  price: number;
+  @Prop()
+  price?: number;
 }
 
 export const PriceSchema = SchemaFactory.createForClass(Price);
