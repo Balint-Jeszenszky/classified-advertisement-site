@@ -5,5 +5,5 @@ export class SiteResponse {
   categoryId: number;
   name: string;
   url: string;
-  rootSelector: RootSelector;
+  selector: RootSelector;
 }

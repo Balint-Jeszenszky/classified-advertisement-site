@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put } from '@nestjs/common';
 import { ScraperService } from './scraper.service';
 import { ProductResponse } from './dto/ProductResponse.dto';
 import { Public } from 'src/auth/public.decorator';
@@ -22,25 +22,27 @@ export class ScraperController {
 
   @Get('sites')
   @HasRole(Role.ADMIN)
-  getAllSites(): SiteResponse[] {
+  getAllSites(): Promise<SiteResponse[]> {
     return this.scraperService.getAllSites();
   }
 
   @Post('site')
   @HasRole(Role.ADMIN)
-  createSite(@Body() site: SiteRequest): SiteResponse {
+  createSite(@Body() site: SiteRequest): Promise<SiteResponse> {
     return this.scraperService.createSite(site);
   }
 
   @Put('site/:id')
   @HasRole(Role.ADMIN)
-  updateSite(@Param('id')id: string, @Body() site: SiteRequest): SiteResponse {
+  @HttpCode(202)
+  updateSite(@Param('id') id: string, @Body() site: SiteRequest): Promise<SiteResponse> {
     return this.scraperService.updateSite(id, site);
   }
 
   @Delete('site/:id')
   @HasRole(Role.ADMIN)
-  deleteSite(@Param('id')id: string) {
-    this.scraperService.deleteSite(id);
+  @HttpCode(204)
+  deleteSite(@Param('id') id: string): Promise<void> {
+    return this.scraperService.deleteSite(id);
   }
 }

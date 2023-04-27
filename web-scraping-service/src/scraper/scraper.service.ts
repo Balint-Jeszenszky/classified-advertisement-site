@@ -1,11 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProductResponse } from './dto/ProductResponse.dto';
 import { SiteRequest } from './dto/SiteRequest.dto';
 import { SiteResponse } from './dto/SiteResponse.dto';
 import { Advertisement } from './dto/Advertisement.dto';
+import { Site, SiteDocument } from './schemas/site.schema';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class ScraperService {
+
+  constructor(
+    @InjectModel(Site.name) private readonly siteModel: Model<Site>,
+  ) { }
 
   getPriceByAdvertisementId(id: number): ProductResponse {
     // TODO get from DB
@@ -13,28 +20,36 @@ export class ScraperService {
     return undefined;
   }
 
-  getAllSites(): SiteResponse[] {
-    // TODO read all from DB
+  async getAllSites(): Promise<SiteResponse[]> {
+    const sites = await this.siteModel.find().exec();
 
-    return undefined;
+    return this.mapSitesModelToDto(sites);
   }
 
-  createSite(site: SiteRequest): SiteResponse {
-    // TODO save to database
+  async createSite(site: SiteRequest): Promise<SiteResponse> {
+    const createdSite = new this.siteModel(site);
+    await createdSite.save();
+
     // TODO run scraper for this site
 
-    return undefined;
+    return this.mapSiteModelToDto(createdSite);
   }
 
-  updateSite(id: string, site: SiteRequest): SiteResponse {
-    // TODO save to database
+  async updateSite(id: string, site: SiteRequest): Promise<SiteResponse> {
+
+    const updatedSite = await this.siteModel.findOneAndUpdate({ _id: id }, site, { new: true }).exec();
+
+    if (!updatedSite) {
+      throw new NotFoundException;
+    }
+
     // TODO run scraper for this site
 
-    return undefined;
+    return this.mapSiteModelToDto(updatedSite);
   }
 
-  deleteSite(id: string) {
-    // TODO remove from database
+  async deleteSite(id: string): Promise<void> {
+    await this.siteModel.deleteOne({ _id: id }).exec();
   }
 
   addAdvertisement(advertisement: Advertisement): void {
@@ -47,4 +62,19 @@ export class ScraperService {
 
   deleteAdvertisement(advertisementId: number): void {
     // TODO remove from database
-  }}
+  }
+
+  private mapSitesModelToDto(sites: SiteDocument[]): SiteResponse[] {
+    return sites.map(site => this.mapSiteModelToDto(site));
+  }
+
+  private mapSiteModelToDto(site: SiteDocument): SiteResponse {
+    return {
+      id: site._id.toHexString(),
+      name: site.name,
+      url: site.url,
+      categoryId: site.categoryId,
+      selector: site.selector,
+    }
+  }
+}

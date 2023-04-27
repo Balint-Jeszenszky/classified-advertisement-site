@@ -2,7 +2,7 @@ export class SiteRequest {
   categoryId: number;
   name: string;
   url: string;
-  rootSelector: RootSelector;
+  selector: RootSelector;
 }
 
 export class RootSelector {
