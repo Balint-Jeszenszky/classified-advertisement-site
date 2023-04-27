@@ -6,6 +6,7 @@ import io.minio.*
 import org.apache.commons.io.FilenameUtils
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
@@ -20,7 +21,7 @@ class FileUploadServiceImpl(
     @Value("\${minio.password}") private val password: String,
     @Value("\${minio.bucket}") private val bucket: String,
     private val rabbitTemplate: RabbitTemplate,
-    private val queue: Queue
+    @Qualifier("image-processing-queue") private val queue: Queue
 ) : FileUploadService {
 
     private val minioClient: MinioClient = MinioClient.builder()

@@ -1,5 +1,6 @@
 package hu.bme.aut.classifiedadvertisementsite.advertisementservice.service
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.AdvertisementResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.NewAdvertisementsResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.BadRequestException
@@ -14,6 +15,9 @@ import hu.bme.aut.classifiedadvertisementsite.advertisementservice.repository.Ad
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.repository.CategoryRepository
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.security.LoggedInUserService
 import org.mapstruct.factory.Mappers
+import org.springframework.amqp.core.Queue
+import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.time.OffsetDateTime
@@ -23,7 +27,9 @@ class AdvertisementService(
     private val advertisementRepository: AdvertisementRepository,
     private val loggedInUserService: LoggedInUserService,
     private val categoryRepository: CategoryRepository,
-    private val fileUploadService: FileUploadService
+    private val fileUploadService: FileUploadService,
+    private val rabbitTemplate: RabbitTemplate,
+    @Qualifier("advertisement-queue") private val queue: Queue
 ) {
     private val advertisementMapper: AdvertisementMapper = Mappers.getMapper(AdvertisementMapper::class.java)
     private val categoryMapper: CategoryMapper = Mappers.getMapper(CategoryMapper::class.java)
@@ -71,6 +77,8 @@ class AdvertisementService(
             fileUploadService.uploadFiles(images, advertisement.id!!)
         }
 
+        sendAdvertisementMessage("CREATE", advertisement.id!!, advertisement.title, advertisement.category.id)
+
         return advertisementMapper.advertisementToAdvertisementResponse(advertisement)
     }
 
@@ -84,6 +92,9 @@ class AdvertisementService(
         }
 
         fileUploadService.deleteImagesForAd(id)
+
+        sendAdvertisementMessage("DELETE", id)
+
         advertisementRepository.delete(advertisement)
     }
 
@@ -125,7 +136,19 @@ class AdvertisementService(
             fileUploadService.deleteImagesById(deletedImages)
         }
 
+        sendAdvertisementMessage("UPDATE", id, advertisement.title, advertisement.category.id)
+
         return advertisementMapper.advertisementToAdvertisementResponse(advertisement)
+    }
+
+    private fun sendAdvertisementMessage(type: String, id: Int, title: String? = null, categoryId: Int? = null) {
+        val mapper = ObjectMapper()
+        val node = mapper.createObjectNode()
+        node.put("type", type)
+        node.put("id", id)
+        if (title != null) node.put("title", title)
+        if (categoryId != null) node.put("categoryId", categoryId)
+        rabbitTemplate.convertAndSend(queue.name, node.toString())
     }
 
     private fun validStateTransition(from: AdvertisementStatus, to: AdvertisementStatus): Boolean {
