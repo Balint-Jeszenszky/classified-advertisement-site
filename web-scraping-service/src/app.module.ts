@@ -3,9 +3,10 @@ import { APP_GUARD } from '@nestjs/core';
 import { HeaderAuthGuard } from './auth/header-auth.guard';
 import { ScraperModule } from './scraper/scraper.module';
 import { RolesGuard } from './auth/role.guard';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
-  imports: [ScraperModule],
+  imports: [ScraperModule, MongooseModule.forRoot('mongodb://localhost/scraper')],
   controllers: [],
   providers: [
     {
