@@ -19,6 +19,9 @@ export class Price {
   image?: string;
   
   @Prop({ required: true })
+  originalTitle: string;
+  
+  @Prop()
   title: string;
   
   @Prop()

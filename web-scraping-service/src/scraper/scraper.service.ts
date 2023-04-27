@@ -11,6 +11,7 @@ import puppeteer from 'puppeteer-extra';
 import { Browser, executablePath } from 'puppeteer';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import UserAgent from 'user-agents';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class ScraperService {
@@ -75,7 +76,9 @@ export class ScraperService {
     // TODO remove from database
   }
 
+  @Cron('0 3 * * *')
   private async scrapePriceForAllAds() {
+    this.logger.log('Scraper started');
     const categoryIds = await this.priceModel.distinct('categoryId').exec() as number[];
 
     puppeteer.use(StealthPlugin());
@@ -84,16 +87,18 @@ export class ScraperService {
     await Promise.all(categoryIds.map(async id => await this.scrapeCategory(id, browser)));
 
     await browser.close();
+    this.logger.log('Scraper finished');
   }
 
   private async scrapeCategory(categoryId: number, browser: Browser) {
+    this.logger.log(`Scrape category ${categoryId}`);
     const sites = await this.siteModel.find({ categoryId }).exec();
     const advertisements = await this.priceModel.find({ categoryId }).exec();
 
     const updatedAdvertisements = await Promise.all(advertisements.map(async advertisement => {
 
       try {
-        const results = await this.scrapeSites(sites, advertisement.title, browser);
+        const results = await this.scrapeSites(sites, advertisement.originalTitle, browser);
         const bestResult = results.reduce((prev, curr) => prev.price < curr.price ? prev : curr);
 
         advertisement.site = bestResult.site;
@@ -102,7 +107,7 @@ export class ScraperService {
         advertisement.url = bestResult.url;
         advertisement.price = bestResult.price;
       } catch {
-        this.logger.log(`No results for ${advertisement.title} (${advertisement.id})`);
+        this.logger.log(`No results for ${advertisement.originalTitle} (${advertisement.id})`);
       }
 
       return advertisement;

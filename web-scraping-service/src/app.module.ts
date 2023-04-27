@@ -4,9 +4,14 @@ import { HeaderAuthGuard } from './auth/header-auth.guard';
 import { ScraperModule } from './scraper/scraper.module';
 import { RolesGuard } from './auth/role.guard';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-  imports: [ScraperModule, MongooseModule.forRoot('mongodb://localhost/scraper')],
+  imports: [
+    ScraperModule,
+    MongooseModule.forRoot('mongodb://localhost/scraper'),
+    ScheduleModule.forRoot(),
+  ],
   controllers: [],
   providers: [
     {
