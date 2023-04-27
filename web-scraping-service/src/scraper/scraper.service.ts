@@ -42,8 +42,6 @@ export class ScraperService {
     const createdSite = new this.siteModel(site);
     await createdSite.save();
 
-    // TODO run scraper for this site
-
     return this.mapSiteModelToDto(createdSite);
   }
 
@@ -55,8 +53,6 @@ export class ScraperService {
       throw new NotFoundException;
     }
 
-    // TODO run scraper for this site
-
     return this.mapSiteModelToDto(updatedSite);
   }
 
@@ -64,25 +60,22 @@ export class ScraperService {
     await this.siteModel.deleteOne({ _id: id }).exec();
   }
 
-  addAdvertisement(advertisement: Advertisement): void {
-    this.logger.log(`New ad ${JSON.stringify(advertisement)}`);
-    // TODO save to database
+  async addAdvertisement(advertisement: Advertisement): Promise<void> {
+    await new this.priceModel(advertisement).save();
   }
 
-  editAdvertisement(advertisement: Advertisement): void {
-    this.logger.log(`update ad ${JSON.stringify(advertisement)}`);
-    // TODO save to database
+  async editAdvertisement(advertisement: Advertisement): Promise<void> {
+    await this.priceModel.findOneAndUpdate({ advertisementId: advertisement.advertisementId }, advertisement).exec();
   }
 
-  deleteAdvertisement(advertisementId: number): void {
-    this.logger.log(`delete ad ${advertisementId}`);
-    // TODO remove from database
+  async deleteAdvertisement(advertisementId: number): Promise<void> {
+    await this.priceModel.deleteOne({ advertisementId }).exec();
   }
 
   @Cron('0 3 * * *')
   private async scrapePriceForAllAds() {
     this.logger.log('Scraper started');
-    const categoryIds = await this.priceModel.distinct('categoryId').exec() as number[];
+    const categoryIds = await this.siteModel.distinct('categoryId').exec() as number[];
 
     puppeteer.use(StealthPlugin());
     const browser = await puppeteer.launch({ executablePath: executablePath() });
@@ -101,16 +94,22 @@ export class ScraperService {
     const updatedAdvertisements = await Promise.all(advertisements.map(async advertisement => {
 
       try {
-        const results = await this.scrapeSites(sites, advertisement.originalTitle, browser);
+        const results = await this.scrapeSites(sites, advertisement.title, browser);
         const bestResult = results.reduce((prev, curr) => prev.price < curr.price ? prev : curr);
 
         advertisement.site = bestResult.site;
         advertisement.image = bestResult.image;
-        advertisement.title = bestResult.title;
+        advertisement.productTitle = bestResult.title;
         advertisement.url = bestResult.url;
         advertisement.price = bestResult.price;
       } catch {
-        this.logger.log(`No results for ${advertisement.originalTitle} (${advertisement.id})`);
+        this.logger.log(`No results for ${advertisement.title} (${advertisement.id})`);
+
+        advertisement.site = undefined;
+        advertisement.image = undefined;
+        advertisement.productTitle = undefined;
+        advertisement.url = undefined;
+        advertisement.price = undefined;
       }
 
       return advertisement;

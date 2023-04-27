@@ -12,19 +12,19 @@ export class MessageQueueController {
   ) { }
 
   @MessagePattern('advertisement', Transport.RMQ)
-  processAdvertisementMessage(@Payload() advertisement: Advertisement, @Ctx() context: RmqContext) {
+  async processAdvertisementMessage(@Payload() advertisement: Advertisement, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const originalMsg = context.getMessage();
 
     switch (advertisement.type) {
       case MessageType.CREATE:
-        this.scraperService.addAdvertisement(advertisement);
+        await this.scraperService.addAdvertisement(advertisement);
         break;
       case MessageType.UPDATE:
-        this.scraperService.editAdvertisement(advertisement);
+        await this.scraperService.editAdvertisement(advertisement);
         break;
       case MessageType.DELETE:
-        this.scraperService.deleteAdvertisement(advertisement.id);
+        await this.scraperService.deleteAdvertisement(advertisement.advertisementId);
         break;
       default:
         this.logger.error(`Message rejected, unknown type: ${JSON.stringify(advertisement)}`);

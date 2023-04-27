@@ -145,7 +145,7 @@ class AdvertisementService(
         val mapper = ObjectMapper()
         val node = mapper.createObjectNode()
         node.put("type", type)
-        node.put("id", id)
+        node.put("advertisementId", id)
         if (title != null) node.put("title", title)
         if (categoryId != null) node.put("categoryId", categoryId)
         rabbitTemplate.convertAndSend(queue.name, node.toString())

@@ -6,7 +6,7 @@ export enum MessageType {
 }
 
 export class Advertisement {
-  id: number;
+  advertisementId: number;
   type: MessageType;
   title: string;
   categoryId: number;
