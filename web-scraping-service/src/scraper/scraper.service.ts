@@ -6,18 +6,24 @@ import { Advertisement } from './dto/Advertisement.dto';
 import { Site, SiteDocument } from './schemas/site.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { Price } from './schemas/price.schema';
 
 @Injectable()
 export class ScraperService {
 
   constructor(
     @InjectModel(Site.name) private readonly siteModel: Model<Site>,
+    @InjectModel(Price.name) private readonly priceModel: Model<Price>,
   ) { }
 
-  getPriceByAdvertisementId(id: number): ProductResponse {
-    // TODO get from DB
+  async getPriceByAdvertisementId(id: number): Promise<ProductResponse> {
+    const price = await this.priceModel.findOne({ advertisementId: id }).exec();
 
-    return undefined;
+    if (!price) {
+      throw new NotFoundException;
+    }
+
+    return price;
   }
 
   async getAllSites(): Promise<SiteResponse[]> {
@@ -37,7 +43,7 @@ export class ScraperService {
 
   async updateSite(id: string, site: SiteRequest): Promise<SiteResponse> {
 
-    const updatedSite = await this.siteModel.findOneAndUpdate({ _id: id }, site, { new: true }).exec();
+    const updatedSite = await this.siteModel.findByIdAndUpdate(id, site, { new: true }).exec();
 
     if (!updatedSite) {
       throw new NotFoundException;

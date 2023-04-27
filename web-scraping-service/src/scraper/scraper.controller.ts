@@ -16,7 +16,7 @@ export class ScraperController {
 
   @Public()
   @Get('advertisement/:id')
-  getPriceByAdvertisementId(@Param('id') id: number): ProductResponse {
+  getPriceByAdvertisementId(@Param('id') id: number): Promise<ProductResponse> {
     return this.scraperService.getPriceByAdvertisementId(id);
   }
 
