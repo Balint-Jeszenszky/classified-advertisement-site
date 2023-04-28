@@ -10,7 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [
     ScraperModule,
-    MongooseModule.forRoot('mongodb://localhost/scraper'),
+    MongooseModule.forRoot(`mongodb://${process.env.MONGO_URL}/scraper`),
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
