@@ -21,7 +21,13 @@ async function bootstrap() {
   app.connectMicroservice({
     transport: Transport.RMQ,
     options: {
-      urls: [process.env.RABBITMQ_URL],
+      urls: [{
+        protocol: 'amqp',
+        hostname: process.env.RABBITMQ_HOST,
+        port: 5672,
+        username: process.env.RABBITMQ_USER,
+        password: process.env.RABBITMQ_PASS,
+      }],
       queue: 'advertisement-queue',
       noAck: false,
       persistent: true,

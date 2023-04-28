@@ -9,12 +9,19 @@ import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    ScraperModule,
-    MongooseModule.forRoot(`mongodb://${process.env.MONGO_URL}/scraper`),
-    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    MongooseModule.forRoot(
+      `mongodb://${process.env.MONGO_URL}`,
+      {
+        authSource: 'admin',
+        user: process.env.MONGO_USER,
+        pass: process.env.MONGO_PASS,
+      },
+    ),
+    ScraperModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [],
   providers: [
