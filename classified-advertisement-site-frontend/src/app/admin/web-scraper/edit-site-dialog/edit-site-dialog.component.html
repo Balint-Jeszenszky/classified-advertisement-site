@@ -57,6 +57,6 @@
   </form>
 </div>
 <div mat-dialog-actions>
-  <button mat-raised-button color="primary" [mat-dialog-close]="getSiteData()" cdkFocusInitial>Save</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="{ siteId, site: getSiteData() }" cdkFocusInitial>Save</button>
   <button mat-raised-button (click)="onNoClick()">Cancel</button>
 </div>

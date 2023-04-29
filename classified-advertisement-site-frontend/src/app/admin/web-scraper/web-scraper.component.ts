@@ -10,7 +10,7 @@ import { EditSiteDialogComponent } from './edit-site-dialog/edit-site-dialog.com
   styleUrls: ['./web-scraper.component.scss']
 })
 export class WebScraperComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'category', 'url'];
+  displayedColumns: string[] = ['name', 'category', 'url', 'edit'];
   sites: SiteResponse[] = [];
   categories: CategoryResponse[] = [];
 
@@ -33,18 +33,44 @@ export class WebScraperComponent implements OnInit {
     return this.categories.find(c => c.id === id)?.name;
   }
 
-  addNewSite() {
+  editSite(site?: SiteResponse) {
     const dialogRef = this.dialog.open(EditSiteDialogComponent, {
       width: '600px',
-      data: { categories: this.categories },
+      data: {
+        categories: this.categories,
+        site,
+      },
     });
 
-    dialogRef.afterClosed().subscribe((newSite?: SiteRequest) => {
-      if (newSite) {
-        this.scraperService.scraperControllerCreateSite(newSite).subscribe({
+    dialogRef.afterClosed().subscribe((siteData?: { siteId?: string, site: SiteRequest }) => {
+      if (siteData?.siteId) {
+        this.scraperService.scraperControllerUpdateSite(siteData.siteId, siteData.site).subscribe({
+          next: res => {
+            const idx = this.sites.findIndex(s => s.id === res.id);
+            if (!~idx) {
+              this.sites = [...this.sites, res];
+            }
+            this.sites = [
+              ...this.sites.slice(0, idx),
+              res,
+              ...this.sites.slice(idx + 1)
+            ];
+          },
+        });
+      } else if (siteData) {
+        this.scraperService.scraperControllerCreateSite(siteData.site).subscribe({
           next: res => this.sites = [...this.sites, res],
         });
       }
     });
+
+  }
+
+  deleteSite(site: SiteResponse) {
+    if (confirm(`Delete site "${site.name}"?`)) {
+      this.scraperService.scraperControllerDeleteSite(site.id).subscribe({
+        next: () => this.sites = this.sites.filter(s => s.id !== site.id),
+      });
+    }
   }
 }

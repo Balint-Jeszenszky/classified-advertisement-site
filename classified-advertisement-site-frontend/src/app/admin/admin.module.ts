@@ -16,6 +16,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatSelectModule } from '@angular/material/select';
+import { MatMenuModule } from '@angular/material/menu';
 import { AdminComponent } from './admin.component';
 import { CategoryTreeComponent } from './categories/category-tree/category-tree.component';
 import { CategoriesComponent } from './categories/categories.component';
@@ -54,6 +55,7 @@ const routes: Routes = [
     MatTabsModule,
     MatTreeModule,
     MatSelectModule,
+    MatMenuModule,
   ]
 })
 export class AdminModule { }

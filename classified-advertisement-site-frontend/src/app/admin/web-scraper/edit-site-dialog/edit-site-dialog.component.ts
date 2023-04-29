@@ -22,6 +22,7 @@ export class EditSiteDialogComponent {
   selectorUrlProperty: string = '';
   selectorUrlSelector: string = '';
   categories: CategoryResponse[] = [];
+  siteId?: string;
 
   constructor(
     private readonly dialogRef: MatDialogRef<EditSiteDialogComponent>,
@@ -44,6 +45,7 @@ export class EditSiteDialogComponent {
       this.selectorTitleSelector = this.data.site.selector.title.selector;
       this.selectorUrlProperty = this.data.site.selector.url.property;
       this.selectorUrlSelector = this.data.site.selector.url.selector;
+      this.siteId = this.data.site.id;
     }
   }
 
