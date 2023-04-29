@@ -6,9 +6,10 @@ import { SiteRequest } from './dto/SiteRequest.dto';
 import { SiteResponse } from './dto/SiteResponse.dto';
 import { HasRole } from 'src/auth/hasrole.decorator';
 import { Role } from 'src/auth/role.enum';
-import { ApiAcceptedResponse, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiAcceptedResponse, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
 
 @ApiTags('scraper')
+@ApiSecurity('JWT')
 @Controller('scraper')
 export class ScraperController {
 

@@ -14,6 +14,10 @@ async function bootstrap() {
     .setDescription('The web scraper microservice provides price data of the products from external websites')
     .setVersion('1.0')
     .addTag('scraper')
+    .addSecurity('JWT', {
+      type: 'http',
+      scheme: 'bearer',
+    })
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
