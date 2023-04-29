@@ -1,13 +1,10 @@
 services:
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:3
     restart: unless-stopped
     container_name: rabbitmq
-    ports:
-      - 5672:5672
-      - 15672:15672
     volumes:
-      - ./container-data/dev/rabbitmq:/var/lib/rabbitmq
+      - ./container-data/prod/rabbitmq:/var/lib/rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
@@ -18,11 +15,8 @@ services:
     image: minio/minio
     restart: unless-stopped
     container_name: minio
-    ports:
-      - 9000:9000
-      - 9001:9001
     volumes:
-      - ./container-data/dev/minio:/data
+      - ./container-data/prod/minio:/data
     environment:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
@@ -34,10 +28,8 @@ services:
     image: mysql:8
     restart: unless-stopped
     container_name: gateway-db
-    ports:
-      - 3306:3306
     volumes:
-      - ./container-data/dev/gateway-mysql:/var/lib/mysql
+      - ./container-data/prod/gateway-mysql:/var/lib/mysql
     environment:
       - MYSQL_DATABASE=gateway
       - MYSQL_ROOT_PASSWORD=${MYSQL_GATEWAY_ROOT_PASSWORD}
@@ -75,10 +67,8 @@ services:
     image: postgres:15
     restart: unless-stopped
     container_name: userservice-db
-    ports:
-      - 5432:5432
     volumes:
-      - ./container-data/dev/userservice-postgres:/var/lib/postgresql/data
+      - ./container-data/prod/userservice-postgres:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${USERSERVICE_POSTGRES_USER}
       - POSTGRES_PASSWORD=${USERSERVICE_POSTGRES_PASSWORD}
@@ -93,8 +83,6 @@ services:
     depends_on:
       - userservice-db
       - rabbitmq
-    ports:
-      - 8081:8080
     environment:
       - DATABASE_URL=userservice-db:5432/users
       - DB_PASS=${USERSERVICE_POSTGRES_PASSWORD}
@@ -112,10 +100,8 @@ services:
     image: mysql:8
     restart: unless-stopped
     container_name: advertisementservice-db
-    ports:
-      - 3307:3306
     volumes:
-      - ./container-data/dev/advertisementservice-mysql:/var/lib/mysql
+      - ./container-data/prod/advertisementservice-mysql:/var/lib/mysql
     environment:
       - MYSQL_DATABASE=advertisements
       - MYSQL_ROOT_PASSWORD=${MYSQL_ADVERTISEMENTSERVICE_ROOT_PASSWORD}
@@ -132,8 +118,6 @@ services:
       - advertisementservice-db
       - rabbitmq
       - minio
-    ports:
-      - 8082:8080
     environment:
       - DATABASE_URL=advertisementservice-db:3306/advertisements
       - DB_USER=${MYSQL_ADVERTISEMENTSERVICE_USERNAME}
@@ -155,10 +139,8 @@ services:
     image: postgres:15
     restart: unless-stopped
     container_name: imageprocessingservice-db
-    ports:
-      - 5433:5432
     volumes:
-      - ./container-data/dev/imageprocessingservice-postgres:/var/lib/postgresql/data
+      - ./container-data/prod/imageprocessingservice-postgres:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${IMAGEPROCESSING_POSTGRES_USER}
       - POSTGRES_PASSWORD=${IMAGEPROCESSING_POSTGRES_PASSWORD}
@@ -174,8 +156,6 @@ services:
       - imageprocessingservice-db
       - rabbitmq
       - minio
-    ports:
-      - 8083:8080
     environment:
       - DATABASE_URL=imageprocessingservice-db:5432/imageprocessing
       - DB_USER=${IMAGEPROCESSING_POSTGRES_USER}
@@ -197,29 +177,12 @@ services:
     image: mongo:5
     restart: unless-stopped
     container_name: webscraperservice-db
-    ports:
-      - 27017:27017
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
       - MONGO_INITDB_DATABASE=scraper
     volumes:
-      - ./container-data/dev/webscraperservice-mongo:/data/db
-    networks:
-      - database
-  
-  webscraperservice-mongo-express:
-    image: mongo-express
-    restart: unless-stopped
-    container_name: webscraperservice-mongo-express
-    depends_on:
-      - webscraperservice-db
-    ports:
-      - 18081:8081
-    environment:
-      - ME_CONFIG_MONGODB_SERVER=webscraperservice-db
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_USERNAME}
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_PASSWORD}
+      - ./container-data/prod/webscraperservice-mongo:/data/db
     networks:
       - database
 
@@ -230,8 +193,6 @@ services:
     depends_on:
       - webscraperservice-db
       - rabbitmq
-    ports:
-      - 3000:3000
     environment:
       - PORT=3000
       - RABBITMQ_HOST=rabbitmq
@@ -249,8 +210,6 @@ services:
     image: balintjeszenszky/adsite:frontend-latest
     restart: unless-stopped
     container_name: frontend
-    ports:
-      - 8000:80
     networks:
       - web
 
