@@ -58,6 +58,7 @@ services:
       - USER_SERVICE_URI=http://userservice:8080
       - ADVERTISEMENT_SERVICE_URI=http://advertisementservice:8080
       - IMAGE_SERVICE_URI=http://imageprocessingservice:8080
+      - WEBSCRAPER_SERVICE_URI=http://webscraperservice:3000
       - FRONTEND_URI=http://frontend:80
     networks:
       - web
