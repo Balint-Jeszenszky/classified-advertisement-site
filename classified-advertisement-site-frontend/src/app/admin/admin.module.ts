@@ -20,6 +20,8 @@ import { AdminComponent } from './admin.component';
 import { CategoryTreeComponent } from './categories/category-tree/category-tree.component';
 import { CategoriesComponent } from './categories/categories.component';
 import { EditCategoryComponent } from './categories/edit-category/edit-category.component';
+import { WebScraperComponent } from './web-scraper/web-scraper.component';
+import { EditSiteDialogComponent } from './web-scraper/edit-site-dialog/edit-site-dialog.component';
 
 const routes: Routes = [
   { path: '', component: AdminComponent },
@@ -32,7 +34,9 @@ const routes: Routes = [
     AdminComponent,
     CategoryTreeComponent,
     CategoriesComponent,
-    EditCategoryComponent
+    EditCategoryComponent,
+    WebScraperComponent,
+    EditSiteDialogComponent
   ],
   imports: [
     RouterModule.forChild(routes),

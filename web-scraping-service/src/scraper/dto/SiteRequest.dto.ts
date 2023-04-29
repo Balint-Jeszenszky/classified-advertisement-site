@@ -53,6 +53,6 @@ export class SiteRequest {
   
   @ApiProperty()
   @ValidateNested({ each: true })
-  @Type(() => Selector)
+  @Type(() => RootSelector)
   selector: RootSelector;
 }

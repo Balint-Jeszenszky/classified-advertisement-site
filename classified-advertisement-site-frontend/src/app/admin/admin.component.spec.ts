@@ -11,6 +11,7 @@ import { AdminComponent } from './admin.component';
 import { CategoriesComponent } from './categories/categories.component';
 import { CategoryTreeComponent } from './categories/category-tree/category-tree.component';
 import { UserListComponent } from './user-list/user-list.component';
+import { WebScraperComponent } from './web-scraper/web-scraper.component';
 
 describe('AdminComponent', () => {
   let component: AdminComponent;
@@ -18,7 +19,7 @@ describe('AdminComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AdminComponent, UserListComponent, CategoriesComponent, CategoryTreeComponent ],
+      declarations: [ AdminComponent, UserListComponent, CategoriesComponent, CategoryTreeComponent, WebScraperComponent ],
       imports: [
         HttpClientTestingModule,
         MatTabsModule,

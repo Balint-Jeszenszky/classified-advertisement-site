@@ -9,6 +9,7 @@ import { ApiModule as GatewayApiModule, Configuration as GatewayApiConfiguration
 import { ApiModule as UserserviceApiModule, Configuration as UserserviceApiConfiguration } from './openapi/userservice';
 import { ApiModule as AdvertisementserviceApiModule, Configuration as AdvertisementserviceApiConfiguration } from './openapi/advertisementservice';
 import { ApiModule as ImageserviceApiModule, Configuration as ImageserviceApiConfiguration } from './openapi/imageprocessingservice';
+import { ApiModule as WebscraperserviceApiModule, Configuration as WebscraperserviceApiConfiguration } from './openapi/webscraperservice';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -30,6 +31,7 @@ import { SubmenuComponent } from './components/navbar/submenu/submenu.component'
     UserserviceApiModule.forRoot(() => new UserserviceApiConfiguration({ basePath: '/api/user' })),
     AdvertisementserviceApiModule.forRoot(() => new AdvertisementserviceApiConfiguration({ basePath: '/api/advertisement' })),
     ImageserviceApiModule.forRoot(() => new ImageserviceApiConfiguration({ basePath: '/api/images' })),
+    WebscraperserviceApiModule.forRoot(() => new WebscraperserviceApiConfiguration({ basePath: '' })),
     MatToolbarModule,
     MatMenuModule,
   ],
