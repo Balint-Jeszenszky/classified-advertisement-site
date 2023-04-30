@@ -21,8 +21,8 @@ export class ScraperController {
   @Get('advertisement/:id')
   @ApiOkResponse({ type: ProductResponse })
   @ApiNotFoundResponse()
-  getPriceByAdvertisementId(@Param('id') id: number): Promise<ProductResponse> {
-    return this.scraperService.getPriceByAdvertisementId(id);
+  getProductByAdvertisementId(@Param('id') id: number): Promise<ProductResponse> {
+    return this.scraperService.getProductByAdvertisementId(id);
   }
 
   @Get('sites')

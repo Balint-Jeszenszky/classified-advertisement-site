@@ -52,7 +52,7 @@ export class DetailsComponent implements OnInit {
       this.imagesService.getImageListAdvertisementId(this.id).subscribe({
         next: urls => this.imageUrls = urls,
       });
-      this.scraperService.scraperControllerGetPriceByAdvertisementId(this.id).subscribe({
+      this.scraperService.scraperControllerGetProductByAdvertisementId(this.id).subscribe({
         next: res => this.commercialPrice = res,
       });
     });

@@ -6,7 +6,7 @@ import { Advertisement } from './dto/Advertisement.dto';
 import { Site, SiteDocument } from './schemas/site.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Price } from './schemas/price.schema';
+import { Product, ProductDocument } from './schemas/product.schema';
 import puppeteer from 'puppeteer-extra';
 import { Browser, executablePath } from 'puppeteer';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
@@ -19,17 +19,17 @@ export class ScraperService {
 
   constructor(
     @InjectModel(Site.name) private readonly siteModel: Model<Site>,
-    @InjectModel(Price.name) private readonly priceModel: Model<Price>,
+    @InjectModel(Product.name) private readonly productModel: Model<Product>,
   ) { }
 
-  async getPriceByAdvertisementId(id: number): Promise<ProductResponse> {
-    const price = await this.priceModel.findOne({ advertisementId: id }).exec();
+  async getProductByAdvertisementId(id: number): Promise<ProductResponse> {
+    const product = await this.productModel.findOne({ advertisementId: id }).exec();
 
-    if (!price) {
+    if (!product) {
       throw new NotFoundException;
     }
 
-    return price;
+    return this.mapProductModelToProductResponse(product);
   }
 
   async getAllSites(): Promise<SiteResponse[]> {
@@ -61,15 +61,18 @@ export class ScraperService {
   }
 
   async addAdvertisement(advertisement: Advertisement): Promise<void> {
-    await new this.priceModel(advertisement).save();
+    await new this.productModel(advertisement).save();
   }
 
   async editAdvertisement(advertisement: Advertisement): Promise<void> {
-    await this.priceModel.findOneAndUpdate({ advertisementId: advertisement.advertisementId }, advertisement).exec();
+    const result = await this.productModel.findOneAndUpdate({ advertisementId: advertisement.advertisementId }, advertisement).exec();
+    if (!result) {
+      await new this.productModel(advertisement).save();
+    }
   }
 
   async deleteAdvertisement(advertisementId: number): Promise<void> {
-    await this.priceModel.deleteOne({ advertisementId }).exec();
+    await this.productModel.deleteOne({ advertisementId }).exec();
   }
 
   @Cron('0 3 * * *')
@@ -89,7 +92,7 @@ export class ScraperService {
   private async scrapeCategory(categoryId: number, browser: Browser) {
     this.logger.log(`Scrape category ${categoryId}`);
     const sites = await this.siteModel.find({ categoryId }).exec();
-    const advertisements = await this.priceModel.find({ categoryId }).exec();
+    const advertisements = await this.productModel.find({ categoryId }).exec();
 
     const updatedAdvertisements = await Promise.all(advertisements.map(async advertisement => {
 
@@ -115,7 +118,7 @@ export class ScraperService {
       return advertisement;
     }));
 
-    this.priceModel.bulkSave(updatedAdvertisements);
+    this.productModel.bulkSave(updatedAdvertisements);
   }
 
   private async scrapeSites(sites: Site[], searchTerm: string, browser: Browser) {
@@ -155,6 +158,16 @@ export class ScraperService {
     return results;
   }
 
+  private mapProductModelToProductResponse(product: ProductDocument): ProductResponse {
+    return {
+      title: product.productTitle,
+      image: product.image,
+      price: product.price,
+      site: product.site,
+      url: product.url,
+    };
+  }
+
   private mapSitesModelToDto(sites: SiteDocument[]): SiteResponse[] {
     return sites.map(site => this.mapSiteModelToDto(site));
   }
@@ -166,6 +179,6 @@ export class ScraperService {
       url: site.url,
       categoryId: site.categoryId,
       selector: site.selector,
-    }
+    };
   }
 }
