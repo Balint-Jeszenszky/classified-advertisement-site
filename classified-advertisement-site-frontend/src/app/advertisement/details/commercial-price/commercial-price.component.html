@@ -1,0 +1,12 @@
+<h3 *ngIf="!product">No commercial price data</h3>
+<div *ngIf="product" class="d-flex">
+  <div class="me-2 thumbnail d-flex justify-content-center align-items-center">
+    <img *ngIf="product.image" [src]="product.image" [alt]="product.title">
+    <div *ngIf="!product.image" alt="placeholder"><mat-icon>image</mat-icon></div>
+  </div>
+  <div>
+    <h3><a [href]="product.url" class="unformatted-link" target="_blank" rel="noreferrer">{{ product.title }} ({{ product.site }})</a></h3>
+    <p>Commercial price: {{ product.price | currency: 'HUF' }}</p>
+    <p *ngIf="advertisementPrice">Save {{ 1 - (advertisementPrice / product.price) | percent : '.0-2' }} by buying this used!</p>
+  </div>
+</div>

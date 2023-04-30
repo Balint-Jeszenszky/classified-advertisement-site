@@ -1,0 +1,19 @@
+$thumbnail-size: 6rem;
+
+.thumbnail {
+  width: $thumbnail-size;
+  height: $thumbnail-size;
+  border: 1px solid #cfcfcf;
+  border-radius: 2px;
+  background-color: #f5f5f5;
+
+  img {
+    object-fit: cover;
+    width: $thumbnail-size;
+    height: $thumbnail-size;
+  }
+}
+
+p {
+  margin: 0;
+}

@@ -25,6 +25,7 @@ import { ImageUploadComponent } from './manage-advertisement/image-upload/image-
 import { loginGuard } from '../auth.guard';
 import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
+import { CommercialPriceComponent } from './details/commercial-price/commercial-price.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -51,7 +52,8 @@ const routes: Routes = [
     AdvertisementCardComponent,
     ManageAdvertisementComponent,
     EditAdvertisementComponent,
-    ImageUploadComponent
+    ImageUploadComponent,
+    CommercialPriceComponent
   ],
   imports: [
     RouterModule.forChild(routes),

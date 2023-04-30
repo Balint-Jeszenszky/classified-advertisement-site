@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AdvertisementResponse, AdvertisementService, CategoryResponse, CategoryService } from 'src/app/openapi/advertisementservice';
 import { ImagesService } from 'src/app/openapi/imageprocessingservice';
 import { PublicUserDetailsResponse, PublicUserService } from 'src/app/openapi/userservice';
+import { ProductResponse, ScraperService } from 'src/app/openapi/webscraperservice';
 import { LoggedInUserService } from 'src/app/service/logged-in-user.service';
 import { Role } from 'src/app/service/types';
 
@@ -19,6 +20,7 @@ export class DetailsComponent implements OnInit {
   admin: boolean = false;
   userId?: number;
   imageUrls?: string[];
+  commercialPrice?: ProductResponse;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -28,6 +30,7 @@ export class DetailsComponent implements OnInit {
     private readonly loggedInUserService: LoggedInUserService,
     private readonly publicUserService: PublicUserService,
     private readonly imagesService: ImagesService,
+    private readonly scraperService: ScraperService,
   ) { }
 
   ngOnInit(): void {
@@ -48,6 +51,9 @@ export class DetailsComponent implements OnInit {
       });
       this.imagesService.getImageListAdvertisementId(this.id).subscribe({
         next: urls => this.imageUrls = urls,
+      });
+      this.scraperService.scraperControllerGetPriceByAdvertisementId(this.id).subscribe({
+        next: res => this.commercialPrice = res,
       });
     });
   }

@@ -19,13 +19,17 @@
       </div>
     </div>
     <p class="date">Published: {{ advertisement.createdAt | localeDateTime }}</p>
-    <div>
+    <div class="mb-3">
       <mat-chip>{{ advertisement.status }}</mat-chip>
     </div>
     <p>{{ advertisement.description }}</p>
     <h2>{{ advertisement.price | currency: 'HUF' : 'symbol' }}</h2>
     <p>Advertiser: {{ advertiser?.username }}</p>
   </div>
+</div>
+<div *ngIf="commercialPrice" class="mt-3">
+  <h2>Commercial price information:</h2>
+  <app-commercial-price [product]="commercialPrice" [advertisementPrice]="advertisement?.price"></app-commercial-price>
 </div>
 <div class="pt-3">
   <app-comment-section *ngIf="advertisement" [advertisementId]="advertisement.id"></app-comment-section>
