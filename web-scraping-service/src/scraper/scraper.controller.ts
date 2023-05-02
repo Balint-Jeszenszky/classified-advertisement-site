@@ -1,11 +1,11 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put } from '@nestjs/common';
 import { ScraperService } from './scraper.service';
 import { ProductResponse } from './dto/ProductResponse.dto';
-import { Public } from 'src/auth/public.decorator';
+import { Public } from '../auth/public.decorator';
 import { SiteRequest } from './dto/SiteRequest.dto';
 import { SiteResponse } from './dto/SiteResponse.dto';
-import { HasRole } from 'src/auth/hasrole.decorator';
-import { Role } from 'src/auth/role.enum';
+import { HasRole } from '../auth/hasrole.decorator';
+import { Role } from '../auth/role.enum';
 import { ApiAcceptedResponse, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
 
 @ApiTags('scraper')

@@ -22,7 +22,7 @@ export class Product {
   title: string;
   
   @Prop()
-  productTitle: string;
+  productTitle?: string;
   
   @Prop()
   url?: string;
