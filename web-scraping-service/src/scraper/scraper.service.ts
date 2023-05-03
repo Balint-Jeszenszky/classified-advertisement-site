@@ -39,8 +39,7 @@ export class ScraperService {
   }
 
   async createSite(site: SiteRequest): Promise<SiteResponse> {
-    const createdSite = new this.siteModel(site);
-    await createdSite.save();
+    const createdSite = await new this.siteModel(site).save();
 
     return this.mapSiteModelToDto(createdSite);
   }
