@@ -82,8 +82,8 @@ public class ImageProcessingServiceImpl implements ImageProcessingService {
     }
 
     @Override
-    public void deleteImagesById(List<Integer> imageIds) {
-        List<ImageData> images = imageDataRepository.findAllById(imageIds);
+    public void deleteImagesByName(List<String> imageNames) {
+        List<ImageData> images = imageDataRepository.findAllByNameIn(imageNames);
 
         try {
             removeImages(images.stream().map(i -> new DeleteObject(IMAGE_PATH + i.getName())).toList());
@@ -93,7 +93,7 @@ public class ImageProcessingServiceImpl implements ImageProcessingService {
                     .map(i -> new DeleteObject(THUMBNAIL_PATH + i.getName()))
                     .toList());
         } catch (Exception e) {
-            log.error("Error when deleting images by ids {}", imageIds);
+            log.error("Error when deleting images by names {}", imageNames);
             log.error(e.getMessage());
         }
 

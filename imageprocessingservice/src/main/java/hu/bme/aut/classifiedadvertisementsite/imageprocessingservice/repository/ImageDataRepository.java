@@ -9,5 +9,7 @@ import java.util.Optional;
 public interface ImageDataRepository extends JpaRepository<ImageData, Integer> {
     List<ImageData> findAllByAdvertisementId(Integer id);
 
+    List<ImageData> findAllByNameIn(List<String> names);
+
     Optional<ImageData> findByAdvertisementIdAndThumbnailIsTrue(Integer id);
 }

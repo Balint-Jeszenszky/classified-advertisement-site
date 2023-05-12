@@ -31,13 +31,13 @@ public class ImageProcessingMessageReceiver implements ChannelAwareMessageListen
                     imageProcessingService.processImage(node.get("name").asText(), node.get("advertisementId").asInt());
                     break;
                 case "DELETE":
-                    List<Integer> imageIds = new ArrayList<>();
-                    if (node.get("imageIds").isArray()) {
-                        for (final JsonNode objNode : node.get("imageIds")) {
-                            imageIds.add(objNode.asInt());
+                    List<String> imageNames = new ArrayList<>();
+                    if (node.get("imageNames").isArray()) {
+                        for (final JsonNode objNode : node.get("imageNames")) {
+                            imageNames.add(objNode.asText());
                         }
                     }
-                    imageProcessingService.deleteImagesById(imageIds);
+                    imageProcessingService.deleteImagesByName(imageNames);
                     break;
                 case "DELETE_AD":
                     imageProcessingService.deleteImagesByAdvertisementId(node.get("advertisementId").asInt());
