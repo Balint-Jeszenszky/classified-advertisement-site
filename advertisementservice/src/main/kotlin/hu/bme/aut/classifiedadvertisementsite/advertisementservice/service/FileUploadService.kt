@@ -5,5 +5,5 @@ import org.springframework.web.multipart.MultipartFile
 interface FileUploadService {
     fun uploadFiles(files: MutableList<MultipartFile>, advertisementId: Int)
     fun deleteImagesForAd(advertisementId: Int)
-    fun deleteImagesById(deletedImages: MutableList<Int>)
+    fun deleteImagesByName(deletedImages: List<String>)
 }

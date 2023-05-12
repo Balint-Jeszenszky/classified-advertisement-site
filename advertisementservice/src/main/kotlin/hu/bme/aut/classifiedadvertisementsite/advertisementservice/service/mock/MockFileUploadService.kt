@@ -19,7 +19,7 @@ class MockFileUploadService : FileUploadService {
         log.info("Delete images for ad: {}", advertisementId)
     }
 
-    override fun deleteImagesById(deletedImages: MutableList<Int>) {
+    override fun deleteImagesByName(deletedImages: List<String>) {
         log.info("Delete images: {}", deletedImages)
     }
 }

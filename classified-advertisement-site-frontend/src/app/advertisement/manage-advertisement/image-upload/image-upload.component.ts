@@ -8,6 +8,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class ImageUploadComponent {
   @Input() advertisementId?: number;
   @Input() files: File[] = [];
+  @Input() images: string[] = [];
+  @Input() imagesToDelete: string[] = [];
   @Output() back: EventEmitter<File[]> = new EventEmitter();
   @Output() next: EventEmitter<File[]> = new EventEmitter();
   acceptedExtensions = ['.jpeg','.jpg','.png'];
@@ -25,8 +27,15 @@ export class ImageUploadComponent {
     }
   }
 
-  remove(file: File) {
+  removeFile(file: File) {
     this.files = this.files.filter(e => e !== file);
+  }
+
+  removeImage(image: string) {
+    if (confirm('Delete image?')) {
+      this.images = this.images.filter(i => i !== image);
+      this.imagesToDelete.push(image);
+    }
   }
 
   onBack() {

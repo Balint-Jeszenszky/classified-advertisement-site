@@ -71,14 +71,14 @@ class FileUploadServiceImpl(
         rabbitTemplate.convertAndSend(queue.name, node.toString())
     }
 
-    override fun deleteImagesById(deletedImages: MutableList<Int>) {
+    override fun deleteImagesByName(deletedImages: List<String>) {
         val mapper = ObjectMapper()
         val node = mapper.createObjectNode()
 
         node.put("type", "DELETE")
         val arrayNode = mapper.createArrayNode()
         deletedImages.forEach(arrayNode::add)
-        node.set<JsonNode>("imageIds", arrayNode)
+        node.set<JsonNode>("imageNames", arrayNode)
         rabbitTemplate.convertAndSend(queue.name, node.toString())
     }
 }

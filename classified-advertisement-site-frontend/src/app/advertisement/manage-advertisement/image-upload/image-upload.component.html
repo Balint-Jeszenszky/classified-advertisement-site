@@ -5,7 +5,7 @@
       <div *ngFor="let file of files" class="d-inline-block position-relative m-2 image-container">
         <div class="d-flex flex-wrap align-items-center h-100">
           <img [src]="file | imageSource | async" [alt]="file.name" class="image-preview mx-auto">
-          <span class="position-absolute top-0 start-100 translate-middle" (click)="remove(file)">
+          <span class="position-absolute top-0 start-100 translate-middle" (click)="removeFile(file)">
             <mat-icon class="remove-image">cancel</mat-icon>
           </span>
         </div>
@@ -18,6 +18,19 @@
   <button mat-raised-button color="primary" class="upload-btn" (click)="fileUpload.click()">
     <mat-icon>attach_file</mat-icon> Upload images
   </button>
+</div>
+<div>
+  <p class="mt-4">Current images:</p>
+  <div class="mb-3 d-flex flex-wrap">
+    <div *ngFor="let image of images" class="d-inline-block position-relative m-2 image-container">
+      <div class="d-flex flex-wrap align-items-center h-100">
+        <img [src]="'/api/images/image/' + image" alt="" class="image-preview mx-auto">
+        <span class="position-absolute top-0 start-100 translate-middle" (click)="removeImage(image)">
+          <mat-icon class="remove-image">cancel</mat-icon>
+        </span>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="text-end">
   <button mat-button (click)="onBack()">Back</button>

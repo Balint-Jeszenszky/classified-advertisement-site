@@ -27,7 +27,7 @@
     <p>Advertiser: {{ advertiser?.username }}</p>
   </div>
 </div>
-<div *ngIf="commercialPrice" class="mt-3">
+<div *ngIf="commercialPrice?.title" class="mt-3">
   <h2>Commercial price information:</h2>
   <app-commercial-price [product]="commercialPrice" [advertisementPrice]="advertisement?.price"></app-commercial-price>
 </div>
