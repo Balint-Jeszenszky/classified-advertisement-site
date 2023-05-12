@@ -411,9 +411,7 @@ components:
             type: string
             format: binary
         deletedImages:
-          type: array
-          items:
-            type: integer
+          type: string
       required:
         - title
         - description

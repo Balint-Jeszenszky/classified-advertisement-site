@@ -106,7 +106,7 @@ class AdvertisementService(
         categoryId: Int,
         status: String,
         images: MutableList<MultipartFile>?,
-        deletedImages: MutableList<Int>?
+        deletedImages: String?
     ): AdvertisementResponse {
         val user = loggedInUserService.getLoggedInUser() ?: throw ForbiddenException("User not found")
         val advertisement = advertisementRepository.findByIdAndAdvertiserId(id, user.getId())
@@ -133,7 +133,7 @@ class AdvertisementService(
             fileUploadService.uploadFiles(images, advertisement.id!!)
         }
         if (!deletedImages.isNullOrEmpty()) {
-            fileUploadService.deleteImagesById(deletedImages)
+            fileUploadService.deleteImagesByName(deletedImages.split(";"))
         }
 
         sendAdvertisementMessage("UPDATE", id, advertisement.title, advertisement.category.id)

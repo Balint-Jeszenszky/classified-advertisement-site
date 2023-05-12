@@ -72,7 +72,7 @@ class AdvertisementController(
         categoryId: Int,
         status: String,
         images: MutableList<MultipartFile>?,
-        deletedImages: MutableList<Int>?
+        deletedImages: String?
     ): ResponseEntity<AdvertisementResponse> {
         val advertisement = advertisementService.updateAdvertisement(
             id,
