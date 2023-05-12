@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
 import { ActivatedRoute } from '@angular/router';
 import { AdvertisementResponse, AdvertisementService, CategoryResponse, CategoryService } from 'src/app/openapi/advertisementservice';
+import { ImagesService } from 'src/app/openapi/imageprocessingservice';
 
 export interface EditAdvertisement {
   id?: number;
@@ -22,11 +23,14 @@ export class ManageAdvertisementComponent implements OnInit {
   advertisement?: EditAdvertisement;
   categories?: CategoryResponse[];
   files: File[] = [];
+  images: string[] = [];
+  imagesToDelete: string[] = [];
 
   constructor(
     private readonly route: ActivatedRoute,
     private readonly categoryService: CategoryService,
     private readonly advertisementService: AdvertisementService,
+    private readonly imagesService: ImagesService,
   ) { }
 
   ngOnInit(): void {
@@ -40,8 +44,9 @@ export class ManageAdvertisementComponent implements OnInit {
         this.advertisementService.getAdvertisementId(advertisementId).subscribe({
           next: res => this.advertisement = res,
         });
-      } else {
-        this.advertisement = { title: '', description: '', price: 0 };
+        this.imagesService.getImageListAdvertisementId(advertisementId).subscribe({
+          next: res => this.images = res,
+        });
       }
     });
     this.categoryService.getCategories().subscribe({
@@ -87,7 +92,7 @@ export class ManageAdvertisementComponent implements OnInit {
         this.advertisement.categoryId,
         this.advertisement.status,
         this.files,
-        // [1,2], TODO find out how to send array
+        this.imagesToDelete.join(';'),
       ).subscribe({
         next: res => {
           this.advertisement = res;
