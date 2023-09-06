@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: advertisementservice-db-config
+data:
+  advertisementservice-db-url: advertisementservice-db-service:3306/advertisements
+  advertisementservice-db-name: advertisements

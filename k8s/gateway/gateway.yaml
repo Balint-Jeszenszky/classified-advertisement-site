@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-deployment
+  labels:
+    app: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+      - name: gateway
+        image: balintjeszenszky/adsite:gateway-latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PORT
+          value: '8080'
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: gateway-db-config
+              key: gateway-db-url
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: gateway-db-secret
+              key: gateway-db-user
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: gateway-db-secret
+              key: gateway-db-password
+        - name: JWT_EXPIRATION
+          valueFrom:
+            secretKeyRef:
+              name: gateway-secret
+              key: jwt-expiration
+        - name: JWT_REFRESH_EXPIRATION
+          valueFrom:
+            secretKeyRef:
+              name: gateway-secret
+              key: jwt-refresh-expiration
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: gateway-secret
+              key: jwt-secret
+        - name: JWT_REFRESH_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: gateway-secret
+              key: jwt-refresh-secret
+        - name: USER_SERVICE_URI
+          valueFrom:
+            configMapKeyRef:
+              name: userservice-config
+              key: userservice-url
+        - name: ADVERTISEMENT_SERVICE_URI
+          valueFrom:
+            configMapKeyRef:
+              name: advertisementservice-config
+              key: advertisementservice-url
+        - name: IMAGE_SERVICE_URI
+          valueFrom:
+            configMapKeyRef:
+              name: imageprocessingservice-config
+              key: imageprocessingservice-url
+        - name: WEBSCRAPER_SERVICE_URI
+          valueFrom:
+            configMapKeyRef:
+              name: webscraperservice-config
+              key: webscraperservice-url
+        - name: FRONTEND_URI
+          valueFrom:
+            configMapKeyRef:
+              name: frontend-config
+              key: frontend-url
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service
+spec:
+  type: NodePort
+  selector:
+    app: gateway
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080
