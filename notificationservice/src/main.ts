@@ -11,10 +11,10 @@ async function bootstrap() {
     options: {
       urls: [{
         protocol: 'amqp',
-        hostname: 'localhost',
+        hostname: process.env.RABBITMQ_HOST,
         port: 5672,
-        username: 'guest',
-        password: 'guest',
+        username: process.env.RABBITMQ_USER,
+        password: process.env.RABBITMQ_PASS,
       }],
       queue: 'email-queue',
       noAck: false,
@@ -32,6 +32,6 @@ async function bootstrap() {
   });
 
   await app.startAllMicroservices();
-  await app.listen(3000);
+  await app.listen(process.env.PORT);
 }
 bootstrap();
