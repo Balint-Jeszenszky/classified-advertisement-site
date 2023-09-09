@@ -8,7 +8,7 @@ import { ConfigModule } from '@nestjs/config';
       envFilePath: process.env.NODE_ENV ? `.${process.env.NODE_ENV}.env` : '.env',
       isGlobal: true,
     }),
-    NotificationModule,
+    NotificationModule.forRoot(),
   ],
   controllers: [],
   providers: [],

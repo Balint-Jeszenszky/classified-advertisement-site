@@ -26,10 +26,10 @@ export class NotificationService {
   sendEmail() {
     this.mailerService.sendMail({
       to: 'user@gmail.com', // List of receivers email address
-      from: 'user@outlook.com', // Senders email address
+      from: process.env.EMAIL_USER,
       subject: 'Testing Nest Mailermodule with template ✔',
-      template: 'index', // The `.pug` or `.hbs` extension is appended automatically.
-      context: {  // Data to be sent to template engine.
+      template: 'test',
+      context: {
         code: 'cf1a3f828287',
         username: 'john doe',
       },

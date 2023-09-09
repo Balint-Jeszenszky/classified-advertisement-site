@@ -21,6 +21,14 @@
 			"path": "web-scraping-service"
 		},
 		{
+			"name": "Notifivation service",
+			"path": "notificationservice"
+		},
+		{
+			"name": "Kubernetes",
+			"path": "k8s"
+		},
+		{
 			"name": "Frontend",
 			"path": "classified-advertisement-site-frontend"
 		},
