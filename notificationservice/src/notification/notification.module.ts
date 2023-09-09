@@ -24,7 +24,7 @@ export class NotificationModule {
             },
           },
           template: {
-            dir: process.cwd() + '/templates/',
+            dir: process.cwd() + '/templates/email',
             adapter: new HandlebarsAdapter(),
             options: {
               strict: true,

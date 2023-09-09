@@ -1,9 +1,12 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { SentMessageInfo } from 'nodemailer';
 import { setVapidDetails, sendNotification } from 'web-push';
+import { Email, Push } from './dto/Notification.dto';
 
 @Injectable()
 export class NotificationService {
+  private readonly logger: Logger = new Logger(NotificationService.name);
 
   constructor(
     private readonly mailerService: MailerService,
@@ -15,7 +18,8 @@ export class NotificationService {
     );
   }
 
-  sendWebPushNotification() {
+  async sendWebPushNotification(push: Push) {
+    this.logger.log('push')
     // sendNotification()
   }
 
@@ -23,22 +27,16 @@ export class NotificationService {
     return process.env.VAPID_PUBLIC_KEY;
   }
 
-  sendEmail() {
-    this.mailerService.sendMail({
-      to: 'user@gmail.com', // List of receivers email address
+  sendEmail(email: Email): Promise<SentMessageInfo> {
+    return this.mailerService.sendMail({
+      to: email.toAddress,
       from: process.env.EMAIL_USER,
-      subject: 'Testing Nest Mailermodule with template ✔',
-      template: 'test',
+      subject: 'TODO read from json (?)',
+      template: email.template,
       context: {
-        code: 'cf1a3f828287',
-        username: 'john doe',
+        baseurl: process.env.BASEURL,
+        ...email.data
       },
-    })
-    .then((success) => {
-      console.log(success);
-    })
-    .catch((err) => {
-      console.log(err);
     });
   }
 }
