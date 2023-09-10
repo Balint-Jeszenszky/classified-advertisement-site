@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { NotificationModule } from './notification/notification.module';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { HeaderAuthGuard } from './auth/header-auth.guard';
 
 @Module({
   imports: [
@@ -11,6 +13,11 @@ import { ConfigModule } from '@nestjs/config';
     NotificationModule.forRoot(),
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: HeaderAuthGuard,
+    },
+  ],
 })
 export class AppModule {}
