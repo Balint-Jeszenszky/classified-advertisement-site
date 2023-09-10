@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { SentMessageInfo } from 'nodemailer';
 import { setVapidDetails, sendNotification } from 'web-push';
 import { Email, Push } from './dto/Notification.dto';
+import * as emailSubject from '../../templates/email/subject.json';
 
 @Injectable()
 export class NotificationService {
@@ -31,7 +32,7 @@ export class NotificationService {
     return this.mailerService.sendMail({
       to: email.toAddress,
       from: process.env.EMAIL_USER,
-      subject: 'TODO read from json (?)',
+      subject: emailSubject[email.template],
       template: email.template,
       context: {
         baseurl: process.env.BASEURL,
