@@ -67,6 +67,7 @@ services:
       - ADVERTISEMENT_SERVICE_URI=http://advertisementservice:8080
       - IMAGE_SERVICE_URI=http://imageprocessingservice:8080
       - WEBSCRAPER_SERVICE_URI=http://webscraperservice:3000
+      - NOTIFICATION_SERVICE_URI=http://notificationservice:3000
       - FRONTEND_URI=http://frontend:80
     networks:
       - web
@@ -201,8 +202,8 @@ services:
     ports:
       - 27017:27017
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_WEBSCRAPINGSERVICE_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_WEBSCRAPINGSERVICE_PASSWORD}
       - MONGO_INITDB_DATABASE=scraper
     volumes:
       - ./container-data/dev/webscraperservice-mongo:/data/db
@@ -219,8 +220,8 @@ services:
       - 18081:8081
     environment:
       - ME_CONFIG_MONGODB_SERVER=webscraperservice-db
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_USERNAME}
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_PASSWORD}
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_WEBSCRAPINGSERVICE_USERNAME}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_WEBSCRAPINGSERVICE_PASSWORD}
     networks:
       - database
 
@@ -239,8 +240,67 @@ services:
       - RABBITMQ_USER=${RABBITMQ_USER}
       - RABBITMQ_PASS=${RABBITMQ_PASS}
       - MONGO_URL=webscraperservice-db/scraper
-      - MONGO_USER=${MONGO_USERNAME}
-      - MONGO_PASS=${MONGO_PASSWORD}
+      - MONGO_USER=${MONGO_WEBSCRAPINGSERVICE_USERNAME}
+      - MONGO_PASS=${MONGO_WEBSCRAPINGSERVICE_PASSWORD}
+    networks:
+      - web
+      - database
+      - message
+  
+  notificationservice-db:
+    image: mongo:5
+    restart: unless-stopped
+    container_name: notificationservice-db
+    ports:
+      - 27018:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_NOTIFICATIONSERVICE_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_NOTIFICATIONSERVICE_PASSWORD}
+      - MONGO_INITDB_DATABASE=notification
+    volumes:
+      - ./container-data/dev/notificationservice-mongo:/data/db
+    networks:
+      - database
+  
+  notificationservice-mongo-express:
+    image: mongo-express
+    restart: unless-stopped
+    container_name: notificationservice-mongo-express
+    depends_on:
+      - notificationservice-db
+    ports:
+      - 18082:8081
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=notificationservice-db
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_NOTIFICATIONSERVICE_USERNAME}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_NOTIFICATIONSERVICE_PASSWORD}
+    networks:
+      - database
+
+  notificationservice:
+    image: balintjeszenszky/adsite:notificationservice-latest
+    restart: unless-stopped
+    container_name: notificationservice
+    depends_on:
+      - notificationservice-db
+      - rabbitmq
+    ports:
+      - 3001:3000
+    environment:
+      - PORT=3000
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - MONGO_URL=notificationservice-db/notification
+      - MONGO_USER=${MONGO_NOTIFICATIONSERVICE_USERNAME}
+      - MONGO_PASS=${MONGO_NOTIFICATIONSERVICE_PASSWORD}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - VAPID_PUBLIC_KEY=${VAPID_PUBLIC_KEY}
+      - VAPID_PRIVATE_KEY=${VAPID_PRIVATE_KEY}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
     networks:
       - web
       - database
