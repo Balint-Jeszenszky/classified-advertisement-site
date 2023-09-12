@@ -17,6 +17,8 @@ public class Router {
     private String imageServiceUri;
     @Value("${gateway.services.webScraperService}")
     private String webScraperServiceUri;
+    @Value("${gateway.services.notificationServiceUri}")
+    private String notificationServiceUri;
     @Value("${gateway.services.frontend}")
     private String frontendUri;
 
@@ -38,6 +40,9 @@ public class Router {
                 .route(p -> p
                         .path("/api/scraper/**")
                         .uri(webScraperServiceUri))
+                .route(p -> p
+                        .path("/api/notification/**")
+                        .uri(notificationServiceUri))
                 .route(p -> p
                         .path("/**")
                         .uri(frontendUri))
