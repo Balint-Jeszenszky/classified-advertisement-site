@@ -123,7 +123,7 @@ export class LoggedInUserService {
   }
 
   private async handlePushSubscription() {
-    this.swPush.subscription.subscribe({
+    this.swPush.subscription.subscribe({ // TODO use first value only
       next: res => {
         if (!this.loggedIn || res != null) return;
 
@@ -131,7 +131,7 @@ export class LoggedInUserService {
           next: res => {
             this.swPush.requestSubscription({
               serverPublicKey: res.publicVapidKey,
-            }).then(sub => /*this.notificationsService.addPushSubscriber(sub).subscribe()*/ console.log(sub));
+            }).then(sub => this.notificationsService.notificationControllerPushSubscription(sub).subscribe());
           },
           error: err => console.error("Could not subscribe to notifications", err),
         });

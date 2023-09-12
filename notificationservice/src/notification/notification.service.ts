@@ -4,6 +4,8 @@ import { SentMessageInfo } from 'nodemailer';
 import { setVapidDetails, sendNotification } from 'web-push';
 import { Email, Push } from './dto/Notification.dto';
 import * as emailSubject from '../../templates/email/subject.json';
+import { User } from 'src/auth/User.model';
+import { PushSubscriptionRequest } from './dto/PushSubscriptionRequest.dto';
 
 @Injectable()
 export class NotificationService {
@@ -26,6 +28,11 @@ export class NotificationService {
 
   getPublicVapidKey(): string {
     return process.env.VAPID_PUBLIC_KEY;
+  }
+
+  subscribePushNotification(user: User, subscription: PushSubscriptionRequest) {
+    this.logger.log(user);
+    this.logger.log(subscription);
   }
 
   sendEmail(email: Email): Promise<SentMessageInfo> {
