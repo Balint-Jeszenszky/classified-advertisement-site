@@ -4,6 +4,7 @@ import { SentMessageInfo } from 'nodemailer';
 import { setVapidDetails, sendNotification } from 'web-push';
 import { Email, Push } from './dto/Notification.dto';
 import * as emailSubject from '../../templates/email/subject.json';
+import * as pushTemplate from '../../templates/push/pushNotifications.json';
 import { User } from 'src/auth/User.model';
 import { PushSubscriptionRequest } from './dto/PushSubscriptionRequest.dto';
 import { PushSubscription, PushSubscriptionDocument } from './schema/push-subscription.model';
@@ -25,9 +26,50 @@ export class NotificationService {
     );
   }
 
-  async sendWebPushNotification(push: Push) {
-    this.logger.log('push')
-    // sendNotification()
+  async sendWebPushNotification(push: Push): Promise<void> {
+    const user = await this.pushSubscription.findOne({ userId: push.userId }).exec();
+
+    if (!user) {
+      return;
+    }
+
+    const payload = this.preparePushNotification(push);
+
+    await Promise.all(user.subscriptions.map(
+      s => sendNotification(s, payload)
+        .catch(async err => await this.deletePushNotificationEndpoint(user, err.endpoint))
+    ));
+  }
+
+  private async deletePushNotificationEndpoint(user: PushSubscriptionDocument, endpoint: string) {
+    user.subscriptions = user.subscriptions.filter(s => s.endpoint !== endpoint);
+    await user.save();
+  }
+
+  private preparePushNotification(push: Push): string {
+    const template = pushTemplate[push.template];
+
+    if (!template){
+      this.logger.error(`Push template "${push.template}" does not exists`);
+      return;
+    }
+
+    return JSON.stringify({
+      notification: {
+        title: this.replaceKeysInString(template.title, push.data),
+        body: this.replaceKeysInString(template.body, push.data),
+      },
+    });
+  }
+
+  private replaceKeysInString(template: string, data: object): string {
+    return Object.entries(data).reduce(
+      (template, entry) => {
+        const [key, value] = entry;
+        return template.replace(`{{${key}}}`, value);
+      },
+      template,
+    );
   }
 
   getPublicVapidKey(): string {

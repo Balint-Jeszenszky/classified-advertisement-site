@@ -1,0 +1,6 @@
+{
+  "example": {
+    "title": "Push title {{username}}",
+    "body": "Push notificatoion {{username}}, {{randomnumber}}"
+  }
+}
