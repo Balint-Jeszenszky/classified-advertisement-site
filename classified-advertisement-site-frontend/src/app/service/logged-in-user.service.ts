@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, ReplaySubject } from 'rxjs';
+import { Observable, ReplaySubject, firstValueFrom } from 'rxjs';
 import { CredentialsService } from '../openapi/credentials.service';
 import { AuthService, LoginResponse, RefreshResponse, UserDetailsResponse } from '../openapi/gateway';
 import { SwPush } from '@angular/service-worker';
@@ -123,19 +123,17 @@ export class LoggedInUserService {
   }
 
   private async handlePushSubscription() {
-    this.swPush.subscription.subscribe({ // TODO use first value only
-      next: res => {
-        if (!this.loggedIn || res != null) return;
+    firstValueFrom(this.swPush.subscription).then(res => {
+      if (!this.loggedIn || res != null) return;
 
-        this.notificationsService.notificationControllerGetPublicVapidKey().subscribe({
-          next: res => {
-            this.swPush.requestSubscription({
-              serverPublicKey: res.publicVapidKey,
-            }).then(sub => this.notificationsService.notificationControllerPushSubscription(sub).subscribe());
-          },
-          error: err => console.error("Could not subscribe to notifications", err),
-        });
-      }
+      this.notificationsService.notificationControllerGetPublicVapidKey().subscribe({
+        next: res => {
+          this.swPush.requestSubscription({
+            serverPublicKey: res.publicVapidKey,
+          }).then(sub => this.notificationsService.notificationControllerPushSubscription(sub).subscribe());
+        },
+        error: err => console.error("Could not subscribe to notifications", err),
+      });
     });
   }
 }

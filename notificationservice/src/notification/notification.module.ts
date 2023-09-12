@@ -4,12 +4,17 @@ import { NotificationService } from './notification.service';
 import { NotificationController } from './notification.controller';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { PushSubscription, PushSubscriptionSchema } from './schema/push-subscription.model';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({})
 export class NotificationModule {
   static forRoot(): DynamicModule {
     return {
       imports: [
+        MongooseModule.forFeature([
+          { name: PushSubscription.name, schema: PushSubscriptionSchema },
+        ]),
         MailerModule.forRoot({
           transport: {
             host: process.env.EMAIL_HOST,
