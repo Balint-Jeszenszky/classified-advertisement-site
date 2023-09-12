@@ -10,6 +10,7 @@ import { ApiModule as UserserviceApiModule, Configuration as UserserviceApiConfi
 import { ApiModule as AdvertisementserviceApiModule, Configuration as AdvertisementserviceApiConfiguration } from './openapi/advertisementservice';
 import { ApiModule as ImageserviceApiModule, Configuration as ImageserviceApiConfiguration } from './openapi/imageprocessingservice';
 import { ApiModule as WebscraperserviceApiModule, Configuration as WebscraperserviceApiConfiguration } from './openapi/webscraperservice';
+import { ApiModule as NotificationserviceApiModule, Configuration as NotificationserviceApiConfiguration } from './openapi/notificationservice';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -33,6 +34,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     AdvertisementserviceApiModule.forRoot(() => new AdvertisementserviceApiConfiguration({ basePath: '/api/advertisement' })),
     ImageserviceApiModule.forRoot(() => new ImageserviceApiConfiguration({ basePath: '/api/images' })),
     WebscraperserviceApiModule.forRoot(() => new WebscraperserviceApiConfiguration({ basePath: '' })),
+    NotificationserviceApiModule.forRoot(() => new NotificationserviceApiConfiguration({ basePath: '' })),
     MatToolbarModule,
     MatMenuModule,
     ServiceWorkerModule.register('ngsw-worker.js', {

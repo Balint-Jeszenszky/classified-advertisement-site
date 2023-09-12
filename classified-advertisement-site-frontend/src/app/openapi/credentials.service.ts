@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AdvertisementService, CommentService } from './advertisementservice';
 import { UserManagementService, UserProfileService } from './userservice';
 import { ScraperService } from './webscraperservice';
+import { NotificationsService } from './notificationservice';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ export class CredentialsService {
     advertisementService: AdvertisementService,
     commentService: CommentService,
     scraperService: ScraperService,
+    notificationService: NotificationsService,
   ) {
     this.services = [
       userManagementService,
@@ -22,6 +24,7 @@ export class CredentialsService {
       advertisementService,
       commentService,
       scraperService,
+      notificationService,
     ];
   }
 
