@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { CredentialsService } from '../openapi/credentials.service';
 import { AuthService, LoginResponse, RefreshResponse, UserDetailsResponse } from '../openapi/gateway';
+import { SwPush } from '@angular/service-worker';
+import { NotificationsService } from '../openapi/notificationservice';
 
 const TOKEN_KEY = 'tokens';
 
@@ -20,6 +22,8 @@ export class LoggedInUserService {
   constructor(
     private readonly authService: AuthService,
     private readonly credentialsService: CredentialsService,
+    private readonly swPush: SwPush,
+    private readonly notificationsService: NotificationsService,
   ) {
     const tokens = localStorage.getItem(TOKEN_KEY);
 
@@ -59,6 +63,7 @@ export class LoggedInUserService {
       response.subscribe({
         next: res => {
           this.setTokens({ accessToken: res.accessToken, refreshToken: res.refreshToken });
+          this.handlePushSubscription();
           subscriber.next(res);
         },
         error: err => subscriber.error(err),
@@ -115,5 +120,22 @@ export class LoggedInUserService {
     const payload = token.split('.')[1];
     const parsed = JSON.parse(window.atob(payload)) as TokenPayload;
     return parsed;
+  }
+
+  private async handlePushSubscription() {
+    this.swPush.subscription.subscribe({
+      next: res => {
+        if (!this.loggedIn || res != null) return;
+
+        this.notificationsService.notificationControllerGetPublicVapidKey().subscribe({
+          next: res => {
+            this.swPush.requestSubscription({
+              serverPublicKey: res.publicVapidKey,
+            }).then(sub => /*this.notificationsService.addPushSubscriber(sub).subscribe()*/ console.log(sub));
+          },
+          error: err => console.error("Could not subscribe to notifications", err),
+        });
+      }
+    });
   }
 }
