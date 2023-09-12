@@ -1,6 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
 import { NotificationService } from './notification.service';
+import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { PublicVapidKeyResponse } from './dto/PublicVapidKeyResponse.dto';
 
+@ApiTags('notifications')
+@ApiSecurity('JWT')
 @Controller('notification')
 export class NotificationController {
 
@@ -9,7 +13,8 @@ export class NotificationController {
   ) { }
 
   @Get('publicVapidKey')
+  @ApiOkResponse({ type: PublicVapidKeyResponse })
   getPublicVapidKey() {
-    return { publicVapidKey: this.notificationService.getPublicVapidKey() };
+    return new PublicVapidKeyResponse(this.notificationService.getPublicVapidKey());
   }
 }

@@ -1,10 +1,24 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Transport } from '@nestjs/microservices';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
+
+  const config = new DocumentBuilder()
+    .setTitle('Notification microservice')
+    .setDescription('The notification microservice sends email, push and SSE notifications')
+    .setVersion('1.0')
+    .addTag('notifications')
+    .addSecurity('JWT', {
+      type: 'http',
+      scheme: 'bearer',
+    })
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
   app.connectMicroservice({
     transport: Transport.RMQ,
