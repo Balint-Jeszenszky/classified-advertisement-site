@@ -14,9 +14,3 @@ export class Push {
 export class ServerSentEvent {
 
 }
-
-export class Notification {
-  email?: Email;
-  push?: Push;
-  serverSentEvent?: ServerSentEvent;
-}
