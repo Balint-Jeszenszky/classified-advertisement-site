@@ -1,10 +1,11 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
 import { Ctx, MessagePattern, Payload, RmqContext, Transport } from '@nestjs/microservices';
 import { Email, Push } from './dto/Notification.dto';
 import { NotificationService } from './notification.service';
 
 @Controller('message-queue')
 export class MessageQueueController {
+  private readonly logger: Logger = new Logger(MessageQueueController.name);
 
   constructor(
     private readonly notificationService: NotificationService,
@@ -18,8 +19,9 @@ export class MessageQueueController {
     try {
       await this.notificationService.sendEmail(email);
       channel.ack(originalMsg);
-    } catch {
-      channel.nack(originalMsg);
+    } catch (err) {
+      this.logger.error(err);
+      setTimeout(() => channel.nack(originalMsg), 10000);
     }
   }
     
@@ -31,7 +33,8 @@ export class MessageQueueController {
     try {
       await this.notificationService.sendWebPushNotification(push);
       channel.ack(originalMsg);
-    } catch {
+    } catch (err) {
+      this.logger.error(err);
       channel.nack(originalMsg);
     }
   }

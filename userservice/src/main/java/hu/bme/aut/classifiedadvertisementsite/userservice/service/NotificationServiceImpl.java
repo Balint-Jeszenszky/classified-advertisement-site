@@ -15,13 +15,13 @@ public class NotificationServiceImpl implements NotificationService {
     private final RabbitTemplate rabbitTemplate;
     private final Queue queue;
 
-    public void sendEmail(String email, String subject, String content) {
+    public void sendEmail(String email, String templateName, ObjectNode data) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode node = mapper.createObjectNode();
 
-        node.put("email", email);
-        node.put("subject", subject);
-        node.put("content", content);
+        node.put("toAddress", email);
+        node.put("template", templateName);
+        node.set("data", data);
         rabbitTemplate.convertAndSend(queue.getName(), node.toString());
     }
 }

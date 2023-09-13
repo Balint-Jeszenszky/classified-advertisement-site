@@ -1,5 +1,7 @@
 package hu.bme.aut.classifiedadvertisementsite.userservice.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.RegistrationRequest;
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.ResetPasswordRequest;
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.internal.model.LoginRequest;
@@ -151,7 +153,13 @@ public class AuthService {
 
         log.info("Sending password reset email to {}, key: {}", email, key);
 
-        notificationService.sendEmail(email, "Reset password", key);
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode node = mapper.createObjectNode();
+
+        node.put("user", user.getUsername());
+        node.put("code", key);
+
+        notificationService.sendEmail(email, "resetPassword", node);
     }
 
     public void resetPassword(ResetPasswordRequest passwordResetDto) {

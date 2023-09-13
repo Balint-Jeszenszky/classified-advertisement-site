@@ -1,5 +1,7 @@
 package hu.bme.aut.classifiedadvertisementsite.userservice.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import hu.bme.aut.classifiedadvertisementsite.userservice.controller.exceptions.NotFoundException;
 import hu.bme.aut.classifiedadvertisementsite.userservice.model.EmailVerification;
 import hu.bme.aut.classifiedadvertisementsite.userservice.model.User;
@@ -36,7 +38,13 @@ public class EmailVerificationService {
 
         log.info("Sending verification email to {}, key: {}", email, key);
 
-        notificationService.sendEmail(email, "Email verification", key);
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode node = mapper.createObjectNode();
+
+        node.put("user", user.getUsername());
+        node.put("code", key);
+
+        notificationService.sendEmail(email, "emailVerification", node);
     }
 
     public void validateKey(String key) {
