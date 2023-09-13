@@ -77,6 +77,11 @@ spec:
             configMapKeyRef:
               name: webscraperservice-config
               key: webscraperservice-url
+        - name: NOTIFICATION_SERVICE_URI
+          valueFrom:
+            configMapKeyRef:
+              name: notificationservice-config
+              key: notificationservice-url
         - name: FRONTEND_URI
           valueFrom:
             configMapKeyRef:
