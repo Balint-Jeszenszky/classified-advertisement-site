@@ -47,6 +47,12 @@ export class ManageAdvertisementComponent implements OnInit {
         this.imagesService.getImageListAdvertisementId(advertisementId).subscribe({
           next: res => this.images = res,
         });
+      } else {
+        this.advertisement = {
+          title: '',
+          description: '',
+          price: 0,
+        }
       }
     });
     this.categoryService.getCategories().subscribe({
