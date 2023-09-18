@@ -25,6 +25,10 @@
 			"path": "notificationservice"
 		},
 		{
+			"name": "Chat service",
+			"path": "chat-service"
+		},
+		{
 			"name": "Kubernetes",
 			"path": "k8s"
 		},
