@@ -13,13 +13,24 @@ export class ChatService {
     @InjectRepository(Message) private readonly messageRepository: Repository<Message>,
   ) { }
 
-  async findChatsForUser(userId: number) {
+  async getChatsForUser(userId: number) {
     const chats = await this.chatRepository.find({ where: [{ advertisementOwnerUserId: userId }, { fromUserId: userId }] });
 
     return chats;
   }
 
+  async getChatById(id: number, currentUserId: number): Promise<Chat> {
+    const chat = await this.chatRepository.findOne({ where: [{ id, fromUserId: currentUserId }, { id, advertisementOwnerUserId: currentUserId }] });
+
+    if (!chat) {
+      throw new NotFoundException();
+    }
+
+    return chat;
+  }
+
   async getMessagesByChatId(id: number, currentUserId: number) {
+    // TODO eager loading disabled
     const chat = await this.chatRepository.findOne({ where: [{ id, fromUserId: currentUserId }, { id, advertisementOwnerUserId: currentUserId }] });
 
     if (!chat) {
@@ -30,9 +41,27 @@ export class ChatService {
   }
 
   async sendMessageForAdvertisement(advertisementId: number, fromUserId: number, text: string) {
+    let chat = await this.chatRepository.findOne({ where: [{ advertisementId, fromUserId }, { advertisementId, advertisementOwnerUserId: fromUserId }] });
+
+    if (!chat) {
+      // TODO if chat not exists check with advertisement microservice ant then create it
+      chat = await this.chatRepository.save(new Chat({
+        advertisementId,
+        fromUserId,
+        advertisementOwnerUserId: 1, // TODO read from advertisement microservice response
+        messages: [],
+      }));
+    }
+
+    const message = await this.messageRepository.save(new Message({ userId: fromUserId, text, chat }));
+
+    return message;
+  }
+
+  async sendMessageToChat(chatId: number, fromUserId: number, text: string) {
     // TODO if chat not exists check with advertisement microservice ant then create it
 
-    const chat = await this.chatRepository.findOne({ where: [{ advertisementId, fromUserId }, { advertisementId, advertisementOwnerUserId: fromUserId }] });
+    const chat = await this.chatRepository.findOne({ where: [{ id: chatId, fromUserId }, { id: chatId, advertisementOwnerUserId: fromUserId }] });
 
     if (!chat) {
       throw new NotFoundException();

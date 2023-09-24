@@ -25,6 +25,6 @@ export default class Chat {
   @Column()
   fromUserId: number;
 
-  @OneToMany(() => Message, message => message.chat, { eager: true })
+  @OneToMany(() => Message, message => message.chat)
   messages: Message[];
 }

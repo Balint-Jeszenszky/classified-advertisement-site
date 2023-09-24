@@ -1,0 +1,37 @@
+
+scalar Date
+
+type Chat {
+  id: Int!
+  advertisementId: Int!
+  advertisementOwnerUserId: Int!
+  fromUserId: Int!
+  messages: [Message!]!
+}
+
+type Message {
+  id: Int!
+  text: String!
+  userId: Int!
+  createdAt: Date!
+}
+
+type Query {
+  chat(id: Int!): Chat
+  chatsForUser: [Chat!]!
+}
+
+input NewChatMessage {
+  chatId: Int!
+  text: String!
+}
+
+input NewAdvertisementMessage {
+  advertisementId: Int!
+  text: String!
+}
+
+type Mutation {
+  sendMessageToChat(newMessage: NewChatMessage!): Message
+  sendMessageForAdvertisement(newMessage: NewAdvertisementMessage!): Message
+}
