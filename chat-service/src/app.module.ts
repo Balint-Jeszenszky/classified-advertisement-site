@@ -6,9 +6,14 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { DateScalar } from './common/scalars/date.scalar';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: process.env.NODE_ENV ? `.${process.env.NODE_ENV}.env` : '.env',
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot(dataSourceOptions),
     ChatModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({

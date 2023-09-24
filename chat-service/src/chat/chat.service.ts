@@ -30,8 +30,15 @@ export class ChatService {
   }
 
   async getMessagesByChatId(id: number, currentUserId: number) {
-    // TODO eager loading disabled
-    const chat = await this.chatRepository.findOne({ where: [{ id, fromUserId: currentUserId }, { id, advertisementOwnerUserId: currentUserId }] });
+    const chat = await this.chatRepository.findOne({
+      where: [
+        { id, fromUserId: currentUserId },
+        { id, advertisementOwnerUserId: currentUserId }
+      ],
+      relations: {
+        messages: true,
+      },
+     });
 
     if (!chat) {
       throw new NotFoundException();
@@ -59,8 +66,6 @@ export class ChatService {
   }
 
   async sendMessageToChat(chatId: number, fromUserId: number, text: string) {
-    // TODO if chat not exists check with advertisement microservice ant then create it
-
     const chat = await this.chatRepository.findOne({ where: [{ id: chatId, fromUserId }, { id: chatId, advertisementOwnerUserId: fromUserId }] });
 
     if (!chat) {
