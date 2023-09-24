@@ -7,8 +7,8 @@ export const dataSourceOptions: DataSourceOptions = {
   username: 'root',
   password: 'root',
   database: 'chat',
-  entities: ['src/**/*.entity.ts'],
-  migrations: ['src/db/migrations/*.ts'],
+  entities: ['dist/**/*.entity.js'],
+  migrations: ['dist/db/migrations/*.js'],
   synchronize: false,
 };
 
