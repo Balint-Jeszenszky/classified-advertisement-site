@@ -7,6 +7,8 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { DateScalar } from './common/scalars/date.scalar';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { HeaderAuthGuard } from './auth/header-auth.guard';
 
 @Module({
   imports: [
@@ -27,6 +29,12 @@ import { ConfigModule } from '@nestjs/config';
     }),
   ],
   controllers: [],
-  providers: [DateScalar],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: HeaderAuthGuard,
+    },
+    DateScalar,
+  ],
 })
 export class AppModule {}
