@@ -1,13 +1,14 @@
 import { APOLLO_OPTIONS, ApolloModule } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { NgModule } from '@angular/core';
-import { ApolloClientOptions, InMemoryCache } from '@apollo/client/core';
+import { ApolloClientOptions } from '@apollo/client/core';
+import { URI, APOLLO_DEFAULTS } from './contants';
 
-const uri = '/api/chat/graphql';
+
 export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
   return {
-    link: httpLink.create({ uri }),
-    cache: new InMemoryCache(),
+    ...APOLLO_DEFAULTS,
+    link: httpLink.create({ uri: URI }),
   };
 }
 
@@ -21,4 +22,4 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
     },
   ],
 })
-export class ChatGraphQLModule {}
+export class GraphQLModule {}

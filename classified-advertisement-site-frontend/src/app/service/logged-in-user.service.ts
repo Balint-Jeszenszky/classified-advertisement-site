@@ -4,6 +4,7 @@ import { CredentialsService } from '../openapi/credentials.service';
 import { AuthService, LoginResponse, RefreshResponse, UserDetailsResponse } from '../openapi/gateway';
 import { SwPush } from '@angular/service-worker';
 import { NotificationsService } from '../openapi/notificationservice';
+import { GraphqlCredentialsService } from '../graphql/graphql-credentials.service';
 
 const TOKEN_KEY = 'tokens';
 
@@ -22,6 +23,7 @@ export class LoggedInUserService {
   constructor(
     private readonly authService: AuthService,
     private readonly credentialsService: CredentialsService,
+    private readonly graphqlCredentialsService: GraphqlCredentialsService,
     private readonly swPush: SwPush,
     private readonly notificationsService: NotificationsService,
   ) {
@@ -105,6 +107,7 @@ export class LoggedInUserService {
 
   private setTokens(tokens: RefreshResponse): void {
     this.credentialsService.updateCredentials(tokens.accessToken);
+    this.graphqlCredentialsService.updateCredentials(tokens.accessToken);
     this.tokens = tokens;
     this.loggedIn.next(true);
     const { id, username, email, roles, exp } = this.getTokenPayload(tokens.accessToken);

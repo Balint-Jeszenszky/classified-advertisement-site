@@ -17,7 +17,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
 import { SubmenuComponent } from './components/navbar/submenu/submenu.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { ChatGraphQLModule } from './graphql/chat/graphql.module';
+import { GraphQLModule as ChatGraphQLModule } from './graphql/chat/graphql.module';
 
 @NgModule({
   declarations: [
