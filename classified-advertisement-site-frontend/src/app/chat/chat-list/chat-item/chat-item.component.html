@@ -1,0 +1,9 @@
+<div *ngIf="chat" class="d-flex justify-content-between chat-item">
+  <div>
+    <p>{{ chat.advertisementId }}: {{ chat.fromUserId }}</p>
+    <p>{{ chat.messages[0].text }}</p>
+  </div>
+  <div>
+    {{ chat.messages[0].createdAt }}
+  </div>
+</div>

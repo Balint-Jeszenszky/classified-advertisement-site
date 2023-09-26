@@ -29,7 +29,6 @@ export class ChatResolver {
 
   @Query(returns => Chat)
   chatsForUser(@CurrentUser() user: User): Promise<Chat> {
-    console.log(user)
     return this.chatService.getChatsForUser(user.id) as any;
   }
 

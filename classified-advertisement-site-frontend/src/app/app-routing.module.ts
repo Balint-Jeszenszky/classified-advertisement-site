@@ -26,6 +26,12 @@ const routes: Routes = [
     data: { login: true, role: Role.ROLE_ADMIN },
     canActivate: [loginGuard, roleGuard],
   },
+  {
+    path: 'chat',
+    loadChildren: () => import('./chat/chat.module').then(m => m.ChatModule),
+    data: { login: true },
+    canActivate: [loginGuard],
+  },
 ];
 
 @NgModule({

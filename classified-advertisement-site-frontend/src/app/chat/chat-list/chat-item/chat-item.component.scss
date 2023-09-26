@@ -1,0 +1,16 @@
+
+.chat-item {
+  border: 1px solid #9e9e9e;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  padding: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #d6d6d6;
+  }
+
+  * {
+    margin: 0;
+  }
+}

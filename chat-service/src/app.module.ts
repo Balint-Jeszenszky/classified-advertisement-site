@@ -22,6 +22,7 @@ import { HeaderAuthGuard } from './auth/header-auth.guard';
       driver: ApolloDriver,
       playground: process.env.NODE_ENV === 'dev',
       typePaths: ['./**/*.graphql'],
+      path: '/api/graphql',
       definitions: {
         path: join(process.cwd(), 'src/graphql/graphql.ts'),
         outputAs: 'class',

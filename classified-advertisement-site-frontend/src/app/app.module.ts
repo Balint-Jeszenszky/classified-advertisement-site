@@ -17,6 +17,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
 import { SubmenuComponent } from './components/navbar/submenu/submenu.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { ChatGraphQLModule } from './graphql/chat/graphql.module';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000'
     }),
+    ChatGraphQLModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
