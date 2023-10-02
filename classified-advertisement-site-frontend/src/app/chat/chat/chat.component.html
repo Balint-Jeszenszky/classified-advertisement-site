@@ -1,1 +1,25 @@
-<p>chat works!</p>
+<div class="h-100 d-flex flex-column justify-content-between" *ngIf="chat">
+  <div>
+    <h1>{{ chat.fromUserId }} - {{ chat.advertisementId }}</h1>
+    <hr>
+  </div>
+
+  <div #messages class="messages">
+    <app-message *ngFor="let message of chat.messages" [date]="message.createdAt" [text]="message.text" [ownMessage]="message.userId === currentUserId"></app-message>
+  </div>
+
+  <div>
+    <form (ngSubmit)="sendMessage()">
+      <mat-form-field class="input">
+        <mat-label>Type your message here...</mat-label>
+        <textarea matInput [(ngModel)]="messageText" name="message"></textarea>
+      </mat-form-field>
+      <div class="text-end">
+        <button mat-raised-button color="primary" type="submit">
+          Send message
+          <mat-icon>send</mat-icon>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
