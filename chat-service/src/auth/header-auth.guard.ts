@@ -2,6 +2,7 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from './public.decorator';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { parseAuthHeader } from './parse-auth-header';
 
 @Injectable()
 export class HeaderAuthGuard implements CanActivate {
@@ -23,7 +24,7 @@ export class HeaderAuthGuard implements CanActivate {
     const header = req.headers['x-user-data'];
 
     try {
-      ctx.getContext().user = JSON.parse(Buffer.from(header, 'base64').toString());
+      ctx.getContext().user = parseAuthHeader(header);
     } catch {
       throw new UnauthorizedException();
     }
