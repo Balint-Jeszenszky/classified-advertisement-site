@@ -61,45 +61,71 @@ tasks.named('test') {
 }
 
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
-tasks.register("kotlinApi", GenerateTask) {
-	kotlinApi.generatorName = "kotlin-spring"
-	kotlinApi.inputSpec = "$rootDir/src/main/resources/openapi/external.yaml".toString()
-	kotlinApi.outputDir = "$buildDir/generated-sources/openapi".toString()
-	kotlinApi.apiPackage = "hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external"
-	kotlinApi.modelPackage = "hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.model"
-	kotlinApi.configOptions = [
+tasks.register("kotlinExternalApi", GenerateTask) {
+	kotlinExternalApi.generatorName = "kotlin-spring"
+	kotlinExternalApi.inputSpec = "$rootDir/src/main/resources/openapi/external.yaml".toString()
+	kotlinExternalApi.outputDir = "$buildDir/generated-sources/openapi/external".toString()
+	kotlinExternalApi.apiPackage = "hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external"
+	kotlinExternalApi.modelPackage = "hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.external.model"
+	kotlinExternalApi.configOptions = [
+			useTags: "true",
+			interfaceOnly: "true",
+			skipDefaultInterface: "true",
+			exceptionHandler: "false"
+	]
+}
+
+tasks.register("kotlinInternalApi", GenerateTask) {
+	kotlinInternalApi.generatorName = "kotlin-spring"
+	kotlinInternalApi.inputSpec = "$rootDir/src/main/resources/openapi/internal.yaml".toString()
+	kotlinInternalApi.outputDir = "$buildDir/generated-sources/openapi/internal".toString()
+	kotlinInternalApi.apiPackage = "hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.internal"
+	kotlinInternalApi.modelPackage = "hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.internal.model"
+	kotlinInternalApi.configOptions = [
+			useTags: "true",
+			interfaceOnly: "true",
+			skipDefaultInterface: "true",
+			exceptionHandler: "false"
+	]
+}
+
+tasks.register("javaExternalApi", GenerateTask) {
+	javaExternalApi.generatorName = "spring"
+	javaExternalApi.inputSpec = "$rootDir/src/main/resources/openapi/external.yaml".toString()
+	javaExternalApi.outputDir = "$buildDir/generated-sources/openapi/external".toString()
+	javaExternalApi.apiPackage = "hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external"
+	javaExternalApi.modelPackage = "hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model"
+	javaExternalApi.configOptions = [
 			useTags: "true",
 			interfaceOnly: "true",
 			skipDefaultInterface: "true"
 	]
 }
 
-tasks.register("javaApi", GenerateTask) {
-	javaApi.generatorName = "spring"
-	javaApi.inputSpec = "$rootDir/src/main/resources/openapi/external.yaml".toString()
-	javaApi.outputDir = "$buildDir/generated-sources/openapi".toString()
-	javaApi.apiPackage = "hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external"
-	javaApi.modelPackage = "hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model"
-	javaApi.configOptions = [
-			useTags: "true",
-			interfaceOnly: "true",
-			skipDefaultInterface: "true"
-	]
+tasks.register("openapiCleanup") {
+	doLast {
+		delete (
+				// exclude org.* to prevent unused SpringDocConfiguration class collision
+				"$buildDir/generated-sources/openapi/external/src/main/kotlin/org",
+				"$buildDir/generated-sources/openapi/internal/src/main/kotlin/org"
+		)
+	}
 }
 
 sourceSets {
 	main {
 		kotlin {
-			srcDir("$buildDir/generated-sources/openapi/src/main/kotlin")
+			srcDir("$buildDir/generated-sources/openapi/external/src/main/kotlin")
+			srcDir("$buildDir/generated-sources/openapi/internal/src/main/kotlin")
 		}
 	}
 }
 
 java.sourceSets["main"].java {
-	srcDir("$buildDir/generated-sources/openapi/src/main/java")
+	srcDir("$buildDir/generated-sources/openapi/external/src/main/java")
 }
 
-compileKotlin.dependsOn('kotlinApi', 'javaApi')
+compileKotlin.dependsOn('kotlinExternalApi', 'kotlinInternalApi', 'javaExternalApi', 'openapiCleanup')
 
 test {
 	systemProperty 'spring.profiles.active', 'test'

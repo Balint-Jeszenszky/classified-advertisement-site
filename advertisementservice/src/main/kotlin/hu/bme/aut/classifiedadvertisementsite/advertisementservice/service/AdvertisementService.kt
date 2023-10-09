@@ -183,4 +183,6 @@ class AdvertisementService(
         val advertisements = advertisementRepository.findByTitleContainsOrDescriptionContains(query, query)
         return advertisements.map { advertisementMapper.advertisementToAdvertisementResponse(it) }
     }
+
+    fun existsById(id: Int) = advertisementRepository.existsById(id)
 }

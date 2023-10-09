@@ -1,0 +1,35 @@
+openapi: 3.0.0
+x-stoplight:
+  id: l0nx7tow1fxgm
+info:
+  title: internal
+  version: '1.0'
+  contact:
+    name: Balint Jeszenszky
+  description: Classified advertisement site advertisement service internal api
+servers:
+  - url: 'http://localhost:8082/api/advertisement/internal'
+paths:
+  '/advertisement/exists/{id}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    head:
+      summary: ''
+      operationId: head-exists-id
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+      description: Check if an advertisement exists by id
+      tags:
+        - advertisement
+components:
+  schemas: {}
+x-internal: true
+tags:
+  - name: advertisement
