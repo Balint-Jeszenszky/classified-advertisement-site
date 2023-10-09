@@ -40,6 +40,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @SubscribeMessage('message')
   async handleMessage(client: Socket, message: MessageRequest) {
     const savedMessage = await this.chatService.sendMessageToChat(message.chatId, client.data.user.id, message.message);
-    client.emit('message', { ...savedMessage, chatId: message.chatId} );
+    client.emit('message', savedMessage );
   }
 }

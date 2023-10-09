@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Socket, io } from 'socket.io-client';
-import { Message } from 'src/app/graphql/chat/generated';
+import { Chat, Message } from 'src/app/graphql/chat/generated';
 import { LoggedInUserService } from 'src/app/service/logged-in-user.service';
 
-type ChatMessage = Message & { chatId: number };
+type ChatMessage = Message & { chat: Chat };
 
 @Injectable({
   providedIn: 'root'

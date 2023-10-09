@@ -1,9 +1,10 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Socket } from 'socket.io';
 import Chat from './entity/chat.entity';
 import { Repository } from 'typeorm';
 import Message from './entity/message.entity';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class ChatService {
@@ -12,6 +13,7 @@ export class ChatService {
   private onlineUsers: Map<number, Socket> = new Map();
 
   constructor(
+    @Inject('REALTIME_CHAT_SERVICE') private readonly client: ClientProxy,
     @InjectRepository(Chat) private readonly chatRepository: Repository<Chat>,
     @InjectRepository(Message) private readonly messageRepository: Repository<Message>,
   ) { }
@@ -65,7 +67,7 @@ export class ChatService {
 
     const message = await this.messageRepository.save(new Message({ userId: fromUserId, text, chat }));
 
-    // TODO publish message event
+    this.publishMessageEvent(chat, message);
 
     return message;
   }
@@ -79,9 +81,19 @@ export class ChatService {
 
     const message = await this.messageRepository.save(new Message({ userId: fromUserId, text, chat }));
 
-    // TODO publish message event
+    this.publishMessageEvent(chat, message);
 
     return message;
+  }
+
+  sendMessageToClient(userId: number, message: Message) {
+    const client = this.onlineUsers.get(userId);
+
+    if (!client) {
+      return;
+    }
+
+    client.emit('message', message);
   }
 
   addOnlineUser(client: Socket) {
@@ -90,5 +102,14 @@ export class ChatService {
 
   removeOnlineUser(client: Socket) {
     this.onlineUsers.delete(client.data.user.id);
+  }
+
+  private publishMessageEvent(chat: Chat, message: Message) {
+    const payload = {
+      userId: chat.fromUserId === message.userId ? chat.advertisementOwnerUserId : chat.fromUserId,
+      message,
+    };
+
+    this.client.emit('message', payload);
   }
 }
