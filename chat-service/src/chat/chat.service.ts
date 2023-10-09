@@ -1,5 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Socket } from 'socket.io';
 import Chat from './entity/chat.entity';
 import { Repository } from 'typeorm';
 import Message from './entity/message.entity';
@@ -7,6 +8,8 @@ import Message from './entity/message.entity';
 @Injectable()
 export class ChatService {
   private readonly logger: Logger = new Logger(ChatService.name);
+
+  private onlineUsers: Map<number, Socket> = new Map();
 
   constructor(
     @InjectRepository(Chat) private readonly chatRepository: Repository<Chat>,
@@ -62,6 +65,8 @@ export class ChatService {
 
     const message = await this.messageRepository.save(new Message({ userId: fromUserId, text, chat }));
 
+    // TODO publish message event
+
     return message;
   }
 
@@ -74,6 +79,16 @@ export class ChatService {
 
     const message = await this.messageRepository.save(new Message({ userId: fromUserId, text, chat }));
 
+    // TODO publish message event
+
     return message;
+  }
+
+  addOnlineUser(client: Socket) {
+    this.onlineUsers.set(client.data.user.id, client);
+  }
+
+  removeOnlineUser(client: Socket) {
+    this.onlineUsers.delete(client.data.user.id);
   }
 }

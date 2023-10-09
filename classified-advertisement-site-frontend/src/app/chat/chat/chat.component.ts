@@ -53,7 +53,9 @@ export class ChatComponent implements OnInit, AfterViewChecked, OnDestroy {
 
     this.chatService.connect(CHAT_COMPONENT);
     this.chatService.message.subscribe(message => {
-      this.chat?.messages.push(message);
+      if (message.chatId === this.chat?.id) {
+        this.chat?.messages.push(message);
+      }
     });
   }
   
@@ -66,7 +68,13 @@ export class ChatComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   sendMessage() {
-    
+    if (!this.chat) {
+      return;
+    }
+
+    this.chatService.sendMessage(this.messageText, this.chat.id);
+
+    this.messageText = '';
   }
 
   scrollToBottom() {

@@ -4,6 +4,11 @@ import { Socket, Server } from 'socket.io';
 import { ChatService } from './chat.service';
 import { parseAuthHeader } from 'src/auth/parse-auth-header';
 
+type MessageRequest = {
+  chatId: number,
+  message: string,
+};
+
 @WebSocketGateway({ namespace: 'chat', path: '/api/chat-ws' })
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(ChatGateway.name);
@@ -25,16 +30,16 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       return;
     }
 
-    // this.service.addOnlineUser(user, client);
+    this.chatService.addOnlineUser(client);
   }
 
   handleDisconnect(client: Socket) {
-    this.logger.debug('disconnect');
+    this.chatService.removeOnlineUser(client);
   }
 
   @SubscribeMessage('message')
-  handleMessage(client: Socket, message: string): string {
-    this.logger.debug('message');
-    return '';
+  async handleMessage(client: Socket, message: MessageRequest) {
+    const savedMessage = await this.chatService.sendMessageToChat(message.chatId, client.data.user.id, message.message);
+    client.emit('message', { ...savedMessage, chatId: message.chatId} );
   }
 }
