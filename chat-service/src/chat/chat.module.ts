@@ -7,6 +7,8 @@ import Chat from './entity/chat.entity';
 import Message from './entity/message.entity';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ChatController } from './chat.controller';
+import { ApiClientService } from './api-client.service';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -17,8 +19,9 @@ import { ChatController } from './chat.controller';
         transport: Transport.REDIS,
       },
     ]),
+    HttpModule,
   ],
-  providers: [ChatService, ChatResolver, ChatGateway],
+  providers: [ChatService, ChatResolver, ChatGateway, ApiClientService],
   controllers: [ChatController]
 })
 export class ChatModule {}

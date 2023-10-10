@@ -47,7 +47,7 @@ class WebSecurityConfig {
             )
             .permitAll()
             .requestMatchers(
-                HttpMethod.HEAD,
+                HttpMethod.GET,
                 "/internal/**"
             )
             .permitAll()

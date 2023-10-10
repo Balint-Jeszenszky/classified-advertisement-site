@@ -1,6 +1,7 @@
 package hu.bme.aut.classifiedadvertisementsite.advertisementservice.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.internal.model.AdvertisementExistsResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.AdvertisementResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.NewAdvertisementsResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.BadRequestException
@@ -184,5 +185,8 @@ class AdvertisementService(
         return advertisements.map { advertisementMapper.advertisementToAdvertisementResponse(it) }
     }
 
-    fun existsById(id: Int) = advertisementRepository.existsById(id)
+    fun existsById(id: Int): AdvertisementExistsResponse {
+        val advertisement = advertisementRepository.findById(id).orElseThrow { NotFoundException("Advertisement not found") }
+        return advertisementMapper.advertisementToAdvertisementExistsResponse(advertisement)
+    }
 }

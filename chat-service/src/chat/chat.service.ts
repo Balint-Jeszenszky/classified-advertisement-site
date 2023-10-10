@@ -1,10 +1,11 @@
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Socket } from 'socket.io';
 import Chat from './entity/chat.entity';
 import { Repository } from 'typeorm';
 import Message from './entity/message.entity';
 import { ClientProxy } from '@nestjs/microservices';
+import { ApiClientService } from './api-client.service';
 
 @Injectable()
 export class ChatService {
@@ -16,6 +17,7 @@ export class ChatService {
     @Inject('REALTIME_CHAT_SERVICE') private readonly client: ClientProxy,
     @InjectRepository(Chat) private readonly chatRepository: Repository<Chat>,
     @InjectRepository(Message) private readonly messageRepository: Repository<Message>,
+    private readonly apiClientService: ApiClientService,
   ) { }
 
   async getChatsForUser(userId: number) {
@@ -56,11 +58,16 @@ export class ChatService {
     let chat = await this.chatRepository.findOne({ where: [{ advertisementId, fromUserId }, { advertisementId, advertisementOwnerUserId: fromUserId }] });
 
     if (!chat) {
-      // TODO if chat not exists check with advertisement microservice ant then create it
+      const advertisementOwnerUserId = await this.apiClientService.advertisementExistsById(advertisementId);
+
+      if (!advertisementOwnerUserId || advertisementOwnerUserId === fromUserId) {
+        throw new BadRequestException();
+      }
+
       chat = await this.chatRepository.save(new Chat({
         advertisementId,
         fromUserId,
-        advertisementOwnerUserId: 1, // TODO read from advertisement microservice response
+        advertisementOwnerUserId,
         messages: [],
       }));
     }
