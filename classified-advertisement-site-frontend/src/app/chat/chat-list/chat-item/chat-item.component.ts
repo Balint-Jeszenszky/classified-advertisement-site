@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Chat } from 'src/app/graphql/chat/generated';
+import { ChatDetails } from '../chat-details.type';
 
 @Component({
   selector: 'app-chat-item',
@@ -8,7 +8,7 @@ import { Chat } from 'src/app/graphql/chat/generated';
   styleUrls: ['./chat-item.component.scss']
 })
 export class ChatItemComponent {
-  @Input() chat?: Chat;
+  @Input() chat?: ChatDetails;
 
   constructor(
     private readonly router: Router,
@@ -20,6 +20,6 @@ export class ChatItemComponent {
       return;
     }
 
-    this.router.navigate(['conversation', this.chat.id], { relativeTo: this.route });
+    this.router.navigate(['conversation', this.chat.chat.id], { relativeTo: this.route });
   }
 }

@@ -5,6 +5,8 @@ import { Chat, Mutation, MutationSendMessageForAdvertisementArgs, Query, QueryCh
 import { GET_CHAT, GET_CHAT_BY_ADVERTISEMENT, SEND_MESSAGE_FOR_ADVERTISEMENT } from 'src/app/graphql/chat/graphql.operations';
 import { LoggedInUserService } from 'src/app/service/logged-in-user.service';
 import { ChatService } from '../service/chat.service';
+import { AdvertisementService } from 'src/app/openapi/advertisementservice';
+import { PublicUserService } from 'src/app/openapi/userservice';
 
 const CHAT_COMPONENT = 'CHAT_COMPONENT';
 
@@ -19,7 +21,9 @@ export class ChatComponent implements OnInit, AfterViewChecked, OnDestroy {
   chat?: Chat;
   currentUserId?: number;
   fromUserId?: number; 
-  advertisementId?: number; 
+  advertisementId?: number;
+  fromUsername: string = '';
+  advertisementTitle: string = '';
 
   constructor(
     private readonly apollo: Apollo,
@@ -27,9 +31,15 @@ export class ChatComponent implements OnInit, AfterViewChecked, OnDestroy {
     private readonly router: Router,
     private readonly loggedInUserService: LoggedInUserService,
     private readonly chatService: ChatService,
+    private readonly advertisementService: AdvertisementService,
+    private readonly publicUserService: PublicUserService,
   ) { }
 
   ngOnInit(): void {
+    this.loggedInUserService.user.subscribe(user => {
+      this.currentUserId = user?.id;
+    });
+
     this.route.params.subscribe(params => {
       if (!params['id'] && !params['advertisementId']) {
         return;
@@ -48,17 +58,19 @@ export class ChatComponent implements OnInit, AfterViewChecked, OnDestroy {
           if (data.chat) {
             this.chat = data.chat;
             this.advertisementId = data.chat.advertisementId;
-            this.fromUserId = data.chat.fromUserId;
+            this.fromUserId = data.chat.fromUserId === this.currentUserId ? data.chat.advertisementOwnerUserId : this.chat.fromUserId;
+            this.advertisementService.getAdvertisementId(data.chat.advertisementId).subscribe(res => {
+              this.advertisementTitle = res.title;
+            });
+            this.publicUserService.getUserId([this.fromUserId]).subscribe(res => {
+              this.fromUsername = res[0].username;
+            });
             this.scrollToBottom();
           }
         });
       } else if (this.advertisementId) {
         this.navigateToConversation(this.advertisementId);
       }
-    });
-
-    this.loggedInUserService.user.subscribe(user => {
-      this.currentUserId = user?.id;
     });
 
     this.chatService.connect(CHAT_COMPONENT);

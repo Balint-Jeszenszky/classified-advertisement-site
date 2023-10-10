@@ -1,6 +1,7 @@
 package hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.external
 
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.AdvertisementApi
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.AdvertisementDataResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.AdvertisementResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.NewAdvertisementsResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.service.AdvertisementService
@@ -28,6 +29,12 @@ class AdvertisementController(
 
     override fun getAdvertisements(categoryId: Int): ResponseEntity<List<AdvertisementResponse>> {
         val advertisements: List<AdvertisementResponse> = advertisementService.getAdvertisementsByCategory(categoryId)
+        return ResponseEntity(advertisements, HttpStatus.OK)
+    }
+
+    override fun getAdvertisementsListIds(ids: MutableList<Int>): ResponseEntity<List<AdvertisementDataResponse>> {
+        val advertisements = advertisementService.getAdvertisementsByIds(ids)
+
         return ResponseEntity(advertisements, HttpStatus.OK)
     }
 

@@ -87,6 +87,30 @@ paths:
       description: Create a new advertisement
       tags:
         - advertisement
+  '/advertisements/list/{ids}':
+    parameters:
+      - schema:
+          type: array
+          items:
+            type: integer
+        name: ids
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - advertisement
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdvertisementDataResponse'
+      operationId: get-advertisements-list-ids
+      description: get details of ads by id
   '/advertisements/{categoryId}':
     parameters:
       - schema:
@@ -490,6 +514,19 @@ components:
       required:
         - category
         - advertisements
+    AdvertisementDataResponse:
+      title: AdvertisementDataResponse
+      x-stoplight:
+        id: rxx4ddcaki9rb
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+      required:
+        - id
+        - title
   securitySchemes:
     JWT:
       type: http
