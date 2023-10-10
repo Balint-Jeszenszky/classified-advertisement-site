@@ -36,6 +36,8 @@ export class Message {
 export abstract class IQuery {
     abstract chat(id: number): Nullable<Chat> | Promise<Nullable<Chat>>;
 
+    abstract chatIdByAdvertisement(advertisementId: number): Nullable<Chat> | Promise<Nullable<Chat>>;
+
     abstract chatsForUser(): Chat[] | Promise<Chat[]>;
 }
 

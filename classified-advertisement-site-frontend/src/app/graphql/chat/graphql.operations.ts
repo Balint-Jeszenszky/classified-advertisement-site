@@ -33,6 +33,14 @@ export const GET_CHAT = gql`
   }
 `;
 
+export const GET_CHAT_BY_ADVERTISEMENT = gql`
+  query GetChatByAdvertisement($advertisementId: Int!) {
+    chatIdByAdvertisement(advertisementId: $advertisementId) {
+      id
+    }
+  }
+`;
+
 export const SEND_MESSAGE_TO_CHAT = gql`
   mutation SendMessageToChat($newMessage: NewChatMessage!) {
     sendMessageToChat(newMessage: $newMessage) {

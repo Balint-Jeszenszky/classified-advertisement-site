@@ -19,6 +19,14 @@ export class ChatResolver {
     return this.chatService.getChatById(id, user.id) as any;
   }
 
+  @Query(returns => Chat)
+  chatIdByAdvertisement(
+    @Args('advertisementId', { type: () => Int }) advertisementId: number,
+    @CurrentUser() user: User,
+  ): Promise<Chat> {
+    return this.chatService.getChatByAdvertisementId(advertisementId, user.id) as any;
+  }
+
   @ResolveField(returns => [Message])
   messages(
     @Parent() chat: Chat,
@@ -42,7 +50,7 @@ export class ChatResolver {
 
   @Mutation(returns => Message)
   async sendMessageForAdvertisement(
-    @Args({ name: 'newAdvertisementMessage', type: () => NewAdvertisementMessage }) newMessage: NewAdvertisementMessage,
+    @Args({ name: 'newMessage', type: () => NewAdvertisementMessage }) newMessage: NewAdvertisementMessage,
     @CurrentUser() user: User,
   ): Promise<Message> {
     return this.chatService.sendMessageForAdvertisement(newMessage.advertisementId, user.id, newMessage.text);

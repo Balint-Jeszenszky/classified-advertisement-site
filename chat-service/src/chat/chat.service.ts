@@ -36,6 +36,16 @@ export class ChatService {
     return chat;
   }
 
+  async getChatByAdvertisementId(advertisementId: number, currentUserId: number): Promise<Chat> {
+    const chat = await this.chatRepository.findOne({ where: [{ advertisementId, fromUserId: currentUserId }, { advertisementId, advertisementOwnerUserId: currentUserId }] });
+
+    if (!chat) {
+      throw new NotFoundException();
+    }
+
+    return chat;
+  }
+
   async getMessagesByChatId(id: number, currentUserId: number) {
     const chat = await this.chatRepository.findOne({
       where: [

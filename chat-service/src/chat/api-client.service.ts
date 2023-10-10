@@ -17,8 +17,8 @@ export class ApiClientService {
 
   async advertisementExistsById(id: number): Promise<number | undefined> {
     try {
-      const advertisement = await this.httpService.axiosRef.get<string, {advertiserId: number}>(`${this.advertisementServicePath}/${id}`);
-      return advertisement.advertiserId;
+      const advertisement = await this.httpService.axiosRef.get<{advertiserId: number}>(`${this.advertisementServicePath}/${id}`);
+      return advertisement.data.advertiserId;
     } catch {
       return undefined;
     }
