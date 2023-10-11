@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatservice-db-deployment
+  labels:
+    app: chatservice-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chatservice-db
+  template:
+    metadata:
+      labels:
+        app: chatservice-db
+    spec:
+      containers:
+      - name: chatservice-db
+        image: mysql:8
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: chatservice-db-config
+              key: chatservice-db-name
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: chatservice-db-secret
+              key: chatservice-db-root-password
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: chatservice-db-secret
+              key: chatservice-db-user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: chatservice-db-secret
+              key: chatservice-db-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chatservice-db-service
+spec:
+  selector:
+    app: chatservice-db
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306

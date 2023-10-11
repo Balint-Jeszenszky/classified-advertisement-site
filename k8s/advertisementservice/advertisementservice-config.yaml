@@ -4,3 +4,5 @@ metadata:
   name: advertisementservice-config
 data:
   advertisementservice-url: http://advertisementservice-service:8080
+  advertisementservice-internal-api-url: http://advertisementservice-service:8080/api/advertisement/internal
+  advertisementservice-advertisement-exists-path: /advertisement/exists

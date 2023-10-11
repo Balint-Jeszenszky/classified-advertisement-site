@@ -82,6 +82,11 @@ spec:
             configMapKeyRef:
               name: notificationservice-config
               key: notificationservice-url
+        - name: CHAT_SERVICE_URI
+          valueFrom:
+            configMapKeyRef:
+              name: chatservice-config
+              key: chatservice-url
         - name: FRONTEND_URI
           valueFrom:
             configMapKeyRef:
