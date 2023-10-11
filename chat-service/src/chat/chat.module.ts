@@ -17,6 +17,10 @@ import { HttpModule } from '@nestjs/axios';
       {
         name: 'REALTIME_CHAT_SERVICE',
         transport: Transport.REDIS,
+        options: {
+          host: process.env.REDIS_HOST,
+          port: parseInt(process.env.REDIS_PORT),
+        },
       },
     ]),
     HttpModule,

@@ -59,6 +59,8 @@ services:
       - ADVERTISEMENT_SERVICE_URI=http://advertisementservice:8080
       - IMAGE_SERVICE_URI=http://imageprocessingservice:8080
       - WEBSCRAPER_SERVICE_URI=http://webscraperservice:3000
+      - NOTIFICATION_SERVICE_URI=http://notificationservice:3000
+      - CHAT_SERVICE_URI=http://chatservice:3000
       - FRONTEND_URI=http://frontend:80
     networks:
       - web
@@ -206,6 +208,55 @@ services:
       - web
       - database
       - message
+
+  chatservice-db:
+    image: mysql:8
+    restart: unless-stopped
+    container_name: chatservice-db
+    ports:
+      - 3308:3306
+    volumes:
+      - ./container-data/dev/chat-mysql:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=chat
+      - MYSQL_ROOT_PASSWORD=${MYSQL_CHATSERVICE_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_CHATSERVICE_USERNAME}
+      - MYSQL_PASSWORD=${MYSQL_CHATSERVICE_PASSWORD}
+    networks:
+      - database
+
+  chatservice-redis:
+    image: redis:7
+    restart: unless-stopped
+    container_name: chatservice-redis
+    ports:
+      - 6379:6379
+    networks:
+      - database
+
+  chatservice:
+    image: balintjeszenszky/adsite:chatservice-latest
+    restart: unless-stopped
+    container_name: chatservice
+    depends_on:
+      - chatservice-db
+      - chatservice-redis
+    ports:
+      - 3002:3000
+    environment:
+      - PORT=3000
+      - DB_URL=chatservice-db
+      - DB_PORT=3306
+      - DB_USER=${MYSQL_CHATSERVICE_USERNAME}
+      - DB_PASS=${MYSQL_CHATSERVICE_PASSWORD}
+      - DB_NAME=chat
+      - REDIS_HOST=chatservice-redis
+      - REDIS_PORT=6379
+      - ADVERTISEMENT_SERVICE_INTERNAL_API_URL=http://advertisementservice:8080/api/advertisement/internal
+      - ADVERTISEMENT_SERVICE_ADVERTISEMENT_EXISTS_PATH=/advertisement/exists
+    networks:
+      - web
+      - database
 
   frontend:
     image: balintjeszenszky/adsite:frontend-latest

@@ -10,10 +10,11 @@ export const dataSourceOptions: DataSourceOptions = {
   port: parseInt(process.env.DB_PORT),
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
-  database: 'chat',
+  database: process.env.DB_NAME,
   entities: ['dist/**/*.entity.js'],
   migrations: ['dist/db/migrations/*.js'],
   synchronize: false,
+  migrationsRun: true,
 };
 
 const dataSource = new DataSource(dataSourceOptions);

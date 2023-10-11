@@ -2,7 +2,7 @@ import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nes
 import { ChatService } from './chat.service';
 import { Chat, Message, NewAdvertisementMessage, NewChatMessage } from '../graphql/graphql';
 import { CurrentUser } from 'src/auth/current-user.decorator';
-import { User } from 'src/auth/User.model';
+import { User } from 'src/auth/user.model';
 
 @Resolver(of => Chat)
 export class ChatResolver {
