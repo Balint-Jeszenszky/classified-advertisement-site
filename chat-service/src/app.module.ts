@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ChatModule } from './chat/chat.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { dataSourceOptions } from './db/data-source';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
@@ -16,7 +15,9 @@ import { HeaderAuthGuard } from './auth/header-auth.guard';
       envFilePath: process.env.NODE_ENV ? `.${process.env.NODE_ENV}.env` : '.env',
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot(dataSourceOptions),
+    TypeOrmModule.forRootAsync({ 
+      useFactory: async () => (await import('./db/data-source')).dataSourceOptions,
+    }),
     ChatModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
