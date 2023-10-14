@@ -29,6 +29,10 @@
 			"path": "chat-service"
 		},
 		{
+			"name": "Bid service",
+			"path": "bidservice"
+		},
+		{
 			"name": "Kubernetes",
 			"path": "k8s"
 		},
