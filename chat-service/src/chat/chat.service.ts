@@ -23,6 +23,11 @@ export class ChatService {
   async getChatsForUser(userId: number) {
     const chats = await this.chatRepository.find({ where: [{ advertisementOwnerUserId: userId }, { fromUserId: userId }] });
 
+    await Promise.all(chats.map(async chat => {
+      const message = await this.messageRepository.findOne({ where: { chat }, order: { createdAt: 'DESC' } });
+      chat.messages = [message];
+    }));
+
     return chats;
   }
 

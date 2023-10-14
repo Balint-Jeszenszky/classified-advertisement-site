@@ -32,6 +32,10 @@ export class ChatResolver {
     @Parent() chat: Chat,
     @CurrentUser() user: User,
   ): Promise<Message[]> {
+    if (chat.messages) {
+      return Promise.resolve(chat.messages);
+    }
+
     return this.chatService.getMessagesByChatId(chat.id, user.id);
   }
 
