@@ -59,6 +59,7 @@ class AdvertisementController(
         description: String,
         price: Double,
         categoryId: Int,
+        type: String,
         images: MutableList<MultipartFile>?
     ): ResponseEntity<AdvertisementResponse> {
         val advertisement: AdvertisementResponse = advertisementService.createAdvertisement(
@@ -66,6 +67,7 @@ class AdvertisementController(
             description,
             price,
             categoryId,
+            type,
             images)
         return ResponseEntity(advertisement, HttpStatus.CREATED)
     }

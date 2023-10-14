@@ -61,10 +61,17 @@ class AdvertisementService(
         description: String,
         price: Double,
         categoryId: Int,
+        type: String,
         images: MutableList<MultipartFile>?
     ): AdvertisementResponse {
         val user = loggedInUserService.getLoggedInUser() ?: throw ForbiddenException("User not found")
         val category = categoryRepository.findById(categoryId).orElseThrow { BadRequestException("Category not found") }
+
+        val advertisementType = try {
+            AdvertisementType.valueOf(type)
+        } catch(e: IllegalArgumentException) {
+            throw BadRequestException("Wrong advertisement type")
+        }
 
         val advertisement = Advertisement(
             title,
@@ -73,7 +80,7 @@ class AdvertisementService(
             price,
             category,
             AdvertisementStatus.AVAILABLE,
-            AdvertisementType.FIXED_PRICE) // TODO
+            advertisementType)
 
         advertisementRepository.save(advertisement)
 
