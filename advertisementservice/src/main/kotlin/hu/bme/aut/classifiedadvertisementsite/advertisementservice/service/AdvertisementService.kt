@@ -12,6 +12,7 @@ import hu.bme.aut.classifiedadvertisementsite.advertisementservice.mapper.Advert
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.mapper.CategoryMapper
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.model.Advertisement
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.model.AdvertisementStatus
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.model.AdvertisementType
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.model.Category
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.repository.AdvertisementRepository
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.repository.CategoryRepository
@@ -71,7 +72,8 @@ class AdvertisementService(
             user.getId(),
             price,
             category,
-            AdvertisementStatus.AVAILABLE)
+            AdvertisementStatus.AVAILABLE,
+            AdvertisementType.FIXED_PRICE) // TODO
 
         advertisementRepository.save(advertisement)
 
@@ -155,7 +157,8 @@ class AdvertisementService(
 
     private fun validStateTransition(from: AdvertisementStatus, to: AdvertisementStatus): Boolean {
         return when (from) {
-            AdvertisementStatus.AVAILABLE -> true
+            AdvertisementStatus.AVAILABLE -> to != AdvertisementStatus.BIDDING
+            AdvertisementStatus.BIDDING -> listOf(AdvertisementStatus.SOLD, AdvertisementStatus.ARCHIVED).contains(to)
             AdvertisementStatus.FREEZED -> listOf(AdvertisementStatus.AVAILABLE, AdvertisementStatus.SOLD).contains(to)
             else -> false
         }
