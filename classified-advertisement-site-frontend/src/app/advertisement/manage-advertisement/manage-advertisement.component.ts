@@ -11,6 +11,7 @@ export interface EditAdvertisement {
   price: number;
   categoryId?: number;
   status?: AdvertisementResponse.StatusEnum;
+  type?: AdvertisementResponse.TypeEnum;
 }
 
 @Component({
@@ -76,12 +77,13 @@ export class ManageAdvertisementComponent implements OnInit {
       return;
     }
 
-    if (this.newAdvertisement) {
+    if (this.newAdvertisement && this.advertisement.type) {
       this.advertisementService.postAdvertisements(
         this.advertisement.title,
         this.advertisement.description,
         this.advertisement.price,
         this.advertisement.categoryId,
+        this.advertisement.type,
         this.files,
       ).subscribe({
         next: res => {

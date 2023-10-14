@@ -72,6 +72,10 @@ class AdvertisementService(
         } catch(e: IllegalArgumentException) {
             throw BadRequestException("Wrong advertisement type")
         }
+        val advertisementStatus = if (advertisementType == AdvertisementType.FIXED_PRICE)
+            AdvertisementStatus.AVAILABLE
+        else
+            AdvertisementStatus.BIDDING
 
         val advertisement = Advertisement(
             title,
@@ -79,7 +83,7 @@ class AdvertisementService(
             user.getId(),
             price,
             category,
-            AdvertisementStatus.AVAILABLE,
+            advertisementStatus,
             advertisementType)
 
         advertisementRepository.save(advertisement)
@@ -124,6 +128,10 @@ class AdvertisementService(
             .orElseThrow { ForbiddenException("Advertisement not found") }
         val category = categoryRepository.findById(categoryId)
             .orElseThrow { BadRequestException("Category not found") }
+
+        if (advertisement.type == AdvertisementType.BID && advertisement.price != price) {
+            throw BadRequestException("Bid start price cannot be changed")
+        }
 
         advertisement.title = title
         advertisement.description = description

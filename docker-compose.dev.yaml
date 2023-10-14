@@ -302,6 +302,7 @@ services:
       - EMAIL_PORT=${EMAIL_PORT}
       - EMAIL_USER=${EMAIL_USER}
       - EMAIL_PASS=${EMAIL_PASS}
+      - BASEURL=http://localhost:8080
     networks:
       - web
       - database
