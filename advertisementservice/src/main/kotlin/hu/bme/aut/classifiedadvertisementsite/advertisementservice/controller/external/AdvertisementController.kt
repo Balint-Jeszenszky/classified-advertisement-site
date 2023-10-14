@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
+import java.time.OffsetDateTime
 
 @RestController
 class AdvertisementController(
@@ -60,6 +61,7 @@ class AdvertisementController(
         price: Double,
         categoryId: Int,
         type: String,
+        expiration: OffsetDateTime?,
         images: MutableList<MultipartFile>?
     ): ResponseEntity<AdvertisementResponse> {
         val advertisement: AdvertisementResponse = advertisementService.createAdvertisement(
@@ -68,6 +70,7 @@ class AdvertisementController(
             price,
             categoryId,
             type,
+            expiration,
             images)
         return ResponseEntity(advertisement, HttpStatus.CREATED)
     }

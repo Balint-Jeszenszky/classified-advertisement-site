@@ -20,6 +20,7 @@ export class EditAdvertisementComponent implements OnInit {
   advertisementType?: AdvertisementResponse.TypeEnum;
   allStatuses: AdvertisementResponse.StatusEnum[] = [];
   allTypes = Object.values(AdvertisementResponse.TypeEnum); 
+  expiration?: Date;
   private initialStatus?: AdvertisementResponse.StatusEnum;
 
   ngOnInit(): void {
@@ -46,6 +47,7 @@ export class EditAdvertisementComponent implements OnInit {
       categoryId: this.categoryId,
       status: this.status,
       type: this.advertisementType,
+      expiration: this.advertisementType === AdvertisementResponse.TypeEnum.Bid ? this.expiration : undefined,
     });
   }
 

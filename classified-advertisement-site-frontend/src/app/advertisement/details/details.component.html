@@ -22,6 +22,7 @@
     <div class="mb-3">
       <mat-chip>{{ advertisement.status }}</mat-chip>
     </div>
+    <p *ngIf="advertisement.expiration" class="date">Expire at: {{ advertisement.expiration | localeDateTime }}</p>
     <p>{{ advertisement.description }}</p>
     <h2>{{ advertisement.price | currency: 'HUF' : 'symbol' }}</h2>
     <p>Advertiser: {{ advertiser?.username }}</p>

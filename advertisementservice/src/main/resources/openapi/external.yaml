@@ -377,6 +377,9 @@ components:
           enum:
             - FIXED_PRICE
             - BID
+        expiration:
+          type: string
+          format: date-time
       required:
         - id
         - title
@@ -407,6 +410,9 @@ components:
           enum:
             - FIXED_PRICE
             - BID
+        expiration:
+          type: string
+          format: date-time
         images:
           type: array
           format: binary

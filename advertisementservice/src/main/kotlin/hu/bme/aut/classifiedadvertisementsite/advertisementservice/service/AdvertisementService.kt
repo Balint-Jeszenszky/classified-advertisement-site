@@ -62,6 +62,7 @@ class AdvertisementService(
         price: Double,
         categoryId: Int,
         type: String,
+        expiration: OffsetDateTime?,
         images: MutableList<MultipartFile>?
     ): AdvertisementResponse {
         val user = loggedInUserService.getLoggedInUser() ?: throw ForbiddenException("User not found")
@@ -77,6 +78,10 @@ class AdvertisementService(
         else
             AdvertisementStatus.BIDDING
 
+        if (advertisementType == AdvertisementType.BID && (expiration == null || expiration.isBefore(OffsetDateTime.now()))) {
+            throw BadRequestException("Expiration should be set for bids to a valid timestamp")
+        }
+
         val advertisement = Advertisement(
             title,
             description,
@@ -84,7 +89,8 @@ class AdvertisementService(
             price,
             category,
             advertisementStatus,
-            advertisementType)
+            advertisementType,
+            expiration)
 
         advertisementRepository.save(advertisement)
 
