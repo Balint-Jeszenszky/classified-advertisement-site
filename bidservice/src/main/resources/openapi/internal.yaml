@@ -1,0 +1,94 @@
+openapi: 3.0.0
+x-stoplight:
+  id: cfkkyjk5ox38g
+info:
+  title: internal
+  version: '1.0'
+  description: Bid service internal api
+  contact:
+    name: Balint Jeszenszky
+servers:
+  - url: 'http://localhost:8084/api/bid'
+paths:
+  /create:
+    post:
+      summary: ''
+      operationId: post-create
+      responses:
+        '201':
+          description: Created
+      tags:
+        - bid
+      description: Create a new ad with bidding
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBidRequest'
+  '/modify/{id}':
+    put:
+      summary: ''
+      operationId: put-modify
+      responses:
+        '202':
+          description: Accepted
+      tags:
+        - bid
+      description: Update a bid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModifyBidRequest'
+    delete:
+      summary: ''
+      operationId: delete-modify
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - bid
+      description: Delete a bid
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+components:
+  schemas:
+    CreateBidRequest:
+      title: CreateBidRequest
+      x-stoplight:
+        id: tv5fys2vn8283
+      type: object
+      properties:
+        advertisementId:
+          type: integer
+        userId:
+          type: integer
+        expiration:
+          type: string
+          format: date-time
+        price:
+          type: number
+          format: double
+      required:
+        - advertisementId
+        - userId
+        - expiration
+        - price
+    ModifyBidRequest:
+      title: ModifyBidRequest
+      x-stoplight:
+        id: 216wyw5r4y70y
+      type: object
+      properties:
+        archived:
+          type: boolean
+          default: true
+      required:
+        - archived
+x-internal: true
+tags:
+  - name: bid

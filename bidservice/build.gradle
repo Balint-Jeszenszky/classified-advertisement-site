@@ -6,6 +6,7 @@ plugins {
 	id 'org.jetbrains.kotlin.jvm' version '1.8.22'
 	id 'org.jetbrains.kotlin.plugin.spring' version '1.8.22'
 	id 'org.jetbrains.kotlin.plugin.jpa' version '1.8.22'
+	id 'org.openapi.generator' version '6.5.0'
 }
 
 group = 'hu.bme.aut.classifiedadvertisementsite'
@@ -28,6 +29,9 @@ dependencies {
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	implementation 'org.liquibase:liquibase-core'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation "javax.servlet:servlet-api:2.5"
+	implementation "javax.validation:validation-api:2.0.1.Final"
+	implementation "io.swagger.parser.v3:swagger-parser:2.1.16"
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.amqp:spring-rabbit-test'
@@ -43,4 +47,57 @@ tasks.withType(KotlinCompile) {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+tasks.register("kotlinExternalApi", GenerateTask) {
+	kotlinExternalApi.generatorName = "kotlin-spring"
+	kotlinExternalApi.inputSpec = "$rootDir/src/main/resources/openapi/external.yaml".toString()
+	kotlinExternalApi.outputDir = "$buildDir/generated-sources/openapi/external".toString()
+	kotlinExternalApi.apiPackage = "hu.bme.aut.classifiedadvertisementsite.bidservice.api.external"
+	kotlinExternalApi.modelPackage = "hu.bme.aut.classifiedadvertisementsite.bidservice.api.external.model"
+	kotlinExternalApi.configOptions = [
+			useTags: "true",
+			interfaceOnly: "true",
+			skipDefaultInterface: "true",
+			exceptionHandler: "false"
+	]
+}
+
+tasks.register("kotlinInternalApi", GenerateTask) {
+	kotlinInternalApi.generatorName = "kotlin-spring"
+	kotlinInternalApi.inputSpec = "$rootDir/src/main/resources/openapi/internal.yaml".toString()
+	kotlinInternalApi.outputDir = "$buildDir/generated-sources/openapi/internal".toString()
+	kotlinInternalApi.apiPackage = "hu.bme.aut.classifiedadvertisementsite.bidservice.api.internal"
+	kotlinInternalApi.modelPackage = "hu.bme.aut.classifiedadvertisementsite.bidservice.api.internal.model"
+	kotlinInternalApi.configOptions = [
+			useTags: "true",
+			interfaceOnly: "true",
+			skipDefaultInterface: "true",
+			exceptionHandler: "false"
+	]
+}
+
+tasks.register("openapiCleanup") {
+	doLast {
+		delete (
+			// exclude org.* to prevent unused SpringDocConfiguration class collision
+			"$buildDir/generated-sources/openapi/external/src/main/kotlin/org",
+			"$buildDir/generated-sources/openapi/internal/src/main/kotlin/org"
+		)
+	}
+}
+sourceSets {
+	main {
+		kotlin {
+			srcDir("$buildDir/generated-sources/openapi/external/src/main/kotlin")
+			srcDir("$buildDir/generated-sources/openapi/internal/src/main/kotlin")
+		}
+	}
+}
+
+compileKotlin.dependsOn('kotlinExternalApi', 'kotlinInternalApi', 'openapiCleanup')
+
+jar {
+	enabled = false
 }

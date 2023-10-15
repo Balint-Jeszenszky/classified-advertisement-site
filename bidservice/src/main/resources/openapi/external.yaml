@@ -1,0 +1,54 @@
+openapi: 3.0.0
+x-stoplight:
+  id: u265iojsw0fao
+info:
+  title: external
+  version: '1.0'
+  contact:
+    name: Balint Jeszenszky
+  description: Bid service external api
+servers:
+  - url: 'http://localhost:8084/api/bid'
+paths:
+  '/currentBids/{ids}':
+    parameters:
+      - schema:
+          type: array
+          items:
+            type: integer
+        name: ids
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - bid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BidResponse'
+      operationId: get-currentBids-ids
+      description: List of bids for advertisements
+components:
+  schemas:
+    BidResponse:
+      title: BidResponse
+      x-stoplight:
+        id: tnn9xwwbrtzvh
+      type: object
+      properties:
+        id:
+          type: integer
+        price:
+          type: number
+          format: double
+      required:
+        - id
+        - price
+tags:
+  - name: bid
