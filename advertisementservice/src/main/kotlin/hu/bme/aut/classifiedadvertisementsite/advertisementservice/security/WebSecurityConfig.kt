@@ -46,6 +46,11 @@ class WebSecurityConfig {
                 "/external/category/*/search/**"
             )
             .permitAll()
+            .requestMatchers(
+                HttpMethod.GET,
+                "/internal/**"
+            )
+            .permitAll()
             .anyRequest().authenticated()
         http.addFilterBefore(authenticationHeaderFilter(), UsernamePasswordAuthenticationFilter::class.java)
         return http.build()

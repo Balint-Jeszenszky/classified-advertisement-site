@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notificationservice-db-deployment
+  labels:
+    app: notificationservice-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notificationservice-db
+  template:
+    metadata:
+      labels:
+        app: notificationservice-db
+    spec:
+      containers:
+      - name: notificationservice-db
+        image: mongo:5
+        ports:
+        - containerPort: 27017
+        env:
+        - name: MONGO_INITDB_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: notificationservice-db-config
+              key: notificationservice-db-name
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: notificationservice-db-secret
+              key: notificationservice-db-root-user
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: notificationservice-db-secret
+              key: notificationservice-db-root-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notificationservice-db-service
+spec:
+  selector:
+    app: notificationservice-db
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: userservice-db-config
+data:
+  userservice-db-url: userservice-db-service:5432/users
+  userservice-db-name: users

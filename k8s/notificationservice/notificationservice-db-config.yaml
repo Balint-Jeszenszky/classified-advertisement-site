@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: notificationservice-db-config
+data:
+  notificationservice-db-url: notificationservice-db-service/notification
+  notificationservice-db-name: notification

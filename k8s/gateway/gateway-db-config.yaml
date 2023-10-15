@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-db-config
+data:
+  gateway-db-url: gateway-db-service:3306/gateway
+  gateway-db-name: gateway

@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable, ReplaySubject } from 'rxjs';
+import { Observable, ReplaySubject, firstValueFrom } from 'rxjs';
 import { CredentialsService } from '../openapi/credentials.service';
 import { AuthService, LoginResponse, RefreshResponse, UserDetailsResponse } from '../openapi/gateway';
+import { SwPush } from '@angular/service-worker';
+import { NotificationsService } from '../openapi/notificationservice';
+import { GraphqlCredentialsService } from '../graphql/graphql-credentials.service';
 
 const TOKEN_KEY = 'tokens';
 
@@ -20,6 +23,9 @@ export class LoggedInUserService {
   constructor(
     private readonly authService: AuthService,
     private readonly credentialsService: CredentialsService,
+    private readonly graphqlCredentialsService: GraphqlCredentialsService,
+    private readonly swPush: SwPush,
+    private readonly notificationsService: NotificationsService,
   ) {
     const tokens = localStorage.getItem(TOKEN_KEY);
 
@@ -52,6 +58,10 @@ export class LoggedInUserService {
     return this.currentUser.asObservable();
   }
 
+  get accessToken(): string | undefined {
+    return this.tokens?.accessToken
+  }
+
   login(username: string, password: string): Observable<LoginResponse> {
     const response = this.authService.postAuthLogin({ username, password });
 
@@ -59,6 +69,7 @@ export class LoggedInUserService {
       response.subscribe({
         next: res => {
           this.setTokens({ accessToken: res.accessToken, refreshToken: res.refreshToken });
+          this.handlePushSubscription();
           subscriber.next(res);
         },
         error: err => subscriber.error(err),
@@ -100,6 +111,7 @@ export class LoggedInUserService {
 
   private setTokens(tokens: RefreshResponse): void {
     this.credentialsService.updateCredentials(tokens.accessToken);
+    this.graphqlCredentialsService.updateCredentials(tokens.accessToken);
     this.tokens = tokens;
     this.loggedIn.next(true);
     const { id, username, email, roles, exp } = this.getTokenPayload(tokens.accessToken);
@@ -115,5 +127,20 @@ export class LoggedInUserService {
     const payload = token.split('.')[1];
     const parsed = JSON.parse(window.atob(payload)) as TokenPayload;
     return parsed;
+  }
+
+  private async handlePushSubscription() {
+    firstValueFrom(this.swPush.subscription).then(res => {
+      if (!this.loggedIn || res != null) return;
+
+      this.notificationsService.notificationControllerGetPublicVapidKey().subscribe({
+        next: res => {
+          this.swPush.requestSubscription({
+            serverPublicKey: res.publicVapidKey,
+          }).then(sub => this.notificationsService.notificationControllerPushSubscription(sub).subscribe());
+        },
+        error: err => console.error("Could not subscribe to notifications", err),
+      });
+    });
   }
 }

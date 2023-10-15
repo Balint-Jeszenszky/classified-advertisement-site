@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: notificationservice-config
+data:
+  notificationservice-url: http://notificationservice-service:3000
+  notificationservice-email-host: smtp.example.com
+  notificationservice-email-port: '587'

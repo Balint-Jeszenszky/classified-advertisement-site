@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: advertisementservice-db-deployment
+  labels:
+    app: advertisementservice-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: advertisementservice-db
+  template:
+    metadata:
+      labels:
+        app: advertisementservice-db
+    spec:
+      containers:
+      - name: advertisementservice-db
+        image: mysql:8
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: advertisementservice-db-config
+              key: advertisementservice-db-name
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: advertisementservice-db-secret
+              key: advertisementservice-db-root-password
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: advertisementservice-db-secret
+              key: advertisementservice-db-user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: advertisementservice-db-secret
+              key: advertisementservice-db-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: advertisementservice-db-service
+spec:
+  selector:
+    app: advertisementservice-db
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306

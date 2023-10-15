@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webscraperservice-db-config
+data:
+  webscraperservice-db-url: webscraperservice-db-service/scraper
+  webscraperservice-db-name: scraper

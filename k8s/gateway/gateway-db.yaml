@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-db-deployment
+  labels:
+    app: gateway-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-db
+  template:
+    metadata:
+      labels:
+        app: gateway-db
+    spec:
+      containers:
+      - name: gateway-db
+        image: mysql:8
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: gateway-db-config
+              key: gateway-db-name
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: gateway-db-secret
+              key: gateway-db-root-password
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: gateway-db-secret
+              key: gateway-db-user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: gateway-db-secret
+              key: gateway-db-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-db-service
+spec:
+  selector:
+    app: gateway-db
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306

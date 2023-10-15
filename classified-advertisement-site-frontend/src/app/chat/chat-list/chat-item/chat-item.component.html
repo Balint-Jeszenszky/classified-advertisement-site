@@ -1,0 +1,9 @@
+<div *ngIf="chat" class="d-flex justify-content-between chat-item" (click)="openChat()">
+  <div>
+    <p>{{ chat.fromUsername }} - {{ chat.advertisementTitle }}</p>
+    <p>{{ chat.chat.messages[0].text }}</p>
+  </div>
+  <div>
+    {{ chat.chat.messages[0].createdAt | localeDateTime }}
+  </div>
+</div>

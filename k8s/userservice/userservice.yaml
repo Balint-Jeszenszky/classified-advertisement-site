@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userservice-deployment
+  labels:
+    app: userservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: userservice
+  template:
+    metadata:
+      labels:
+        app: userservice
+    spec:
+      containers:
+      - name: userservice
+        image: balintjeszenszky/adsite:userservice-latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PORT
+          value: '8080'
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: userservice-db-config
+              key: userservice-db-url
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: userservice-db-secret
+              key: userservice-db-user
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: userservice-db-secret
+              key: userservice-db-password
+        - name: RABBITMQ_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: rabbitmq-config
+              key: rabbitmq-url
+        - name: RABBITMQ_USER
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-secret
+              key: rabbitmq-user
+        - name: RABBITMQ_PASS
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-secret
+              key: rabbitmq-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: userservice-service
+spec:
+  type: NodePort
+  selector:
+    app: userservice
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30081

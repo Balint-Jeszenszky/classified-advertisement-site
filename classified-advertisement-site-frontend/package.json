@@ -12,8 +12,11 @@
     "openapi:generate-userservice": "openapi-generator-cli generate -i ../userservice/src/main/resources/openapi/external.yaml -g typescript-angular -o src/app/openapi/userservice",
     "openapi:generate-advertisementservice": "openapi-generator-cli generate -i ../advertisementservice/src/main/resources/openapi/external.yaml -g typescript-angular -o src/app/openapi/advertisementservice",
     "openapi:generate-imageprocessingservice": "openapi-generator-cli generate -i ../imageprocessingservice/src/main/resources/openapi/external.yaml -g typescript-angular -o src/app/openapi/imageprocessingservice",
-    "openapi:generate-webscraperservice": "openapi-generator-cli generate -i http://localhost:3000/api-json -g typescript-angular -o src/app/openapi/webscraperservice",
-    "openapi:generate": "npm run openapi:generate-gateway && npm run openapi:generate-userservice && npm run openapi:generate-advertisementservice && npm run openapi:generate-imageprocessingservice && npm run openapi:generate-webscraperservice"
+    "openapi:generate-webscraperservice": "openapi-generator-cli generate -i http://localhost:3000/api-yaml -g typescript-angular -o src/app/openapi/webscraperservice",
+    "openapi:generate-notificationservice": "openapi-generator-cli generate -i http://localhost:3001/api-yaml -g typescript-angular -o src/app/openapi/notificationservice",
+    "openapi:generate": "npm run openapi:generate-gateway && npm run openapi:generate-userservice && npm run openapi:generate-advertisementservice && npm run openapi:generate-imageprocessingservice && npm run openapi:generate-webscraperservice && npm run openapi:generate-notificationservice",
+    "graphql:generate-chat": "graphql-codegen --config ./src/app/graphql/chat/codegen.ts",
+    "graphql:generate": "npm run graphql:generate-chat"
   },
   "private": true,
   "dependencies": {
@@ -27,8 +30,13 @@
     "@angular/platform-browser": "^15.2.0",
     "@angular/platform-browser-dynamic": "^15.2.0",
     "@angular/router": "^15.2.0",
+    "@angular/service-worker": "^15.2.3",
+    "@apollo/client": "^3.0.0",
+    "apollo-angular": "^5.0.2",
     "bootstrap": "^5.2.3",
+    "graphql": "^16",
     "rxjs": "~7.8.0",
+    "socket.io-client": "^4.7.2",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"
   },
@@ -36,6 +44,10 @@
     "@angular-devkit/build-angular": "^15.2.4",
     "@angular/cli": "~15.2.4",
     "@angular/compiler-cli": "^15.2.0",
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/typescript": "^4.0.1",
+    "@graphql-codegen/typescript-apollo-angular": "^4.0.0",
+    "@graphql-codegen/typescript-operations": "^4.0.1",
     "@openapitools/openapi-generator-cli": "^2.5.2",
     "@types/jasmine": "~4.3.0",
     "jasmine-core": "~4.5.0",

@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webscraperservice-deployment
+  labels:
+    app: webscraperservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webscraperservice
+  template:
+    metadata:
+      labels:
+        app: webscraperservice
+    spec:
+      containers:
+      - name: webscraperservice
+        image: balintjeszenszky/adsite:webscraperservice-latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: PORT
+          value: '3000'
+        - name: MONGO_URL
+          valueFrom:
+            configMapKeyRef:
+              name: webscraperservice-db-config
+              key: webscraperservice-db-url
+        - name: MONGO_USER
+          valueFrom:
+            secretKeyRef:
+              name: webscraperservice-db-secret
+              key: webscraperservice-db-root-user
+        - name: MONGO_PASS
+          valueFrom:
+            secretKeyRef:
+              name: webscraperservice-db-secret
+              key: webscraperservice-db-root-password
+        - name: RABBITMQ_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: rabbitmq-config
+              key: rabbitmq-url
+        - name: RABBITMQ_USER
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-secret
+              key: rabbitmq-user
+        - name: RABBITMQ_PASS
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-secret
+              key: rabbitmq-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webscraperservice-service
+spec:
+  type: NodePort
+  selector:
+    app: webscraperservice
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+      nodePort: 30300

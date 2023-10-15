@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: imageprocessingservice-deployment
+  labels:
+    app: imageprocessingservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: imageprocessingservice
+  template:
+    metadata:
+      labels:
+        app: imageprocessingservice
+    spec:
+      containers:
+      - name: imageprocessingservice
+        image: balintjeszenszky/adsite:imageprocessingservice-latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PORT
+          value: '8080'
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: imageprocessingservice-db-config
+              key: imageprocessingservice-db-url
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: imageprocessingservice-db-secret
+              key: imageprocessingservice-db-user
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: imageprocessingservice-db-secret
+              key: imageprocessingservice-db-password
+        - name: MINIO_URL
+          valueFrom:
+            configMapKeyRef:
+              name: minio-config
+              key: minio-url
+        - name: MINIO_USER
+          valueFrom:
+            secretKeyRef:
+              name: minio-secret
+              key: minio-user
+        - name: MINIO_PASS
+          valueFrom:
+            secretKeyRef:
+              name: minio-secret
+              key: minio-password
+        - name: RABBITMQ_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: rabbitmq-config
+              key: rabbitmq-url
+        - name: RABBITMQ_USER
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-secret
+              key: rabbitmq-user
+        - name: RABBITMQ_PASS
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-secret
+              key: rabbitmq-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: imageprocessingservice-service
+spec:
+  type: NodePort
+  selector:
+    app: imageprocessingservice
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30083

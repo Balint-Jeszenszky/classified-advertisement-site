@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chatservice-db-config
+data:
+  chatservice-db-url: chatservice-db-service
+  chatservice-db-name: chat

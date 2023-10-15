@@ -1,11 +1,13 @@
 package hu.bme.aut.classifiedadvertisementsite.advertisementservice.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.internal.model.AdvertisementExistsResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.AdvertisementResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.NewAdvertisementsResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.BadRequestException
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.ForbiddenException
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.NotFoundException
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.AdvertisementDataResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.mapper.AdvertisementMapper
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.mapper.CategoryMapper
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.model.Advertisement
@@ -182,5 +184,16 @@ class AdvertisementService(
     fun search(query: String): List<AdvertisementResponse> {
         val advertisements = advertisementRepository.findByTitleContainsOrDescriptionContains(query, query)
         return advertisements.map { advertisementMapper.advertisementToAdvertisementResponse(it) }
+    }
+
+    fun existsById(id: Int): AdvertisementExistsResponse {
+        val advertisement = advertisementRepository.findById(id).orElseThrow { NotFoundException("Advertisement not found") }
+        return advertisementMapper.advertisementToAdvertisementExistsResponse(advertisement)
+    }
+
+    fun getAdvertisementsByIds(ids: MutableList<Int>): List<AdvertisementDataResponse> {
+        val advertisements = advertisementRepository.findAllById(ids)
+
+        return advertisements.map { advertisementMapper.advertisementToAdvertisementDataResponse(it) }
     }
 }

@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notificationservice-deployment
+  labels:
+    app: notificationservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notificationservice
+  template:
+    metadata:
+      labels:
+        app: notificationservice
+    spec:
+      containers:
+      - name: notificationservice
+        image: balintjeszenszky/adsite:notificationservice-latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: PORT
+          value: '3000'
+        - name: MONGO_URL
+          valueFrom:
+            configMapKeyRef:
+              name: notificationservice-db-config
+              key: notificationservice-db-url
+        - name: MONGO_USER
+          valueFrom:
+            secretKeyRef:
+              name: notificationservice-db-secret
+              key: notificationservice-db-root-user
+        - name: MONGO_PASS
+          valueFrom:
+            secretKeyRef:
+              name: notificationservice-db-secret
+              key: notificationservice-db-root-password
+        - name: RABBITMQ_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: rabbitmq-config
+              key: rabbitmq-url
+        - name: RABBITMQ_USER
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-secret
+              key: rabbitmq-user
+        - name: RABBITMQ_PASS
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-secret
+              key: rabbitmq-password
+        - name: ADMIN_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: notificationservice-secret
+              key: notificationservice-admin-email
+        - name: VAPID_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              name: notificationservice-secret
+              key: notificationservice-vapid-public-key
+        - name: VAPID_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: notificationservice-secret
+              key: notificationservice-vapid-private-key
+        - name: EMAIL_USER
+          valueFrom:
+            secretKeyRef:
+              name: notificationservice-secret
+              key: notificationservice-email-user
+        - name: EMAIL_PASS
+          valueFrom:
+            secretKeyRef:
+              name: notificationservice-secret
+              key: notificationservice-email-pass
+        - name: EMAIL_HOST
+          valueFrom: 
+            configMapKeyRef:
+              name: notificationservice-config
+              key: notificationservice-email-host
+        - name: EMAIL_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: notificationservice-config
+              key: notificationservice-email-port
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notificationservice-service
+spec:
+  type: NodePort
+  selector:
+    app: notificationservice
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+      nodePort: 30301

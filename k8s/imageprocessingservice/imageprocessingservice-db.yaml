@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: imageprocessingservice-db-deployment
+  labels:
+    app: imageprocessingservice-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: imageprocessingservice-db
+  template:
+    metadata:
+      labels:
+        app: imageprocessingservice-db
+    spec:
+      containers:
+      - name: imageprocessingservice-db
+        image: postgres:15
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: imageprocessingservice-db-config
+              key: imageprocessingservice-db-name
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: imageprocessingservice-db-secret
+              key: imageprocessingservice-db-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: imageprocessingservice-db-secret
+              key: imageprocessingservice-db-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: imageprocessingservice-db-service
+spec:
+  selector:
+    app: imageprocessingservice-db
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
