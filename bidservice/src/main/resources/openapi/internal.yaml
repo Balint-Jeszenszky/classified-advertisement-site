@@ -8,7 +8,7 @@ info:
   contact:
     name: Balint Jeszenszky
 servers:
-  - url: 'http://localhost:8084/api/bid'
+  - url: 'http://localhost:8084/api/bid/internal'
 paths:
   /create:
     post:

@@ -8,7 +8,7 @@ info:
     name: Balint Jeszenszky
   description: Bid service external api
 servers:
-  - url: 'http://localhost:8084/api/bid'
+  - url: 'http://localhost:8084/api/bid/external'
 paths:
   '/currentBids/{ids}':
     parameters:

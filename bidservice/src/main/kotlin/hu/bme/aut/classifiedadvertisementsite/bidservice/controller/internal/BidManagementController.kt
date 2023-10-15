@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class BidManagementController : BidApi, InternalApi {
+class BidManagementController : InternalApi, BidApi {
     override fun deleteModify(id: Int): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }

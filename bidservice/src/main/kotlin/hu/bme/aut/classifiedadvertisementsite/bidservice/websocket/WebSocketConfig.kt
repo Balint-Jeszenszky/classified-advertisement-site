@@ -9,6 +9,6 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 class WebSocketConfig : WebSocketConfigurer {
     override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
-        registry.addHandler(SocketHandler(), "/live-bids")
+        registry.addHandler(SocketHandler(), "/external/live-bids")
     }
 }
