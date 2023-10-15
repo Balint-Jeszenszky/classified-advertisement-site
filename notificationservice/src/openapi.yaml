@@ -1,0 +1,83 @@
+openapi: 3.0.0
+paths:
+  /api/notification/publicVapidKey:
+    get:
+      operationId: NotificationController_getPublicVapidKey
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicVapidKeyResponse'
+      tags: &ref_0
+        - notifications
+      security: &ref_1
+        - JWT: []
+  /api/notification/pushSubscription:
+    post:
+      operationId: NotificationController_pushSubscription
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushSubscriptionRequest'
+      responses:
+        '201':
+          description: ''
+      tags: *ref_0
+      security: *ref_1
+info:
+  title: Notification microservice
+  description: The notification microservice sends email, push and SSE notifications
+  version: '1.0'
+  contact: {}
+tags:
+  - name: notifications
+    description: ''
+servers: []
+components:
+  securitySchemes:
+    JWT:
+      type: http
+      scheme: bearer
+  schemas:
+    Email:
+      type: object
+      properties: {}
+    Push:
+      type: object
+      properties: {}
+    PublicVapidKeyResponse:
+      type: object
+      properties:
+        publicVapidKey:
+          type: string
+      required:
+        - publicVapidKey
+    PushSubscriptionKeys:
+      type: object
+      properties:
+        p256dh:
+          type: string
+        auth:
+          type: string
+      required:
+        - p256dh
+        - auth
+    PushSubscriptionRequest:
+      type: object
+      properties:
+        endpoint:
+          type: string
+        expirationTime:
+          type: string
+        keys:
+          $ref: '#/components/schemas/PushSubscriptionKeys'
+      required:
+        - endpoint
+        - expirationTime
+        - keys
