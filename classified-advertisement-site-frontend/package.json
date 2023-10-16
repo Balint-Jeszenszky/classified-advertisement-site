@@ -14,7 +14,8 @@
     "openapi:generate-imageprocessingservice": "openapi-generator-cli generate -i ../imageprocessingservice/src/main/resources/openapi/external.yaml -g typescript-angular -o src/app/openapi/imageprocessingservice",
     "openapi:generate-webscraperservice": "openapi-generator-cli generate -i ../web-scraping-service/src/openapi.yaml -g typescript-angular -o src/app/openapi/webscraperservice",
     "openapi:generate-notificationservice": "openapi-generator-cli generate -i ../notificationservice/src/openapi.yaml -g typescript-angular -o src/app/openapi/notificationservice",
-    "openapi:generate": "npm run openapi:generate-gateway && npm run openapi:generate-userservice && npm run openapi:generate-advertisementservice && npm run openapi:generate-imageprocessingservice && npm run openapi:generate-webscraperservice && npm run openapi:generate-notificationservice",
+    "openapi:generate-bidservice": "openapi-generator-cli generate -i ../bidservice/src/main/resources/openapi/external.yaml -g typescript-angular -o src/app/openapi/bidservice",
+    "openapi:generate": "npm run openapi:generate-gateway && npm run openapi:generate-userservice && npm run openapi:generate-advertisementservice && npm run openapi:generate-imageprocessingservice && npm run openapi:generate-webscraperservice && npm run openapi:generate-notificationservice && npm run openapi:generate-bidservice",
     "graphql:generate-chat": "graphql-codegen --config ./src/app/graphql/chat/codegen.ts",
     "graphql:generate": "npm run graphql:generate-chat"
   },

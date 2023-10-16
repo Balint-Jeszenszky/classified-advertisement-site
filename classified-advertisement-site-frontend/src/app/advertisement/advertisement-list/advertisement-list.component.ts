@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdvertisementResponse, AdvertisementService, CategoryResponse, CategoryService } from 'src/app/openapi/advertisementservice';
+import { BidService } from 'src/app/openapi/bidservice';
 
 @Component({
   selector: 'app-advertisement-list',
@@ -18,6 +19,7 @@ export class AdvertisementListComponent implements OnInit {
     private readonly router: Router,
     private readonly advertisementService: AdvertisementService,
     private readonly categoryService: CategoryService,
+    private readonly bidService: BidService,
   ) { }
 
   ngOnInit(): void {
@@ -63,7 +65,25 @@ export class AdvertisementListComponent implements OnInit {
     }
 
     this.advertisementService.getAdvertisements(this.categoryId).subscribe({
-      next: advertisements => this.advertisements = advertisements,
+      next: advertisements => {
+        this.advertisements = advertisements;
+        this.loadBids();
+      },
+    });
+  }
+
+  loadBids() {
+    if (!this.advertisements) {
+      return;
+    }
+
+    this.bidService.getCurrentBidsIds(this.advertisements.filter(a => a.type === AdvertisementResponse.TypeEnum.Bid).map(a => a.id)).subscribe(res => {
+      res.forEach(bid => {
+        const advertisement = this.advertisements?.find(a => a.id === bid.id);
+        if (advertisement) {
+          advertisement.price = bid.price;
+        }
+      });
     });
   }
 
