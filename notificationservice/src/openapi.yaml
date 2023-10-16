@@ -79,5 +79,4 @@ components:
           $ref: '#/components/schemas/PushSubscriptionKeys'
       required:
         - endpoint
-        - expirationTime
         - keys
