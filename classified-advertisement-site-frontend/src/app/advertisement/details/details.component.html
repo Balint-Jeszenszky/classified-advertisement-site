@@ -13,7 +13,7 @@
         <a *ngIf="advertisement.advertiserId === userId" mat-icon-button [routerLink]="'/advertisement/edit/' + advertisement.id" class="edit-icon">
           <mat-icon>edit</mat-icon>
         </a>
-        <button *ngIf="admin || advertiser?.id === advertisement.advertiserId" mat-icon-button (click)="onDelete()">
+        <button *ngIf="admin || userId === advertisement.advertiserId" mat-icon-button (click)="onDelete()">
           <mat-icon>delete</mat-icon>
         </button>
       </div>
@@ -24,7 +24,20 @@
     </div>
     <p *ngIf="advertisement.expiration" class="date">Expire at: {{ advertisement.expiration | localeDateTime }}</p>
     <p>{{ advertisement.description }}</p>
-    <h2>{{ advertisement.price | currency: 'HUF' : 'symbol' }}</h2>
+    <div class="d-flex align-items-center">
+      <h2 class="price">{{ advertisement.price | currency: 'HUF' : 'symbol' }}</h2>
+      <div *ngIf="userId && userId !== advertisement.advertiserId && advertisement.type === 'BID'" class="ms-3">
+        <form (ngSubmit)="submitBid()">
+          <mat-form-field>
+            <mat-label>Bid</mat-label>
+            <input matInput type="number" [(ngModel)]="bid" name="bid">
+            <button matSuffix mat-icon-button aria-label="Bid">
+              <mat-icon>done</mat-icon>
+            </button>
+          </mat-form-field>
+        </form>
+      </div>
+    </div>
     <p>Advertiser: {{ advertiser?.username }}</p>
     <a *ngIf="userId && advertisement.advertiserId !== userId" [routerLink]="'/chat/advertisement/' + advertisement.id" mat-raised-button color="primary">Buy now</a>
   </div>
