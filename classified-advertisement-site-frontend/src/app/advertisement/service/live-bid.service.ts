@@ -42,9 +42,10 @@ export class LiveBidService {
     });
   }
 
-  bid(price: number) {
+  bid(advertisementId: number, price: number) {
     this.socket?.send(JSON.stringify({
       type: 'bid',
+      advertisementId,
       price,
     }));
   }

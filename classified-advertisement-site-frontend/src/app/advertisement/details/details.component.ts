@@ -51,7 +51,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
         this.publicUserService.getUserId([ad.advertiserId]).subscribe({
           next: users => this.advertiser = users[0],
         });
-        this.liveBidService.subscribeForBids(this.advertisement.advertiserId).subscribe({
+        this.liveBidService.subscribeForBids(this.advertisement.id).subscribe({
           next: bid => {
             if (this.advertisement?.price) {
               this.advertisement.price = bid.price;
@@ -85,7 +85,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.liveBidService.bid(this.bid);
+    this.liveBidService.bid(this.advertisement.id, this.bid);
   }
 
   private setCategory(categories: CategoryResponse[], id?: number) {
