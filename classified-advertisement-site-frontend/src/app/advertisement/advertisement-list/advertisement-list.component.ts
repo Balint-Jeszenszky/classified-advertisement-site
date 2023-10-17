@@ -91,7 +91,10 @@ export class AdvertisementListComponent implements OnInit {
     this.router.navigate(['/search/', this.searchTerm]);
 
     this.advertisementService.getAdvertisementsSearchQuery(this.searchTerm).subscribe({
-      next: res => this.advertisements = res,
+      next: advertisements => {
+        this.advertisements = advertisements;
+        this.loadBids();
+      },
     });
   }
 
@@ -103,7 +106,10 @@ export class AdvertisementListComponent implements OnInit {
     this.router.navigate(['/category/', this.categoryId, this.searchTerm]);
 
     this.advertisementService.getCategoryIdSearchQuery(this.categoryId, this.searchTerm).subscribe({
-      next: res => this.advertisements = res,
+      next: advertisements => {
+        this.advertisements = advertisements;
+        this.loadBids();
+      },
     });
   }
 
