@@ -2,11 +2,10 @@ package hu.bme.aut.classifiedadvertisementsite.advertisementservice.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.internal.model.AdvertisementExistsResponse
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.client.java.api.model.CreateBidRequest
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.*
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.AdvertisementResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.NewAdvertisementsResponse
-import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.BadRequestException
-import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.ForbiddenException
-import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.NotFoundException
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.AdvertisementDataResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.mapper.AdvertisementMapper
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.mapper.CategoryMapper
@@ -17,11 +16,14 @@ import hu.bme.aut.classifiedadvertisementsite.advertisementservice.model.Categor
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.repository.AdvertisementRepository
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.repository.CategoryRepository
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.security.LoggedInUserService
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.service.apiclient.BidApiClient
+import jakarta.transaction.Transactional
 import org.mapstruct.factory.Mappers
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
+import org.springframework.web.client.RestClientException
 import org.springframework.web.multipart.MultipartFile
 import java.time.OffsetDateTime
 
@@ -32,7 +34,8 @@ class AdvertisementService(
     private val categoryRepository: CategoryRepository,
     private val fileUploadService: FileUploadService,
     private val rabbitTemplate: RabbitTemplate,
-    @Qualifier("advertisement-queue") private val queue: Queue
+    @Qualifier("advertisement-queue") private val queue: Queue,
+    private val bidApiClient: BidApiClient,
 ) {
     private val advertisementMapper: AdvertisementMapper = Mappers.getMapper(AdvertisementMapper::class.java)
     private val categoryMapper: CategoryMapper = Mappers.getMapper(CategoryMapper::class.java)
@@ -56,6 +59,7 @@ class AdvertisementService(
         return listOf(category, *subcategories.toTypedArray())
     }
 
+    @Transactional
     fun createAdvertisement(
         title: String,
         description: String,
@@ -99,6 +103,18 @@ class AdvertisementService(
         }
 
         sendAdvertisementMessage("CREATE", advertisement.id!!, advertisement.title, advertisement.category.id)
+
+        if (advertisement.type == AdvertisementType.BID) {
+            try {
+                bidApiClient.postCreate(CreateBidRequest()
+                    .advertisementId(advertisement.id)
+                    .userId(advertisement.advertiserId)
+                    .price(advertisement.price)
+                    .expiration(advertisement.expiration))
+            } catch (e: RestClientException) {
+                throw ServiceUnavailableException("Bid service unavailable")
+            }
+        }
 
         return advertisementMapper.advertisementToAdvertisementResponse(advertisement)
     }

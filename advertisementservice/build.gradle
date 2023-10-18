@@ -102,6 +102,19 @@ tasks.register("javaExternalApi", GenerateTask) {
 	]
 }
 
+tasks.register("bidServiceInternalApiClient", GenerateTask) {
+	bidServiceInternalApiClient.generatorName = "java"
+	bidServiceInternalApiClient.library = "resttemplate"
+	bidServiceInternalApiClient.inputSpec = "$rootDir/../bidservice/src/main/resources/openapi/internal.yaml".toString()
+	bidServiceInternalApiClient.outputDir = "$buildDir/generated-sources/openapi/client".toString()
+	bidServiceInternalApiClient.apiPackage = "hu.bme.aut.classifiedadvertisementsite.advertisementservice.client.java.api"
+	bidServiceInternalApiClient.modelPackage = "hu.bme.aut.classifiedadvertisementsite.advertisementservice.client.java.api.model"
+	bidServiceInternalApiClient.generateApiDocumentation = false
+	bidServiceInternalApiClient.generateApiTests = false
+	bidServiceInternalApiClient.generateModelDocumentation = false
+	bidServiceInternalApiClient.generateModelTests = false
+}
+
 tasks.register("openapiCleanup") {
 	doLast {
 		delete (
@@ -123,9 +136,10 @@ sourceSets {
 
 java.sourceSets["main"].java {
 	srcDir("$buildDir/generated-sources/openapi/external/src/main/java")
+	srcDir("$buildDir/generated-sources/openapi/client/src/main/java")
 }
 
-compileKotlin.dependsOn('kotlinExternalApi', 'kotlinInternalApi', 'javaExternalApi', 'openapiCleanup')
+compileKotlin.dependsOn('kotlinExternalApi', 'kotlinInternalApi', 'javaExternalApi', 'bidServiceInternalApiClient', 'openapiCleanup')
 
 test {
 	systemProperty 'spring.profiles.active', 'test'
