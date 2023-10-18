@@ -13,6 +13,7 @@ class Bid (
     var price: Double,
 
     @ManyToOne
+    @JoinColumn(name = "advertisement_id", nullable = false)
     var advertisement: Advertisement,
 
     @Id

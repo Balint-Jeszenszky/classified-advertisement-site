@@ -2,7 +2,11 @@ package hu.bme.aut.classifiedadvertisementsite.bidservice.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import hu.bme.aut.classifiedadvertisementsite.bidservice.api.external.model.BidResponse
+import hu.bme.aut.classifiedadvertisementsite.bidservice.api.internal.model.CreateBidRequest
+import hu.bme.aut.classifiedadvertisementsite.bidservice.api.internal.model.ModifyBidRequest
+import hu.bme.aut.classifiedadvertisementsite.bidservice.controller.exception.NotFoundException
 import hu.bme.aut.classifiedadvertisementsite.bidservice.mapper.BidMapper
+import hu.bme.aut.classifiedadvertisementsite.bidservice.model.Advertisement
 import hu.bme.aut.classifiedadvertisementsite.bidservice.model.Bid
 import hu.bme.aut.classifiedadvertisementsite.bidservice.repository.AdvertisementRepository
 import hu.bme.aut.classifiedadvertisementsite.bidservice.repository.BidRepository
@@ -11,6 +15,9 @@ import org.mapstruct.factory.Mappers
 import org.springframework.stereotype.Service
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
+import java.time.OffsetDateTime
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
 
 @Service
@@ -19,7 +26,7 @@ class BidService(
     private val bidRepository: BidRepository,
 ) {
     private val bidMapper: BidMapper = Mappers.getMapper(BidMapper::class.java)
-    private val subscriptions: MutableMap<Int, MutableList<WebSocketSession>> = mutableMapOf()
+    private val subscriptions: ConcurrentHashMap<Int, CopyOnWriteArrayList<WebSocketSession>> = ConcurrentHashMap()
 
     companion object {
         private const val SUBSCRIBED_ADVERTISEMENT_ID = "advertisementId"
@@ -41,7 +48,7 @@ class BidService(
         }
 
         if (subscriptions.containsKey(advertisementId).not()) {
-            subscriptions[advertisementId] = mutableListOf()
+            subscriptions[advertisementId] = CopyOnWriteArrayList()
         }
 
         subscriptions[advertisementId]?.add(session)
@@ -57,7 +64,9 @@ class BidService(
     fun createBid(userId: Int, advertisementId: Int, price: Double) {
         val advertisement = advertisementRepository.findById(advertisementId)
 
-        if (advertisement.isEmpty) {
+        if (advertisement.isEmpty
+            || advertisement.get().archived
+            || advertisement.get().expiration.isBefore(OffsetDateTime.now())) {
             return
         }
 
@@ -79,6 +88,37 @@ class BidService(
             return
         }
         subscriptions[session.attributes[SUBSCRIBED_ADVERTISEMENT_ID]]?.remove(session)
+    }
+
+    fun createAdvertisement(createBidRequest: CreateBidRequest) {
+        val advertisement = Advertisement(
+            createBidRequest.advertisementId,
+            createBidRequest.userId,
+            createBidRequest.expiration,
+            createBidRequest.price)
+
+        advertisementRepository.save(advertisement)
+    }
+
+    fun modifyAdvertisement(id: Int, modifyBidRequest: ModifyBidRequest) {
+        val advertisement = advertisementRepository.findById(id)
+
+        if (advertisement.isEmpty) {
+            throw NotFoundException("Advertisement not found")
+        }
+
+        val storedAdvertisement = advertisement.get()
+        storedAdvertisement.archived = modifyBidRequest.archived
+
+        advertisementRepository.save(storedAdvertisement)
+
+        subscriptions.remove(id)
+    }
+
+    fun deleteAdvertisement(id: Int) {
+        advertisementRepository.deleteById(id)
+
+        subscriptions.remove(id)
     }
 
     private fun createPriceMessage(price: Double): TextMessage {

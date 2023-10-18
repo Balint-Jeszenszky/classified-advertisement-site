@@ -19,7 +19,9 @@ class Advertisement (
     @Column(name = "initial_price", updatable = false, nullable = false)
     var initialPrice: Double,
 
-    @OneToMany(cascade = [CascadeType.ALL])
-    @JoinColumn(name = "advertisement_id")
+    @Column(name = "archived", nullable = false)
+    var archived: Boolean = false,
+
+    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY, mappedBy = "advertisement")
     var bids: List<Bid> = mutableListOf(),
 )
