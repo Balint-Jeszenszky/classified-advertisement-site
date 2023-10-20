@@ -101,7 +101,7 @@ export class NotificationService {
     return this.mailerService.sendMail({
       to: email.toAddress,
       from: process.env.EMAIL_USER,
-      subject: emailSubject[email.template],
+      subject: this.replaceKeysInString(emailSubject[email.template], email.data),
       template: email.template,
       context: {
         baseurl: process.env.BASEURL,

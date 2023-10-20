@@ -4,6 +4,7 @@ import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.Mod
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.ModifyUserRequest;
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.PublicUserDetailsResponse;
 import hu.bme.aut.classifiedadvertisementsite.userservice.api.external.model.UserDetailsResponse;
+import hu.bme.aut.classifiedadvertisementsite.userservice.api.internal.model.UserDataResponse;
 import hu.bme.aut.classifiedadvertisementsite.userservice.controller.exceptions.BadRequestException;
 import hu.bme.aut.classifiedadvertisementsite.userservice.controller.exceptions.NotFoundException;
 import hu.bme.aut.classifiedadvertisementsite.userservice.mapper.UserMapper;
@@ -127,9 +128,9 @@ public class UserService {
         log.info("Admin {} successfully modified {} id({})", loggedInUser.getUsername(), user.getUsername(), user.getId());
     }
 
-    public List<PublicUserDetailsResponse> getPublicUserDetailsById(List<Integer> ids) {
+    public List<UserData> getUserDataByIds(List<Integer> ids) {
         List<User> users = userRepository.findAllById(ids);
 
-        return users.stream().map(UserMapper.INSTANCE::userToPublicUserDetailsResponse).toList();
+        return users.stream().map(UserMapper.INSTANCE::userToUserData).toList();
     }
 }

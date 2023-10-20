@@ -1,6 +1,6 @@
 {
-  "example": {
-    "title": "Push title {{username}}",
-    "body": "Push notificatoion {{username}}, {{randomnumber}}"
+  "winnerBid": {
+    "title": "Winner bid!",
+    "body": "Your bid for {{advertisementTitle}} won"
   }
 }

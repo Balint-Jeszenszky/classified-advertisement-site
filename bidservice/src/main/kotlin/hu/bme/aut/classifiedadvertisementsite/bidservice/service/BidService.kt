@@ -95,7 +95,8 @@ class BidService(
             createBidRequest.advertisementId,
             createBidRequest.userId,
             createBidRequest.expiration,
-            createBidRequest.price)
+            createBidRequest.price,
+            createBidRequest.title)
 
         advertisementRepository.save(advertisement)
     }
@@ -109,6 +110,7 @@ class BidService(
 
         val storedAdvertisement = advertisement.get()
         storedAdvertisement.archived = modifyBidRequest.archived
+        storedAdvertisement.title = modifyBidRequest.title
 
         advertisementRepository.save(storedAdvertisement)
 

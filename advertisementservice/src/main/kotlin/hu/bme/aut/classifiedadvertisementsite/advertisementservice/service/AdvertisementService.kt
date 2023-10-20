@@ -3,6 +3,7 @@ package hu.bme.aut.classifiedadvertisementsite.advertisementservice.service
 import com.fasterxml.jackson.databind.ObjectMapper
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.internal.model.AdvertisementExistsResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.client.java.api.model.CreateBidRequest
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.client.java.api.model.ModifyBidRequest
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.*
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.AdvertisementResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.NewAdvertisementsResponse
@@ -110,7 +111,8 @@ class AdvertisementService(
                     .advertisementId(advertisement.id)
                     .userId(advertisement.advertiserId)
                     .price(advertisement.price)
-                    .expiration(advertisement.expiration))
+                    .expiration(advertisement.expiration)
+                    .title(advertisement.title))
             } catch (e: RestClientException) {
                 throw ServiceUnavailableException("Bid service unavailable")
             }
@@ -178,6 +180,17 @@ class AdvertisementService(
         }
 
         sendAdvertisementMessage("UPDATE", id, advertisement.title, advertisement.category.id)
+
+        if (advertisement.type == AdvertisementType.BID) {
+            try {
+                bidApiClient.putModify(advertisement.id,
+                    ModifyBidRequest()
+                        .title(advertisement.title)
+                        .archived(advertisement.status == AdvertisementStatus.ARCHIVED))
+            } catch (e: RestClientException) {
+                throw ServiceUnavailableException("Bid service unavailable")
+            }
+        }
 
         return advertisementMapper.advertisementToAdvertisementResponse(advertisement)
     }

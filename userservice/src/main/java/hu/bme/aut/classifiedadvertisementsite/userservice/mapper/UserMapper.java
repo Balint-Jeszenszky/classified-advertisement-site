@@ -30,7 +30,7 @@ public interface UserMapper {
 
     UserDataResponse userDataToUserDataResponse(UserData user);
 
-    PublicUserDetailsResponse userToPublicUserDetailsResponse(User user);
+    PublicUserDetailsResponse userDataToPublicUserDetailsResponse(UserData user);
 
     @Mapping(source = "authorities", target = "roles")
     User userDetailsToUser(UserDetailsImpl userDetails);

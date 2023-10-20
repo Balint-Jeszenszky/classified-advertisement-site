@@ -33,8 +33,12 @@ dependencies {
 	implementation "javax.validation:validation-api:2.0.1.Final"
 	implementation "io.swagger.parser.v3:swagger-parser:2.1.16"
 	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'javax.annotation:javax.annotation-api:1.3.2'
+	implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.amqp:spring-rabbit-test'
 	testImplementation 'org.springframework.amqp:spring-rabbit-test'
 	kapt 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 }
@@ -79,6 +83,19 @@ tasks.register("kotlinInternalApi", GenerateTask) {
 	]
 }
 
+tasks.register("userServiceInternalApiClient", GenerateTask) {
+	userServiceInternalApiClient.generatorName = "java"
+	userServiceInternalApiClient.library = "resttemplate"
+	userServiceInternalApiClient.inputSpec = "$rootDir/../userservice/src/main/resources/openapi/internal.yaml".toString()
+	userServiceInternalApiClient.outputDir = "$buildDir/generated-sources/openapi/client".toString()
+	userServiceInternalApiClient.apiPackage = "hu.bme.aut.classifiedadvertisementsite.bidservice.client.java.api"
+	userServiceInternalApiClient.modelPackage = "hu.bme.aut.classifiedadvertisementsite.bidservice.client.java.api.model"
+	userServiceInternalApiClient.generateApiDocumentation = false
+	userServiceInternalApiClient.generateApiTests = false
+	userServiceInternalApiClient.generateModelDocumentation = false
+	userServiceInternalApiClient.generateModelTests = false
+}
+
 tasks.register("openapiCleanup") {
 	doLast {
 		delete (
@@ -96,8 +113,11 @@ sourceSets {
 		}
 	}
 }
+java.sourceSets["main"].java {
+	srcDir("$buildDir/generated-sources/openapi/client/src/main/java")
+}
 
-compileKotlin.dependsOn('kotlinExternalApi', 'kotlinInternalApi', 'openapiCleanup')
+compileKotlin.dependsOn('kotlinExternalApi', 'kotlinInternalApi', 'userServiceInternalApiClient', 'openapiCleanup')
 
 jar {
 	enabled = false

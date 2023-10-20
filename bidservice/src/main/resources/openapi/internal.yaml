@@ -65,6 +65,8 @@ components:
       properties:
         advertisementId:
           type: integer
+        title:
+          type: string
         userId:
           type: integer
         expiration:
@@ -75,6 +77,7 @@ components:
           format: double
       required:
         - advertisementId
+        - title
         - userId
         - expiration
         - price
@@ -87,8 +90,11 @@ components:
         archived:
           type: boolean
           default: true
+        title:
+          type: string
       required:
         - archived
+        - title
 x-internal: true
 tags:
   - name: bid

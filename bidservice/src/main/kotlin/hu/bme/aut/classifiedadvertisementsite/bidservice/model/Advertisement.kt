@@ -19,8 +19,14 @@ class Advertisement (
     @Column(name = "initial_price", updatable = false, nullable = false)
     var initialPrice: Double,
 
+    @Column(name = "title", nullable = false)
+    var title: String,
+
     @Column(name = "archived", nullable = false)
     var archived: Boolean = false,
+
+    @Column(name = "notified", nullable = false)
+    var notified: Boolean = false,
 
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY, mappedBy = "advertisement")
     var bids: List<Bid> = mutableListOf(),
