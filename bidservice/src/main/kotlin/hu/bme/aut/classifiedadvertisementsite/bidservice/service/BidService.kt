@@ -10,9 +10,10 @@ import hu.bme.aut.classifiedadvertisementsite.bidservice.model.Advertisement
 import hu.bme.aut.classifiedadvertisementsite.bidservice.model.Bid
 import hu.bme.aut.classifiedadvertisementsite.bidservice.repository.AdvertisementRepository
 import hu.bme.aut.classifiedadvertisementsite.bidservice.repository.BidRepository
-import jakarta.transaction.Transactional
 import org.mapstruct.factory.Mappers
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Isolation
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 import java.time.OffsetDateTime
@@ -60,7 +61,7 @@ class BidService(
         session.attributes[SUBSCRIBED_ADVERTISEMENT_ID] = advertisementId
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     fun createBid(userId: Int, advertisementId: Int, price: Double) {
         val advertisement = advertisementRepository.findById(advertisementId)
 
