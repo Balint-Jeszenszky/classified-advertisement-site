@@ -16,8 +16,8 @@ import hu.bme.aut.classifiedadvertisementsite.gateway.security.model.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,6 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@EnableScheduling
 public class AuthService {
     private final JwtUtils jwtUtils;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -142,6 +141,7 @@ public class AuthService {
     }
 
     @Scheduled(cron = "0 0 3 * * *", zone = "Europe/Budapest")
+    @SchedulerLock(name = "clearExpiredRefreshTokens", lockAtLeastFor = "PT10M", lockAtMostFor = "PT1H")
     protected void clearExpiredRefreshTokens() {
         log.info("Deleting expired refresh tokens");
         List<RefreshToken> expired = refreshTokenRepository.findByExpirationLessThan(new Date());

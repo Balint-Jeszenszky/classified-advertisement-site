@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component
 @Component
 class NotificationMessageQueue {
     companion object {
-        const val EMAIL_QUEUE_NAME = "email-queue"
-        const val PUSH_QUEUE_NAME = "push-queue"
+        private const val EMAIL_QUEUE_NAME = "email-queue"
+        private const val PUSH_QUEUE_NAME = "push-queue"
     }
 
     @Bean("email-queue")

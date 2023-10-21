@@ -6,13 +6,15 @@
           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
 
     <changeSet author="Balint-Jeszenszky" id="3">
-        <addColumn tableName="advertisement">
-            <column name="title" type="VARCHAR(255)" defaultValue="">
+        <createTable tableName="shedlock">
+            <column name="name" type="VARCHAR(64)">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="lock_until" type="TIMESTAMP"/>
+            <column name="locked_at" type="TIMESTAMP"/>
+            <column name="locked_by" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="notified" type="BOOLEAN" defaultValueBoolean="false">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
+        </createTable>
     </changeSet>
 </databaseChangeLog>

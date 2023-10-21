@@ -8,7 +8,8 @@ import hu.bme.aut.classifiedadvertisementsite.bidservice.model.Bid
 import hu.bme.aut.classifiedadvertisementsite.bidservice.repository.AdvertisementRepository
 import hu.bme.aut.classifiedadvertisementsite.bidservice.repository.BidRepository
 import hu.bme.aut.classifiedadvertisementsite.bidservice.service.apiclient.UserApiClient
-import hu.bme.aut.classifiedadvertisementsite.bidservice.service.messagequeue.NotificationMessageQueue
+import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.core.RabbitTemplate
@@ -31,7 +32,9 @@ class NotificationService(
     private val log = LoggerFactory.getLogger(javaClass)
 
     @Scheduled(cron = "0 */5 * * * *")
+    @SchedulerLock(name = "notifyBidWinners", lockAtLeastFor = "PT3M", lockAtMostFor = "PT4M")
     protected fun notifyBidWinners() {
+        log.info("notifying winners started")
         val advertisements = advertisementRepository
             .findAllByExpirationBeforeAndArchivedIsFalseAndNotifiedIsFalse(OffsetDateTime.now())
         val bids = bidRepository.findTopBidsForAdvertisementsByIds(advertisements.map { it.id })
@@ -57,6 +60,7 @@ class NotificationService(
         }
 
         advertisementRepository.saveAll(advertisements)
+        log.info("notifying winners finished")
     }
 
     private fun sendEmailNotification(advertisement: Advertisement, user: UserDataResponse) {
@@ -74,7 +78,7 @@ class NotificationService(
         dataNode.put("username", user.username)
         mainNode.set<ObjectNode>("data", dataNode)
 
-        rabbitTemplate.convertAndSend(NotificationMessageQueue.EMAIL_QUEUE_NAME, mainNode.toString())
+        rabbitTemplate.convertAndSend(emailQueue.name, mainNode.toString())
     }
 
     private fun sendPushNotification(advertisement: Advertisement, bid: Bid) {
@@ -90,6 +94,6 @@ class NotificationService(
         dataNode.put("advertisementTitle", advertisement.title)
         mainNode.set<ObjectNode>("data", dataNode)
 
-        rabbitTemplate.convertAndSend(NotificationMessageQueue.PUSH_QUEUE_NAME, mainNode.toString())
+        rabbitTemplate.convertAndSend(pushQueue.name, mainNode.toString())
     }
 }
