@@ -38,14 +38,16 @@ class NotificationService(
         val advertisements = advertisementRepository
             .findAllByExpirationBeforeAndArchivedIsFalseAndNotifiedIsFalse(OffsetDateTime.now())
         val bids = bidRepository.findTopBidsForAdvertisementsByIds(advertisements.map { it.id })
+
         val users = try {
-            userApiClient.getUserDetailsIds(bids.map { it.userId })
+            if (bids.isNotEmpty()) userApiClient.getUserDetailsIds(bids.map { it.userId }) else emptyList()
         } catch (e: RestClientException) {
             log.error("Error while getting user data from user service: ${e.localizedMessage}")
             return
         }
 
         advertisements.forEach { advertisement ->
+            advertisement.notified = true
             val bid = bids.find { bid -> bid.advertisement.id == advertisement.id } ?: return@forEach
             val user = users.find { it.id == bid.userId }
 
@@ -56,7 +58,6 @@ class NotificationService(
 
             sendEmailNotification(advertisement, user)
             sendPushNotification(advertisement, bid)
-            advertisement.notified = true
         }
 
         advertisementRepository.saveAll(advertisements)

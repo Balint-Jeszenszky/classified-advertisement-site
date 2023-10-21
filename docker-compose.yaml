@@ -61,6 +61,7 @@ services:
       - WEBSCRAPER_SERVICE_URI=http://webscraperservice:3000
       - NOTIFICATION_SERVICE_URI=http://notificationservice:3000
       - CHAT_SERVICE_URI=http://chatservice:3000
+      - BID_SERVICE_URI=http://bidservice:8088
       - FRONTEND_URI=http://frontend:80
     networks:
       - web
@@ -132,6 +133,7 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=${RABBITMQ_USER}
       - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - BID_API_URL=http://bidservice:8084/api/bid
     networks:
       - web
       - database
@@ -181,8 +183,8 @@ services:
     restart: unless-stopped
     container_name: webscraperservice-db
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_WEBSCRAPINGSERVICE_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_WEBSCRAPINGSERVICE_PASSWORD}
       - MONGO_INITDB_DATABASE=scraper
     volumes:
       - ./container-data/prod/webscraperservice-mongo:/data/db
@@ -202,8 +204,49 @@ services:
       - RABBITMQ_USER=${RABBITMQ_USER}
       - RABBITMQ_PASS=${RABBITMQ_PASS}
       - MONGO_URL=webscraperservice-db/scraper
-      - MONGO_USER=${MONGO_USERNAME}
-      - MONGO_PASS=${MONGO_PASSWORD}
+      - MONGO_USER=${MONGO_WEBSCRAPINGSERVICE_USERNAME}
+      - MONGO_PASS=${MONGO_WEBSCRAPINGSERVICE_PASSWORD}
+    networks:
+      - web
+      - database
+      - message
+  
+  notificationservice-db:
+    image: mongo:5
+    restart: unless-stopped
+    container_name: notificationservice-db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_NOTIFICATIONSERVICE_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_NOTIFICATIONSERVICE_PASSWORD}
+      - MONGO_INITDB_DATABASE=notification
+    volumes:
+      - ./container-data/prod/notificationservice-mongo:/data/db
+    networks:
+      - database
+
+  notificationservice:
+    image: balintjeszenszky/adsite:notificationservice-latest
+    restart: unless-stopped
+    container_name: notificationservice
+    depends_on:
+      - notificationservice-db
+      - rabbitmq
+    environment:
+      - PORT=3000
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - MONGO_URL=notificationservice-db/notification
+      - MONGO_USER=${MONGO_NOTIFICATIONSERVICE_USERNAME}
+      - MONGO_PASS=${MONGO_NOTIFICATIONSERVICE_PASSWORD}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - VAPID_PUBLIC_KEY=${VAPID_PUBLIC_KEY}
+      - VAPID_PRIVATE_KEY=${VAPID_PRIVATE_KEY}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+      - BASEURL=http://localhost:8080
     networks:
       - web
       - database
@@ -213,10 +256,8 @@ services:
     image: mysql:8
     restart: unless-stopped
     container_name: chatservice-db
-    ports:
-      - 3308:3306
     volumes:
-      - ./container-data/dev/chat-mysql:/var/lib/mysql
+      - ./container-data/prod/chat-mysql:/var/lib/mysql
     environment:
       - MYSQL_DATABASE=chat
       - MYSQL_ROOT_PASSWORD=${MYSQL_CHATSERVICE_ROOT_PASSWORD}
@@ -229,8 +270,6 @@ services:
     image: redis:7
     restart: unless-stopped
     container_name: chatservice-redis
-    ports:
-      - 6379:6379
     networks:
       - database
 
@@ -241,8 +280,6 @@ services:
     depends_on:
       - chatservice-db
       - chatservice-redis
-    ports:
-      - 3002:3000
     environment:
       - PORT=3000
       - DB_URL=chatservice-db
@@ -254,6 +291,35 @@ services:
       - REDIS_PORT=6379
       - ADVERTISEMENT_SERVICE_INTERNAL_API_URL=http://advertisementservice:8080/api/advertisement/internal
       - ADVERTISEMENT_SERVICE_ADVERTISEMENT_EXISTS_PATH=/advertisement/exists
+    networks:
+      - web
+      - database
+
+  bidservice-db:
+    image: postgres:15
+    restart: unless-stopped
+    container_name: bidservice-db
+    volumes:
+      - ./container-data/prod/bidservice-postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${BIDSERVICE_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${BIDERVICE_POSTGRES_PASSWORD}
+      - POSTGRES_DB=bids
+    networks:
+      - database
+
+  bidservice:
+    image: balintjeszenszky/adsite:bidservice-latest
+    restart: unless-stopped
+    container_name: bidservice
+    depends_on:
+      - bidservice-db
+    environment:
+      - DATABASE_URL=bidservice-db:5432/bids
+      - DB_USER=${BIDSERVICE_POSTGRES_USER}
+      - DB_PASS=${BIDERVICE_POSTGRES_PASSWORD}
+      - PORT=8080
+      - USER_API_URL=http://userservice:8080/api/user
     networks:
       - web
       - database

@@ -69,7 +69,7 @@ services:
       - WEBSCRAPER_SERVICE_URI=http://webscraperservice:3000
       - NOTIFICATION_SERVICE_URI=http://notificationservice:3000
       - CHAT_SERVICE_URI=http://chatservice:3000
-      - BID_SERVICE_URI=http://bidservice:8084
+      - BID_SERVICE_URI=http://bidservice:8088
       - FRONTEND_URI=http://frontend:80
     networks:
       - web
@@ -149,6 +149,7 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=${RABBITMQ_USER}
       - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - BID_API_URL=http://bidservice:8084/api/bid
     networks:
       - web
       - database
@@ -354,6 +355,39 @@ services:
       - REDIS_PORT=6379
       - ADVERTISEMENT_SERVICE_INTERNAL_API_URL=http://advertisementservice:8080/api/advertisement/internal
       - ADVERTISEMENT_SERVICE_ADVERTISEMENT_EXISTS_PATH=/advertisement/exists
+    networks:
+      - web
+      - database
+
+  bidservice-db:
+    image: postgres:15
+    restart: unless-stopped
+    container_name: bidservice-db
+    ports:
+      - 5434:5432
+    volumes:
+      - ./container-data/dev/bidservice-postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${BIDSERVICE_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${BIDERVICE_POSTGRES_PASSWORD}
+      - POSTGRES_DB=bids
+    networks:
+      - database
+
+  bidservice:
+    image: balintjeszenszky/adsite:bidservice-latest
+    restart: unless-stopped
+    container_name: bidservice
+    depends_on:
+      - bidservice-db
+    ports:
+      - 8084:8080
+    environment:
+      - DATABASE_URL=bidservice-db:5432/bids
+      - DB_USER=${BIDSERVICE_POSTGRES_USER}
+      - DB_PASS=${BIDERVICE_POSTGRES_PASSWORD}
+      - PORT=8080
+      - USER_API_URL=http://userservice:8080/api/user
     networks:
       - web
       - database
