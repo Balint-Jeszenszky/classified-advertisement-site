@@ -149,7 +149,7 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=${RABBITMQ_USER}
       - RABBITMQ_PASS=${RABBITMQ_PASS}
-      - BID_API_URL=http://bidservice:8084/api/bid
+      - BID_API_URL=http://bidservice:8080/api/bid
     networks:
       - web
       - database
