@@ -69,7 +69,18 @@ export class ChatComponent implements OnInit, AfterViewChecked, OnDestroy {
           }
         });
       } else if (this.advertisementId) {
-        this.navigateToConversation(this.advertisementId);
+        this.navigateToConversation(this.advertisementId).catch(() => {
+          if (!this.advertisementId) {
+            return;
+          }
+
+          this.advertisementService.getAdvertisementId(this.advertisementId).subscribe(res => {
+            this.advertisementTitle = res.title;
+            this.publicUserService.getUserId([res.advertiserId]).subscribe(users => {
+              this.fromUsername = users[0].username;
+            });
+          });
+        });
       }
     });
 
@@ -120,16 +131,24 @@ export class ChatComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.messagesScrollContainer.nativeElement.scrollTop = this.messagesScrollContainer.nativeElement.scrollHeight;            
   }
 
-  private navigateToConversation(advertisementId: number) {
-    this.apollo.query<Query, QueryChatIdByAdvertisementArgs>({
-      query: GET_CHAT_BY_ADVERTISEMENT,
-      variables: {
-        advertisementId,
-      },
-    }).subscribe(({data, error}) => {
-      if (data.chatIdByAdvertisement) {
-        this.router.navigate(['/chat/conversation/', data.chatIdByAdvertisement.id]);
-      }
+  private navigateToConversation(advertisementId: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.apollo.query<Query, QueryChatIdByAdvertisementArgs>({
+        query: GET_CHAT_BY_ADVERTISEMENT,
+        variables: {
+          advertisementId,
+        },
+      }).subscribe({
+        next: ({data}) => {
+          resolve();
+          if (data.chatIdByAdvertisement) {
+            this.router.navigate(['/chat/conversation/', data.chatIdByAdvertisement.id], { skipLocationChange: true });
+          }
+        },
+        error: () => {
+          reject();
+        }
+      });
     });
   }
 }
