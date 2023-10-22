@@ -61,7 +61,7 @@ services:
       - WEBSCRAPER_SERVICE_URI=http://webscraperservice:3000
       - NOTIFICATION_SERVICE_URI=http://notificationservice:3000
       - CHAT_SERVICE_URI=http://chatservice:3000
-      - BID_SERVICE_URI=http://bidservice:8088
+      - BID_SERVICE_URI=http://bidservice:8080
       - FRONTEND_URI=http://frontend:80
     networks:
       - web
