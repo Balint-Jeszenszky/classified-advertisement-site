@@ -10,6 +10,8 @@ import hu.bme.aut.classifiedadvertisementsite.bidservice.model.Advertisement
 import hu.bme.aut.classifiedadvertisementsite.bidservice.model.Bid
 import hu.bme.aut.classifiedadvertisementsite.bidservice.repository.AdvertisementRepository
 import hu.bme.aut.classifiedadvertisementsite.bidservice.repository.BidRepository
+import hu.bme.aut.classifiedadvertisementsite.bidservice.service.pubsub.RedisMessagePublisher
+import hu.bme.aut.classifiedadvertisementsite.bidservice.service.pubsub.dto.BidMessage
 import org.mapstruct.factory.Mappers
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Isolation
@@ -25,6 +27,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 class BidService(
     private val advertisementRepository: AdvertisementRepository,
     private val bidRepository: BidRepository,
+    private val redisMessagePublisher: RedisMessagePublisher,
 ) {
     private val bidMapper: BidMapper = Mappers.getMapper(BidMapper::class.java)
     private val subscriptions: ConcurrentHashMap<Int, CopyOnWriteArrayList<WebSocketSession>> = ConcurrentHashMap()
@@ -79,8 +82,12 @@ class BidService(
 
         bidRepository.save(Bid(userId, price, advertisement.get()))
 
-        subscriptions[advertisementId]?.forEach {
-            if (it.isOpen) it.sendMessage(createPriceMessage(price))
+        redisMessagePublisher.publish(BidMessage(advertisementId, price))
+    }
+
+    fun notifyBid(bidMessage: BidMessage) {
+        subscriptions[bidMessage.advertisementId]?.forEach {
+            if (it.isOpen) it.sendMessage(createPriceMessage(bidMessage.price))
         }
     }
 

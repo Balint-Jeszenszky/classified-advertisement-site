@@ -38,6 +38,8 @@ dependencies {
 	implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
 	implementation 'net.javacrumbs.shedlock:shedlock-spring:5.9.1'
 	implementation 'net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.9.1'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'redis.clients:jedis'
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.amqp:spring-rabbit-test'
