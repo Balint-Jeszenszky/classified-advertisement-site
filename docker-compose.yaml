@@ -308,6 +308,13 @@ services:
     networks:
       - database
 
+  bidservice-redis:
+    image: redis:7
+    restart: unless-stopped
+    container_name: bidservice-redis
+    networks:
+      - database
+
   bidservice:
     image: balintjeszenszky/adsite:bidservice-latest
     restart: unless-stopped
@@ -323,6 +330,8 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=${RABBITMQ_USER}
       - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - REDIS_HOST=bidservice-redis
+      - REDIS_PORT=6379
     networks:
       - web
       - database
