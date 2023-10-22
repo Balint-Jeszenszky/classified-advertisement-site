@@ -77,7 +77,13 @@ export class AdvertisementListComponent implements OnInit {
       return;
     }
 
-    this.bidService.getCurrentBidsIds(this.advertisements.filter(a => a.type === AdvertisementResponse.TypeEnum.Bid).map(a => a.id)).subscribe(res => {
+    const ids = this.advertisements.filter(a => a.type === AdvertisementResponse.TypeEnum.Bid).map(a => a.id);
+
+    if (!ids.length) {
+      return;
+    }
+
+    this.bidService.getCurrentBidsIds(ids).subscribe(res => {
       res.forEach(bid => {
         const advertisement = this.advertisements?.find(a => a.id === bid.id);
         if (advertisement) {
