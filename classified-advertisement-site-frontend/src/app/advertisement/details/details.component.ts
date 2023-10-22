@@ -54,17 +54,19 @@ export class DetailsComponent implements OnInit, OnDestroy {
         this.publicUserService.getUserId([ad.advertiserId]).subscribe({
           next: users => this.advertiser = users[0],
         });
-        this.liveBidService.subscribeForBids(this.advertisement.id).subscribe({
-          next: bid => {
-            if (this.advertisement?.price) {
-              this.advertisement.price = bid.price;
+        if (this.advertisement.type === AdvertisementResponse.TypeEnum.Bid) {
+          this.liveBidService.subscribeForBids(this.advertisement.id).subscribe({
+            next: bid => {
+              if (this.advertisement?.price) {
+                this.advertisement.price = bid.price;
+              }
+  
+              this.publicUserService.getUserId([bid.userId]).subscribe({
+                next: users => this.bidWinnerUser = users[0],
+              });
             }
-
-            this.publicUserService.getUserId([bid.userId]).subscribe({
-              next: users => this.bidWinnerUser = users[0],
-            });
-          }
-        });
+          });
+        }
       });
       this.imagesService.getImageListAdvertisementId(this.id).subscribe({
         next: urls => this.imageUrls = urls,
