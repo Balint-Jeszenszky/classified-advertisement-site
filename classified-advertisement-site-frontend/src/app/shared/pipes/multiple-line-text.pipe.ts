@@ -5,8 +5,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class MultipleLineTextPipe implements PipeTransform {
 
-  transform(value: string, ...args: unknown[]): string[] {
-    return value.split('\n');
+  transform(value: string | undefined, ...args: unknown[]): string[] {
+    return value?.split('\n') ?? [];
   }
 
 }

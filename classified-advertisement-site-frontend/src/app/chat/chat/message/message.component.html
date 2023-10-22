@@ -1,7 +1,7 @@
 <div class="">
   <div class="message" [class.own-message]="ownMessage">
     <small *ngIf="date">{{ date | localeDateTime }}</small>
-    <p>{{ text }}</p>
+    <p *ngFor="let line of text | multipleLineText">{{ line }}</p>
   </div>
 </div>
 <div class="clearfix"></div>
