@@ -48,7 +48,7 @@ class BidService(
         }
 
         bidRepository.findFirstByAdvertisement_IdOrderByPriceDesc(advertisementId).ifPresent {
-            session.sendMessage(createPriceMessage(it.price))
+            session.sendMessage(createPriceMessage(it.price, it.userId))
         }
 
         if (subscriptions.containsKey(advertisementId).not()) {
@@ -82,12 +82,12 @@ class BidService(
 
         bidRepository.save(Bid(userId, price, advertisement.get()))
 
-        redisMessagePublisher.publish(BidMessage(advertisementId, price))
+        redisMessagePublisher.publish(BidMessage(advertisementId, price, userId))
     }
 
     fun notifyBid(bidMessage: BidMessage) {
         subscriptions[bidMessage.advertisementId]?.forEach {
-            if (it.isOpen) it.sendMessage(createPriceMessage(bidMessage.price))
+            if (it.isOpen) it.sendMessage(createPriceMessage(bidMessage.price, bidMessage.userId))
         }
     }
 
@@ -131,10 +131,11 @@ class BidService(
         subscriptions.remove(id)
     }
 
-    private fun createPriceMessage(price: Double): TextMessage {
+    private fun createPriceMessage(price: Double, userId: Int): TextMessage {
         val mapper = ObjectMapper()
         val node = mapper.createObjectNode()
         node.put("price", price)
+        node.put("userId", userId)
         return TextMessage(node.toString())
     }
 }

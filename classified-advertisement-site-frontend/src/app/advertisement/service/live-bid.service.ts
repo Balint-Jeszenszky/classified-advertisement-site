@@ -4,6 +4,7 @@ import { LoggedInUserService } from 'src/app/service/logged-in-user.service';
 
 type Bid = {
   price: number,
+  userId: number,
 }
 
 @Injectable({

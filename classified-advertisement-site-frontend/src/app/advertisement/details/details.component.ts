@@ -23,6 +23,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
   imageUrls?: string[];
   commercialPrice?: ProductResponse;
   bid: number = 0;
+  bidWinnerUser?: PublicUserDetailsResponse;
+  expired: boolean = false;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -41,6 +43,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
       this.id = +params['id'];
       this.advertisementService.getAdvertisementId(this.id).subscribe(ad => {
         this.advertisement = ad;
+        this.expired = !!ad.expiration && Date.parse(ad.expiration) < Date.now();
         this.categoryService.getCategories().subscribe({
           next: cat => this.setCategory(cat, ad.categoryId),
         });
@@ -56,6 +59,10 @@ export class DetailsComponent implements OnInit, OnDestroy {
             if (this.advertisement?.price) {
               this.advertisement.price = bid.price;
             }
+
+            this.publicUserService.getUserId([bid.userId]).subscribe({
+              next: users => this.bidWinnerUser = users[0],
+            });
           }
         });
       });
