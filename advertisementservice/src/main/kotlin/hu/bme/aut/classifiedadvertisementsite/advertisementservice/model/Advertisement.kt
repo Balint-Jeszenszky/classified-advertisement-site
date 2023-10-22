@@ -38,8 +38,7 @@ class Advertisement (
     @Column(name = "created_at", nullable = false, updatable = false)
     var createdAt: OffsetDateTime = OffsetDateTime.now(),
 
-    @OneToMany(cascade = [CascadeType.ALL])
-    @JoinColumn(name = "advertisement_id")
+    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY, mappedBy = "advertisement")
     var comments: List<Comment> = mutableListOf(),
 
     @Id

@@ -14,6 +14,7 @@ class Comment (
     var creatorId: Int,
 
     @ManyToOne
+    @JoinColumn(name = "advertisement_id", nullable = false)
     var advertisement: Advertisement,
 
     @Column(name = "created_at", nullable = false, updatable = false)
