@@ -388,9 +388,13 @@ services:
       - DB_PASS=${BIDERVICE_POSTGRES_PASSWORD}
       - PORT=8080
       - USER_API_URL=http://userservice:8080/api/user
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}
     networks:
       - web
       - database
+      - message
 
   frontend:
     image: balintjeszenszky/adsite:frontend-latest
