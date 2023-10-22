@@ -114,6 +114,8 @@ class AdvertisementService(
                     .expiration(advertisement.expiration)
                     .title(advertisement.title))
             } catch (e: RestClientException) {
+                sendAdvertisementMessage("DELETE", advertisement.id!!)
+                fileUploadService.deleteImagesForAd(advertisement.id!!)
                 throw ServiceUnavailableException("Bid service unavailable")
             }
         }
