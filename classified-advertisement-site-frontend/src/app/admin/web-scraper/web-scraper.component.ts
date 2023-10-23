@@ -55,7 +55,7 @@ export class WebScraperComponent implements OnInit {
             this.sites = [
               ...this.sites.slice(0, idx),
               res,
-              ...this.sites.slice(idx + 1)
+              ...this.sites.slice(idx + 1),
             ];
           },
         });
