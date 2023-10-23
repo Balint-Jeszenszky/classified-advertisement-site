@@ -87,6 +87,11 @@ spec:
             configMapKeyRef:
               name: notificationservice-config
               key: notificationservice-email-port
+        - name: BASEURL
+          valueFrom:
+            configMapKeyRef:
+              name: common-config
+              key: base-url
 ---
 apiVersion: v1
 kind: Service

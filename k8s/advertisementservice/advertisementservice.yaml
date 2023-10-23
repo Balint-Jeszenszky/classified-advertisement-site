@@ -67,6 +67,11 @@ spec:
             secretKeyRef:
               name: rabbitmq-secret
               key: rabbitmq-password
+        - name: BID_API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: bidservice-config
+              key: bidservice-api-url
 ---
 apiVersion: v1
 kind: Service

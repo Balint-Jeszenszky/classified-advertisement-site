@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bidservice-db-config
+data:
+  bidservice-db-url: bidservice-db-service:5432/bids
+  bidservice-db-name: bids

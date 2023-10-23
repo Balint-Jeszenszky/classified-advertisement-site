@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bidservice-config
+data:
+  bidservice-url: http://bidservice-service:8080
+  bidservice-api-url: http://bidservice-service:8080/api/bid

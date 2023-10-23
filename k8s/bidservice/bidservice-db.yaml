@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bidservice-db-deployment
+  labels:
+    app: bidservice-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bidservice-db
+  template:
+    metadata:
+      labels:
+        app: bidservice-db
+    spec:
+      containers:
+      - name: bidservice-db
+        image: postgres:15
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: bidservice-db-config
+              key: bidservice-db-name
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: bidservice-db-secret
+              key: bidservice-db-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: bidservice-db-secret
+              key: bidservice-db-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bidservice-db-service
+spec:
+  selector:
+    app: bidservice-db
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
