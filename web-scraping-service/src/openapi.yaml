@@ -37,6 +37,21 @@ paths:
                   $ref: '#/components/schemas/SiteResponse'
       tags: *ref_0
       security: *ref_1
+  /api/scraper/scrape:
+    post:
+      operationId: ScraperController_scrapeCategory
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScrapeRequest'
+      responses:
+        '201':
+          description: ''
+      tags: *ref_0
+      security: *ref_1
   /api/scraper/site:
     post:
       operationId: ScraperController_createSite
@@ -165,8 +180,10 @@ components:
       properties:
         id:
           type: string
-        categoryId:
-          type: number
+        categoryIds:
+          type: array
+          items:
+            type: number
         name:
           type: string
         url:
@@ -175,15 +192,24 @@ components:
           $ref: '#/components/schemas/RootSelector'
       required:
         - id
-        - categoryId
+        - categoryIds
         - name
         - url
         - selector
+    ScrapeRequest:
+      type: object
+      properties:
+        siteId:
+          type: string
+      required:
+        - siteId
     SiteRequest:
       type: object
       properties:
-        categoryId:
-          type: number
+        categoryIds:
+          type: array
+          items:
+            type: number
         name:
           type: string
         url:
@@ -191,7 +217,7 @@ components:
         selector:
           $ref: '#/components/schemas/RootSelector'
       required:
-        - categoryId
+        - categoryIds
         - name
         - url
         - selector

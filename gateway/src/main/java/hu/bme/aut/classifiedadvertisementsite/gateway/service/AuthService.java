@@ -140,7 +140,7 @@ public class AuthService {
         }
     }
 
-    @Scheduled(cron = "0 0 3 * * *", zone = "Europe/Budapest")
+    @Scheduled(cron = "0 0 3 * * *")
     @SchedulerLock(name = "clearExpiredRefreshTokens", lockAtLeastFor = "PT10M", lockAtMostFor = "PT1H")
     protected void clearExpiredRefreshTokens() {
         log.info("Deleting expired refresh tokens");

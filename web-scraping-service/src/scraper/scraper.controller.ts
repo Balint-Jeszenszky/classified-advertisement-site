@@ -7,6 +7,7 @@ import { SiteResponse } from './dto/SiteResponse.dto';
 import { HasRole } from '../auth/hasrole.decorator';
 import { Role } from '../auth/role.enum';
 import { ApiAcceptedResponse, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
+import { ScrapeRequest } from './dto/ScrapeRequest.dto';
 
 @ApiTags('scraper')
 @ApiSecurity('JWT')
@@ -30,6 +31,13 @@ export class ScraperController {
   @ApiOkResponse({ type: SiteResponse, isArray: true })
   getAllSites(): Promise<SiteResponse[]> {
     return this.scraperService.getAllSites();
+  }
+
+  @Post('scrape')
+  @HasRole(Role.ADMIN)
+  @ApiCreatedResponse()
+  scrapeCategory(@Body() scrape: ScrapeRequest): Promise<void> {
+    return this.scraperService.scrapeSite(scrape.siteId);
   }
 
   @Post('site')

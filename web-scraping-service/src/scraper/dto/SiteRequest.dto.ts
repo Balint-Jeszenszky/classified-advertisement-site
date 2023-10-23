@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsNotEmpty, IsInt, ValidateNested } from "class-validator";
+import { IsNotEmpty, ValidateNested, IsArray } from "class-validator";
 
 export class Selector {
   @ApiProperty()
@@ -39,9 +39,9 @@ export class RootSelector {
 }
 
 export class SiteRequest {
-  @ApiProperty()
-  @IsInt()
-  categoryId: number;
+  @ApiProperty({ isArray: true, type: Number })
+  @IsArray()
+  categoryIds: number[];
 
   @ApiProperty()
   @IsNotEmpty()

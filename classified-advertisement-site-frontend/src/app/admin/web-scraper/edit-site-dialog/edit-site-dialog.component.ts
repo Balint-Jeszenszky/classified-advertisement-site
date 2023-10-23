@@ -35,7 +35,7 @@ export class EditSiteDialogComponent {
     if (this.data.site) {
       this.name = this.data.site.name;
       this.url = this.data.site.url;
-      this.categoryId = this.data.site.categoryId;
+      this.categoryId = this.data.site.categoryIds[0];
       this.selectorBase = this.data.site.selector.base;
       this.selectorImageProperty = this.data.site.selector.image.property;
       this.selectorImageSelector = this.data.site.selector.image.selector;
@@ -61,7 +61,7 @@ export class EditSiteDialogComponent {
     return {
       name: this.name,
       url: this.url,
-      categoryId: this.categoryId,
+      categoryIds: [this.categoryId],
       selector: {
         base: this.selectorBase,
         image: {

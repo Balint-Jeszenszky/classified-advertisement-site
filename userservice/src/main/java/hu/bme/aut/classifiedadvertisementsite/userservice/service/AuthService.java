@@ -187,8 +187,8 @@ public class AuthService {
         passwordResetRepository.delete(passwordReset);
     }
 
-    @Scheduled(cron = "0 0 3 * * *", zone = "Europe/Budapest")
-    @SchedulerLock(name = "clearExpiredRefreshTokens", lockAtLeastFor = "PT10M", lockAtMostFor = "PT1H")
+    @Scheduled(cron = "0 0 3 * * *")
+    @SchedulerLock(name = "deleteExpiredPasswordResetKeys", lockAtLeastFor = "PT10M", lockAtMostFor = "PT1H")
     protected void deleteExpiredPasswordResetKeys() {
         log.info("Deleting expired password reset keys");
         List<PasswordReset> expired = passwordResetRepository.findByExpirationLessThan(new Date());

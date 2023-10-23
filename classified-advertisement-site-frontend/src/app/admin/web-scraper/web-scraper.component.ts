@@ -29,8 +29,8 @@ export class WebScraperComponent implements OnInit {
     });
   }
 
-  getCategoryNameById(id: number): string | undefined {
-    return this.categories.find(c => c.id === id)?.name;
+  getCategoryNameByIds(ids: number[]): string {
+    return ids.map(id => this.categories.find(c => c.id === id)?.name).join(', ');
   }
 
   editSite(site?: SiteResponse) {
