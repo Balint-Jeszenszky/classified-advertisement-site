@@ -1,11 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
-
-export interface MenuTree {
-  id: number;
-  name: string;
-  children?: MenuTree[];
-}
+import { CategoryTree } from 'src/app/util/category-tree';
 
 @Component({
   selector: 'app-submenu',
@@ -14,7 +9,7 @@ export interface MenuTree {
 })
 export class SubmenuComponent {
   @Input() path?: string;
-  @Input() tree?: MenuTree[];
+  @Input() tree?: CategoryTree[];
   private openedMenuTrigger?: MatMenuTrigger
 
   openMenu(menuTrigger: MatMenuTrigger) {
