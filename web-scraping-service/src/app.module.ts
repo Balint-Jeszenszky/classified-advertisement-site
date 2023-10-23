@@ -6,6 +6,7 @@ import { RolesGuard } from './auth/role.guard';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleLockModule } from './schedule-lock/schedule-lock.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ConfigModule } from '@nestjs/config';
     ),
     ScraperModule,
     ScheduleModule.forRoot(),
+    ScheduleLockModule,
   ],
   controllers: [],
   providers: [

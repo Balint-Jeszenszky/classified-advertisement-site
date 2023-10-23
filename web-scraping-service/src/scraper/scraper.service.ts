@@ -12,6 +12,7 @@ import { Browser, executablePath } from 'puppeteer';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import UserAgent from 'user-agents';
 import { Cron } from '@nestjs/schedule';
+import { ScheduleLockService } from 'src/schedule-lock/schedule-lock.service';
 
 @Injectable()
 export class ScraperService {
@@ -20,6 +21,7 @@ export class ScraperService {
   constructor(
     @InjectModel(Site.name) private readonly siteModel: Model<Site>,
     @InjectModel(Product.name) private readonly productModel: Model<Product>,
+    private readonly scheduleLockService: ScheduleLockService,
   ) { }
 
   async getProductByAdvertisementId(id: number): Promise<ProductResponse> {
@@ -90,6 +92,10 @@ export class ScraperService {
 
   @Cron('0 3 * * *')
   private async scrapePriceForAllAds() {
+    if (!await this.scheduleLockService.lock('test', new Date(Date.now() + 1000 * 60 * 60 * 3))) {
+      return;
+    }
+
     this.logger.log('Scheduled scraper started');
     const categoryIds = await this.siteModel.distinct('categoryIds').exec() as number[];
     await this.scrapeCategories(categoryIds);
