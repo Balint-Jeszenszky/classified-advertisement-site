@@ -36,7 +36,7 @@ export class ScraperController {
   @Post('scrape')
   @HasRole(Role.ADMIN)
   @ApiCreatedResponse()
-  scrapeCategory(@Body() scrape: ScrapeRequest): Promise<void> {
+  scrapeSite(@Body() scrape: ScrapeRequest): Promise<void> {
     return this.scraperService.scrapeSite(scrape.siteId);
   }
 

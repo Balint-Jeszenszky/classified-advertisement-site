@@ -39,7 +39,7 @@ paths:
       security: *ref_1
   /api/scraper/scrape:
     post:
-      operationId: ScraperController_scrapeCategory
+      operationId: ScraperController_scrapeSite
       parameters: []
       requestBody:
         required: true

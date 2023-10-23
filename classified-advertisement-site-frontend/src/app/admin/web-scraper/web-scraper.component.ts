@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CategoryResponse, CategoryService } from 'src/app/openapi/advertisementservice';
 import { ScraperService, SiteRequest, SiteResponse } from 'src/app/openapi/webscraperservice';
 import { EditSiteDialogComponent } from './edit-site-dialog/edit-site-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-web-scraper',
@@ -18,6 +19,7 @@ export class WebScraperComponent implements OnInit {
     private readonly scraperService: ScraperService,
     private readonly categoryService: CategoryService,
     private readonly dialog: MatDialog,
+    private readonly snackBar: MatSnackBar,
   ) { }
 
   ngOnInit(): void {
@@ -63,7 +65,12 @@ export class WebScraperComponent implements OnInit {
         });
       }
     });
+  }
 
+  triggerSite(site: SiteResponse) {
+    this.scraperService.scraperControllerScrapeSite({ siteId: site.id }).subscribe({
+      next: () => this.snackBar.open('Scraper triggered', 'OK', { duration: 5000 }),
+    });
   }
 
   deleteSite(site: SiteResponse) {
