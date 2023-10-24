@@ -28,10 +28,11 @@ export class ScheduleLockService {
     const lock = await this.scheduleLockModel.findOne({ task, lockedUntil: { $gt: new Date() } }, undefined, { sort: { lockedAt: 'asc' } }).exec();
 
     if (lock.process === this.uuid) {
+      await this.scheduleLockModel.deleteMany({ $and: [{ task }, { lockedUntil: { $lt: new Date() } }]});
       return true;
     }
 
-    await this.scheduleLockModel.deleteMany({ $or: [{ _id: lockAttempt._id }, { lockedUntil: { $lt: new Date() } }] }).exec();
+    await this.scheduleLockModel.deleteMany({ $and: [{ task }, { $or: [{ _id: lockAttempt._id }, { lockedUntil: { $lt: new Date() } }]}] }).exec();
 
     return false;
   }

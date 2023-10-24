@@ -106,7 +106,7 @@ export class ChatService {
     const message = await this.messageRepository.save(new Message({ userId: fromUserId, text, chat }));
 
     this.publishMessageEvent(chat, message);
-    this.sendPushNotification(chat.fromUserId === fromUserId ? chat.advertisementOwnerUserId : fromUserId, text);
+    this.sendPushNotification(chat.fromUserId === fromUserId ? chat.advertisementOwnerUserId : chat.fromUserId, text);
 
     return message;
   }

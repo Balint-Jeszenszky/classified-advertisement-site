@@ -9,6 +9,7 @@ services:
     volumes:
       - ./container-data/dev/rabbitmq:/var/lib/rabbitmq
     environment:
+      - TZ=Europe/Budapest
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
     networks:
@@ -24,6 +25,7 @@ services:
     volumes:
       - ./container-data/dev/minio:/data
     environment:
+      - TZ=Europe/Budapest
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
     command: server --console-address :9001 /data
@@ -39,6 +41,7 @@ services:
     volumes:
       - ./container-data/dev/gateway-mysql:/var/lib/mysql
     environment:
+      - TZ=Europe/Budapest
       - MYSQL_DATABASE=gateway
       - MYSQL_ROOT_PASSWORD=${MYSQL_GATEWAY_ROOT_PASSWORD}
       - MYSQL_USER=${MYSQL_GATEWAY_USERNAME}
@@ -55,6 +58,7 @@ services:
     ports:
       - 8080:8080
     environment:
+      - TZ=Europe/Budapest
       - DATABASE_URL=gateway-db:3306/gateway
       - DB_USER=${MYSQL_GATEWAY_USERNAME}
       - DB_PASS=${MYSQL_GATEWAY_PASSWORD}
@@ -84,6 +88,7 @@ services:
     volumes:
       - ./container-data/dev/userservice-postgres:/var/lib/postgresql/data
     environment:
+      - TZ=Europe/Budapest
       - POSTGRES_USER=${USERSERVICE_POSTGRES_USER}
       - POSTGRES_PASSWORD=${USERSERVICE_POSTGRES_PASSWORD}
       - POSTGRES_DB=users
@@ -100,6 +105,7 @@ services:
     ports:
       - 8081:8080
     environment:
+      - TZ=Europe/Budapest
       - DATABASE_URL=userservice-db:5432/users
       - DB_PASS=${USERSERVICE_POSTGRES_PASSWORD}
       - DB_USER=${USERSERVICE_POSTGRES_USER}
@@ -121,6 +127,7 @@ services:
     volumes:
       - ./container-data/dev/advertisementservice-mysql:/var/lib/mysql
     environment:
+      - TZ=Europe/Budapest
       - MYSQL_DATABASE=advertisements
       - MYSQL_ROOT_PASSWORD=${MYSQL_ADVERTISEMENTSERVICE_ROOT_PASSWORD}
       - MYSQL_USER=${MYSQL_ADVERTISEMENTSERVICE_USERNAME}
@@ -139,6 +146,7 @@ services:
     ports:
       - 8082:8080
     environment:
+      - TZ=Europe/Budapest
       - DATABASE_URL=advertisementservice-db:3306/advertisements
       - DB_USER=${MYSQL_ADVERTISEMENTSERVICE_USERNAME}
       - DB_PASS=${MYSQL_ADVERTISEMENTSERVICE_PASSWORD}
@@ -165,6 +173,7 @@ services:
     volumes:
       - ./container-data/dev/imageprocessingservice-postgres:/var/lib/postgresql/data
     environment:
+      - TZ=Europe/Budapest
       - POSTGRES_USER=${IMAGEPROCESSING_POSTGRES_USER}
       - POSTGRES_PASSWORD=${IMAGEPROCESSING_POSTGRES_PASSWORD}
       - POSTGRES_DB=imageprocessing
@@ -182,6 +191,7 @@ services:
     ports:
       - 8083:8080
     environment:
+      - TZ=Europe/Budapest
       - DATABASE_URL=imageprocessingservice-db:5432/imageprocessing
       - DB_USER=${IMAGEPROCESSING_POSTGRES_USER}
       - DB_PASS=${IMAGEPROCESSING_POSTGRES_PASSWORD}
@@ -205,6 +215,7 @@ services:
     ports:
       - 27017:27017
     environment:
+      - TZ=Europe/Budapest
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_WEBSCRAPINGSERVICE_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_WEBSCRAPINGSERVICE_PASSWORD}
       - MONGO_INITDB_DATABASE=scraper
@@ -222,6 +233,7 @@ services:
     ports:
       - 18081:8081
     environment:
+      - TZ=Europe/Budapest
       - ME_CONFIG_MONGODB_SERVER=webscraperservice-db
       - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_WEBSCRAPINGSERVICE_USERNAME}
       - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_WEBSCRAPINGSERVICE_PASSWORD}
@@ -238,6 +250,7 @@ services:
     ports:
       - 3000:3000
     environment:
+      - TZ=Europe/Budapest
       - PORT=3000
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
@@ -258,6 +271,7 @@ services:
     ports:
       - 27018:27017
     environment:
+      - TZ=Europe/Budapest
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_NOTIFICATIONSERVICE_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_NOTIFICATIONSERVICE_PASSWORD}
       - MONGO_INITDB_DATABASE=notification
@@ -275,6 +289,7 @@ services:
     ports:
       - 18082:8081
     environment:
+      - TZ=Europe/Budapest
       - ME_CONFIG_MONGODB_SERVER=notificationservice-db
       - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_NOTIFICATIONSERVICE_USERNAME}
       - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_NOTIFICATIONSERVICE_PASSWORD}
@@ -291,6 +306,7 @@ services:
     ports:
       - 3001:3000
     environment:
+      - TZ=Europe/Budapest
       - PORT=3000
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
@@ -321,6 +337,7 @@ services:
     volumes:
       - ./container-data/dev/chat-mysql:/var/lib/mysql
     environment:
+      - TZ=Europe/Budapest
       - MYSQL_DATABASE=chat
       - MYSQL_ROOT_PASSWORD=${MYSQL_CHATSERVICE_ROOT_PASSWORD}
       - MYSQL_USER=${MYSQL_CHATSERVICE_USERNAME}
@@ -334,6 +351,8 @@ services:
     container_name: chatservice-redis
     ports:
       - 6379:6379
+    environment:
+      - TZ=Europe/Budapest
     networks:
       - database
 
@@ -347,6 +366,7 @@ services:
     ports:
       - 3002:3000
     environment:
+      - TZ=Europe/Budapest
       - PORT=3000
       - DB_URL=chatservice-db
       - DB_PORT=3306
@@ -364,6 +384,7 @@ services:
     networks:
       - web
       - database
+      - message
 
   bidservice-db:
     image: postgres:15
@@ -374,6 +395,7 @@ services:
     volumes:
       - ./container-data/dev/bidservice-postgres:/var/lib/postgresql/data
     environment:
+      - TZ=Europe/Budapest
       - POSTGRES_USER=${BIDSERVICE_POSTGRES_USER}
       - POSTGRES_PASSWORD=${BIDERVICE_POSTGRES_PASSWORD}
       - POSTGRES_DB=bids
@@ -386,6 +408,8 @@ services:
     container_name: bidservice-redis
     ports:
       - 6380:6379
+    environment:
+      - TZ=Europe/Budapest
     networks:
       - database
 
@@ -398,6 +422,7 @@ services:
     ports:
       - 8084:8080
     environment:
+      - TZ=Europe/Budapest
       - DATABASE_URL=bidservice-db:5432/bids
       - DB_USER=${BIDSERVICE_POSTGRES_USER}
       - DB_PASS=${BIDERVICE_POSTGRES_PASSWORD}
@@ -419,6 +444,8 @@ services:
     container_name: frontend
     ports:
       - 8000:80
+    environment:
+      - TZ=Europe/Budapest
     networks:
       - web
 
