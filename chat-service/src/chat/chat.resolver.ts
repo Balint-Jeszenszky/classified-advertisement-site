@@ -46,7 +46,7 @@ export class ChatResolver {
 
   @Mutation(returns => Message)
   async sendMessageToChat(
-    @Args({ name: 'newChatMessage', type: () => NewChatMessage }) newMessage: NewChatMessage,
+    @Args({ name: 'newMessage', type: () => NewChatMessage }) newMessage: NewChatMessage,
     @CurrentUser() user: User,
   ): Promise<Message> {
     return this.chatService.sendMessageToChat(newMessage.chatId, user.id, newMessage.text);

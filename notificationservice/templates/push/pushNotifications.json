@@ -2,5 +2,9 @@
   "winnerBid": {
     "title": "Winner bid!",
     "body": "Your bid for {{advertisementTitle}} won"
+  },
+  "chatMessage": {
+    "title": "New chat message",
+    "body": "{{message}}"
   }
 }

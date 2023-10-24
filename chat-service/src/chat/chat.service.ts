@@ -14,10 +14,11 @@ export class ChatService {
   private onlineUsers: Map<number, Socket> = new Map();
 
   constructor(
-    @Inject('REALTIME_CHAT_SERVICE') private readonly client: ClientProxy,
+    @Inject('REALTIME_CHAT_SERVICE') private readonly redisClient: ClientProxy,
     @InjectRepository(Chat) private readonly chatRepository: Repository<Chat>,
     @InjectRepository(Message) private readonly messageRepository: Repository<Message>,
     private readonly apiClientService: ApiClientService,
+    @Inject('PUSH_NOTIFICATION') private readonly pushNotificationClient: ClientProxy,
   ) { }
 
   async getChatsForUser(userId: number) {
@@ -90,6 +91,7 @@ export class ChatService {
     const message = await this.messageRepository.save(new Message({ userId: fromUserId, text, chat }));
 
     this.publishMessageEvent(chat, message);
+    this.sendPushNotification(chat.fromUserId === fromUserId ? chat.advertisementOwnerUserId : fromUserId, text);
 
     return message;
   }
@@ -104,6 +106,7 @@ export class ChatService {
     const message = await this.messageRepository.save(new Message({ userId: fromUserId, text, chat }));
 
     this.publishMessageEvent(chat, message);
+    this.sendPushNotification(chat.fromUserId === fromUserId ? chat.advertisementOwnerUserId : fromUserId, text);
 
     return message;
   }
@@ -132,6 +135,16 @@ export class ChatService {
       message,
     };
 
-    this.client.emit('message', payload);
+    this.redisClient.emit('message', payload);
+  }
+
+  private sendPushNotification(userId: number, message: string) {
+    this.pushNotificationClient.emit('push', {
+      userId,
+      template: 'chatMessage',
+      data: {
+        message,
+      },
+    });
   }
 }

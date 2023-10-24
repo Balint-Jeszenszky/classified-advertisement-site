@@ -240,6 +240,7 @@ services:
     environment:
       - PORT=3000
       - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
       - RABBITMQ_USER=${RABBITMQ_USER}
       - RABBITMQ_PASS=${RABBITMQ_PASS}
       - MONGO_URL=webscraperservice-db/scraper
@@ -292,6 +293,7 @@ services:
     environment:
       - PORT=3000
       - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
       - RABBITMQ_USER=${RABBITMQ_USER}
       - RABBITMQ_PASS=${RABBITMQ_PASS}
       - MONGO_URL=notificationservice-db/notification
@@ -353,6 +355,10 @@ services:
       - DB_NAME=chat
       - REDIS_HOST=chatservice-redis
       - REDIS_PORT=6379
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}
       - ADVERTISEMENT_SERVICE_INTERNAL_API_URL=http://advertisementservice:8080/api/advertisement/internal
       - ADVERTISEMENT_SERVICE_ADVERTISEMENT_EXISTS_PATH=/advertisement/exists
     networks:
