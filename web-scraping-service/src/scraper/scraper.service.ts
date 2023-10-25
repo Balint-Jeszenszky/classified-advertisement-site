@@ -104,7 +104,11 @@ export class ScraperService {
   }
 
   private async scrapeCategories(ids: number[]) {
-    const browser = await puppeteer.use(StealthPlugin()).launch({ executablePath: executablePath() });
+    const browser = await puppeteer.use(StealthPlugin()).launch({
+      headless: 'new',
+      executablePath: executablePath(),
+      args: ['--no-sandbox'],
+    });
     await Promise.all(ids.map(async id => await this.scrapeCategory(id, browser)));
     await browser.close();
   }
