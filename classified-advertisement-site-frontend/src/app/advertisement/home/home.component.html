@@ -9,4 +9,5 @@
       <app-advertisement-card *ngFor="let advertisement of group.advertisements" class="me-3" [advertisement]="advertisement"></app-advertisement-card>
     </div>
   </div>
+  <h3 *ngIf="advertisementGroups?.length === 0" class="text-center">No advertisements yet</h3>
 </div>

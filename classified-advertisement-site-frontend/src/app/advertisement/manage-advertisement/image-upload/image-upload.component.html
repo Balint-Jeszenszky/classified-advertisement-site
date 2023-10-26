@@ -20,7 +20,7 @@
   </button>
 </div>
 <div>
-  <p class="mt-4">Current images:</p>
+  <p *ngIf="images.length" class="mt-4">Current images:</p>
   <div class="mb-3 d-flex flex-wrap">
     <div *ngFor="let image of images" class="d-inline-block position-relative m-2 image-container">
       <div class="d-flex flex-wrap align-items-center h-100">
@@ -31,8 +31,8 @@
       </div>
     </div>
   </div>
-  <small>Max 10 images, max image size 1MB, accepted formats: {{ acceptedExtensions.join(', ') }}</small>
 </div>
+<small>Max 10 images, max image size 1MB, accepted formats: {{ acceptedExtensions.join(', ') }}</small>
 <div class="text-end">
   <button mat-button (click)="onBack()">Back</button>
   <button mat-button (click)="onNext()">Next</button>
