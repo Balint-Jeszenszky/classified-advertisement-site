@@ -182,6 +182,7 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=${RABBITMQ_USER}
       - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - WATERMARK_TEXT=${WATERMARK_TEXT}
     networks:
       - web
       - database
