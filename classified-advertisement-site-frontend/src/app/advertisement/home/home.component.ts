@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AdvertisementResponse, AdvertisementService, NewAdvertisementsResponse } from 'src/app/openapi/advertisementservice';
 import { BidService } from 'src/app/openapi/bidservice';
+import { LoadingState } from 'src/app/shared/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-home',
@@ -10,6 +11,7 @@ import { BidService } from 'src/app/openapi/bidservice';
 })
 export class HomeComponent implements OnInit {
   advertisementGroups?: NewAdvertisementsResponse[];
+  loadingState: LoadingState = LoadingState.LOADING;
 
   constructor(
     private readonly advertisementService: AdvertisementService,
@@ -20,8 +22,12 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.advertisementService.getAdvertisementsNew().subscribe({
       next: res => {
+        this.loadingState = LoadingState.LOADED;
         this.advertisementGroups = res;
         this.loadBids();
+      },
+      error: () => {
+        this.loadingState = LoadingState.ERROR;
       },
     });
   }

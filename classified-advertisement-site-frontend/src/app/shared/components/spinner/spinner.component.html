@@ -1,0 +1,4 @@
+<div *ngIf="loadingState === loadingStates.LOADING" class="spinner">
+  <mat-spinner></mat-spinner>
+</div>
+<h3 *ngIf="loadingState === loadingStates.ERROR" class="text-center">Error occured while loading. Please try again later.</h3>

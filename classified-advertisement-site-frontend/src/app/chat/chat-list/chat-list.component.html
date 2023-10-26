@@ -2,4 +2,6 @@
 
 <app-chat-item *ngFor="let chat of chats" [chat]="chat"></app-chat-item>
 
-<h3 *ngIf="!chats.length" class="text-center">No conversations yet</h3>
+<h3 *ngIf="chats?.length === 0" class="text-center">No conversations yet</h3>
+
+<app-spinner [loadingState]="loadingState"></app-spinner>
