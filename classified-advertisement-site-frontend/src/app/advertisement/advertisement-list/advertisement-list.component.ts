@@ -145,6 +145,8 @@ export class AdvertisementListComponent implements OnInit {
       if (currentCategory) {
         this.category.unshift(currentCategory);
         parentCategoryId = currentCategory.parentCategoryId;
+      } else {
+        return;
       }
     } while (parentCategoryId);
   }

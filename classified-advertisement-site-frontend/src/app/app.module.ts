@@ -19,12 +19,14 @@ import { MatMenuModule } from '@angular/material/menu';
 import { SubmenuComponent } from './components/navbar/submenu/submenu.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { GraphQLModule as ChatGraphQLModule } from './graphql/chat/graphql.module';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
-    SubmenuComponent
+    SubmenuComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,

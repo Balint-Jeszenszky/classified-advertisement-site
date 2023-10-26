@@ -7,6 +7,7 @@ import { ProductResponse, ScraperService } from 'src/app/openapi/webscraperservi
 import { LoggedInUserService } from 'src/app/service/logged-in-user.service';
 import { Role } from 'src/app/service/types';
 import { LiveBidService } from '../service/live-bid.service';
+import { LoadingState } from 'src/app/shared/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-details',
@@ -25,6 +26,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
   bid: number = 0;
   bidWinnerUser?: PublicUserDetailsResponse;
   expired: boolean = false;
+  loadingState: LoadingState = LoadingState.LOADING;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -41,32 +43,41 @@ export class DetailsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.id = +params['id'];
-      this.advertisementService.getAdvertisementId(this.id).subscribe(ad => {
-        this.advertisement = ad;
-        this.expired = !!ad.expiration && Date.parse(ad.expiration) < Date.now();
-        this.categoryService.getCategories().subscribe({
-          next: cat => this.setCategory(cat, ad.categoryId),
-        });
-        this.loggedInUserService.user.subscribe(user => {
-          this.admin = !!user?.roles.includes(Role.ROLE_ADMIN);
-          this.userId = user?.id;
-        });
-        this.publicUserService.getUserId([ad.advertiserId]).subscribe({
-          next: users => this.advertiser = users[0],
-        });
-        if (this.advertisement.type === AdvertisementResponse.TypeEnum.Bid) {
-          this.liveBidService.subscribeForBids(this.advertisement.id).subscribe({
-            next: bid => {
-              if (this.advertisement?.price) {
-                this.advertisement.price = bid.price;
-              }
-  
-              this.publicUserService.getUserId([bid.userId]).subscribe({
-                next: users => this.bidWinnerUser = users[0],
-              });
-            }
+      this.advertisementService.getAdvertisementId(this.id).subscribe({
+        next: ad => {
+          this.loadingState = LoadingState.LOADED;
+          this.advertisement = ad;
+          this.expired = !!ad.expiration && Date.parse(ad.expiration) < Date.now();
+          this.categoryService.getCategories().subscribe({
+            next: cat => this.setCategory(cat, ad.categoryId),
           });
-        }
+          this.loggedInUserService.user.subscribe(user => {
+            this.admin = !!user?.roles.includes(Role.ROLE_ADMIN);
+            this.userId = user?.id;
+          });
+          this.publicUserService.getUserId([ad.advertiserId]).subscribe({
+            next: users => this.advertiser = users[0],
+          });
+          if (this.advertisement.type === AdvertisementResponse.TypeEnum.Bid) {
+            this.liveBidService.subscribeForBids(this.advertisement.id).subscribe({
+              next: bid => {
+                if (this.advertisement?.price) {
+                  this.advertisement.price = bid.price;
+                }
+    
+                this.publicUserService.getUserId([bid.userId]).subscribe({
+                  next: users => this.bidWinnerUser = users[0],
+                });
+              }
+            });
+          }
+        },
+        error: error => {
+          if (error.status === 404) {
+            this.router.navigate(['/404']);
+          }
+          this.loadingState = LoadingState.LOADED;
+        },
       });
       this.imagesService.getImageListAdvertisementId(this.id).subscribe({
         next: urls => this.imageUrls = urls,

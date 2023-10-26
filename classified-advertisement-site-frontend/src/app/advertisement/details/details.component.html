@@ -2,6 +2,7 @@
   <p class="category d-inline"><a routerLink="/" class="unformatted-link">Home</a></p>
   <p class="category d-inline" *ngFor="let cat of category"> ⮞ <a [routerLink]="'/category/' + cat.id" class="unformatted-link">{{ cat.name }}</a></p>
 </div>
+<app-spinner [loadingState]="loadingState"></app-spinner>
 <div class="d-flex flex-wrap">
   <div class="images me-3">
     <app-gallery *ngIf="imageUrls" [imageUrls]="imageUrls"></app-gallery>

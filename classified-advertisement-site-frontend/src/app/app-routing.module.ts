@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { loginGuard, roleGuard } from './auth.guard';
 import { Role } from './service/types';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 const routes: Routes = [
   {
@@ -31,6 +32,10 @@ const routes: Routes = [
     loadChildren: () => import('./chat/chat.module').then(m => m.ChatModule),
     data: { login: true },
     canActivate: [loginGuard],
+  },
+  {
+    path: '**',
+    component: NotFoundComponent,
   },
 ];
 
