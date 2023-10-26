@@ -174,11 +174,12 @@ class AdvertisementService(
 
         advertisementRepository.save(advertisement)
 
-        if (!images.isNullOrEmpty()) {
-            fileUploadService.uploadFiles(images, advertisement.id!!)
-        }
         if (!deletedImages.isNullOrEmpty()) {
             fileUploadService.deleteImagesByName(deletedImages.split(";"))
+        }
+
+        if (!images.isNullOrEmpty()) {
+            fileUploadService.uploadFiles(images, advertisement.id!!)
         }
 
         sendAdvertisementMessage("UPDATE", id, advertisement.title, advertisement.category.id)

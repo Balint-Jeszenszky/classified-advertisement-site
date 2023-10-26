@@ -144,6 +144,11 @@ public class ImageProcessingServiceImpl implements ImageProcessingService {
 
     @Override
     public void processImage(String name, int advertisementId) throws Exception {
+        if (imageDataRepository.countByAdvertisementId(advertisementId) >= 10) {
+            removeImages(List.of(new DeleteObject(RAW_PATH + name)));
+            return;
+        }
+
         String newName = FileNameUtils.getBaseName(name) + JPG_EXTENSION;
 
         try {
