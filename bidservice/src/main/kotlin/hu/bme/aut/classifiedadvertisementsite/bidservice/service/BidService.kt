@@ -122,7 +122,9 @@ class BidService(
 
         advertisementRepository.save(storedAdvertisement)
 
-        subscriptions.remove(id)
+        if (storedAdvertisement.archived) {
+            subscriptions.remove(id)
+        }
     }
 
     fun deleteAdvertisement(id: Int) {
