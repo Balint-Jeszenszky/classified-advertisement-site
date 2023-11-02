@@ -3,4 +3,5 @@ kind: ConfigMap
 metadata:
   name: imageprocessingservice-config
 data:
+  watermark-text: AdSite
   imageprocessingservice-url: http://imageprocessingservice-service:8080

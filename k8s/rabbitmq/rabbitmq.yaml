@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: rabbitmq-deployment
   labels:
@@ -31,6 +31,13 @@ spec:
             secretKeyRef:
               name: rabbitmq-secret
               key: rabbitmq-password
+        volumeMounts:
+          - name: local
+            mountPath: /var/lib/rabbitmq
+      volumes:
+      - name: local
+        hostPath:
+          path: /run/desktop/mnt/host/d/Work/Dipterv/classified-advertisement-site/container-data/k8s/rabbitmq
 ---
 apiVersion: v1
 kind: Service

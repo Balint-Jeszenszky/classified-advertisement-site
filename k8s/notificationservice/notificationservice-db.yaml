@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: notificationservice-db-deployment
   labels:
@@ -35,6 +35,13 @@ spec:
             secretKeyRef:
               name: notificationservice-db-secret
               key: notificationservice-db-root-password
+        volumeMounts:
+          - name: local
+            mountPath: /data/db
+      volumes:
+      - name: local
+        hostPath:
+          path: /run/desktop/mnt/host/d/Work/Dipterv/classified-advertisement-site/container-data/k8s/notificationservice-mongo
 ---
 apiVersion: v1
 kind: Service
