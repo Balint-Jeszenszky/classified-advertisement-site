@@ -29,6 +29,8 @@ export class ChatService {
       chat.messages = [message];
     }));
 
+    chats.sort((a, b) => b.messages[0].createdAt.getTime() - a.messages[0].createdAt.getTime());
+
     return chats;
   }
 
