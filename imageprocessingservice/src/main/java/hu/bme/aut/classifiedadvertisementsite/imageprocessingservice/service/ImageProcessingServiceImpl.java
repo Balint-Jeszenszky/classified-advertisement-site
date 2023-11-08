@@ -40,20 +40,15 @@ public class ImageProcessingServiceImpl implements ImageProcessingService {
     private final ImageDataRepository imageDataRepository;
     private final String watermarkText;
 
-    ImageProcessingServiceImpl(
+    public ImageProcessingServiceImpl(
             ImageDataRepository imageDataRepository,
-            @Value("${minio.endpoint}") String endpoint,
-            @Value("${minio.username}") String username,
-            @Value("${minio.password}") String password,
+            MinioClient minioClient,
             @Value("${minio.bucket}") String bucket,
             @Value("${advertisement.image.watermark.text}") String watermarkText) {
         this.imageDataRepository = imageDataRepository;
         this.bucket = bucket;
         this.watermarkText = watermarkText;
-        minioClient = MinioClient.builder()
-                .endpoint(endpoint)
-                .credentials(username, password)
-                .build();
+        this.minioClient = minioClient;
     }
 
     @Override
