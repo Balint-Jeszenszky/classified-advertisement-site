@@ -6,6 +6,7 @@ import { ScraperService } from '../src/scraper/scraper.service';
 import { MessageType } from '../src/scraper/dto/Advertisement.dto';
 import { ScraperModule } from '../src/scraper/scraper.module';
 import { getAdminAuthHeader, getUserAuthHeader, siteRequest } from './test.util';
+import { ScheduleLockModule } from '../src/schedule-lock/schedule-lock.module';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -13,7 +14,7 @@ describe('AppController (e2e)', () => {
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule, ScraperModule],
+      imports: [AppModule, ScraperModule, ScheduleLockModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();

@@ -12,7 +12,7 @@ import { Browser, executablePath } from 'puppeteer';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import UserAgent from 'user-agents';
 import { Cron } from '@nestjs/schedule';
-import { ScheduleLockService } from 'src/schedule-lock/schedule-lock.service';
+import { ScheduleLockService } from '../schedule-lock/schedule-lock.service';
 
 @Injectable()
 export class ScraperService {

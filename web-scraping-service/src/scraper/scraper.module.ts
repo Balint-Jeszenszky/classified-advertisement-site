@@ -5,7 +5,7 @@ import { Site, SiteSchema } from './schemas/site.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Product, ProductSchema } from './schemas/product.schema';
 import { MessageQueueController } from './message-queue.controller';
-import { ScheduleLockModule } from 'src/schedule-lock/schedule-lock.module';
+import { ScheduleLockModule } from '../schedule-lock/schedule-lock.module';
 
 @Module({
   imports: [

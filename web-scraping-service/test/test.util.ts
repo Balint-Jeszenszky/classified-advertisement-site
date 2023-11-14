@@ -10,7 +10,7 @@ export function getAdminAuthHeader() {
 export const siteRequest = {
   name: "site",
   url: "siteurl",
-  categoryId: 1,
+  categoryIds: [1],
   selector: {
     base: "#normal-product-list .product-box-container",
     image: {
