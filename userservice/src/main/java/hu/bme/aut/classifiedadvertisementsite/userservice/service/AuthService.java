@@ -50,7 +50,7 @@ public class AuthService {
         String username = registrationRequest.getUsername().toLowerCase();
 
         if (!UserValidator.validateUsername(username)) {
-            throw new BadRequestException("Error: Username should be at least 4 characters long!");
+            throw new BadRequestException("Error: Username should be at least 4, at most 20 characters long!");
         }
 
         if (!EmailValidator.validateEmail(email)) {

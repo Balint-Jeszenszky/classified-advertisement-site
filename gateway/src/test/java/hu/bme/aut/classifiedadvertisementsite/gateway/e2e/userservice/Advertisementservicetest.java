@@ -96,6 +96,7 @@ class Advertisementservicetest {
         bodyBuilder.part("description", "This is a test advertisement");
         bodyBuilder.part("price", 42);
         bodyBuilder.part("categoryId", editableCategoryId);
+        bodyBuilder.part("type", "FIXED_PRICE");
 
         webTestClient.post()
                 .uri(API_PREFIX + "/advertisements")
@@ -227,6 +228,7 @@ class Advertisementservicetest {
         bodyBuilder.part("description", "This is a test advertisement");
         bodyBuilder.part("price", 42);
         bodyBuilder.part("categoryId", editableCategoryId);
+        bodyBuilder.part("type", "FIXED_PRICE");
 
         String responseBody = new String(webTestClient.post()
                 .uri(API_PREFIX + "/advertisements")

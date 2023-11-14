@@ -13,6 +13,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import java.util.List;
+import java.util.UUID;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
@@ -39,13 +40,14 @@ class Userservicetest {
 
     @Test
     void registerUser() {
+        String uuid = UUID.randomUUID().toString().replace("-", "").substring(0, 20);
         webTestClient.post()
                 .uri(API_PREFIX + "/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromObject("{" +
-                        "\"username\": \"e2euser\"," +
-                        "\"email\": \"e2euser@e2etest.local\"," +
+                        "\"username\": \"" + uuid + "\"," +
+                        "\"email\": \"" + uuid + "@e2etest.local\"," +
                         "\"password\": \"Password\"," +
                         "\"confirmPassword\": \"Password\"" +
                         "}"))

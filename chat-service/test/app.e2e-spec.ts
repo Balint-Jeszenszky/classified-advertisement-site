@@ -7,7 +7,7 @@ import Chat from '../src/chat/entity/chat.entity';
 import { Repository } from 'typeorm';
 import Message from '../src/chat/entity/message.entity';
 
-const GRAPHWL_API = '/api/graphql';
+const GRAPHQL_API = '/api/graphql';
 
 describe('Chat resolver (e2e)', () => {
   let app: INestApplication;
@@ -67,7 +67,7 @@ describe('Chat resolver (e2e)', () => {
 
   it('throws error when unauthenticated user lists chats', () => {
     return request(app.getHttpServer())
-      .post(GRAPHWL_API)
+      .post(GRAPHQL_API)
       .send({
         operationName: 'GetChatsForUser',
         variables: {},
@@ -82,7 +82,7 @@ describe('Chat resolver (e2e)', () => {
 
   it('returns list when authenticated user lists chats', () => {
     return request(app.getHttpServer())
-      .post(GRAPHWL_API)
+      .post(GRAPHQL_API)
       .set('x-user-data', userAuthHeader)
       .send({
         operationName: 'GetChatsForUser',
@@ -110,7 +110,7 @@ describe('Chat resolver (e2e)', () => {
 
   it('throws error when unauthenticated user queries chat by id', () => {
     return request(app.getHttpServer())
-      .post(GRAPHWL_API)
+      .post(GRAPHQL_API)
       .send({
         operationName: 'GetChat',
         variables: {
@@ -127,7 +127,7 @@ describe('Chat resolver (e2e)', () => {
 
   it('throws error when authenticated user queries other user\'s chat by id', () => {
     return request(app.getHttpServer())
-      .post(GRAPHWL_API)
+      .post(GRAPHQL_API)
       .set('x-user-data', userAuthHeader)
       .send({
         operationName: 'GetChat',
@@ -145,7 +145,7 @@ describe('Chat resolver (e2e)', () => {
 
   it('returns chat for authenticated user when queries chat by id', () => {
     return request(app.getHttpServer())
-      .post(GRAPHWL_API)
+      .post(GRAPHQL_API)
       .set('x-user-data', userAuthHeader)
       .send({
         operationName: 'GetChat',
@@ -175,7 +175,7 @@ describe('Chat resolver (e2e)', () => {
 
   it('throws error when unauthenticated user queries chat by advertisement id', () => {
     return request(app.getHttpServer())
-      .post(GRAPHWL_API)
+      .post(GRAPHQL_API)
       .send({
         operationName: 'GetChatByAdvertisement',
         variables: {
@@ -192,7 +192,7 @@ describe('Chat resolver (e2e)', () => {
 
   it('returns chat for authenticated user when queries chat by advertisement id', () => {
     return request(app.getHttpServer())
-      .post(GRAPHWL_API)
+      .post(GRAPHQL_API)
       .set('x-user-data', userAuthHeader)
       .send({
         operationName: 'GetChatByAdvertisement',
@@ -212,7 +212,7 @@ describe('Chat resolver (e2e)', () => {
 
   it('throws error when unauthenticated user sends message to chat by advertisement id', () => {
     return request(app.getHttpServer())
-      .post(GRAPHWL_API)
+      .post(GRAPHQL_API)
       .send({
         operationName: 'SendMessageForAdvertisement',
         variables: {
@@ -232,7 +232,7 @@ describe('Chat resolver (e2e)', () => {
 
   it('returns message when user sends message to chat by advertisement id', () => {
     return request(app.getHttpServer())
-      .post(GRAPHWL_API)
+      .post(GRAPHQL_API)
       .set('x-user-data', userAuthHeader)
       .send({
         operationName: 'SendMessageForAdvertisement',
