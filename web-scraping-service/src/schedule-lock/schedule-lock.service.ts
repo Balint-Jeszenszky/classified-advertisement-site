@@ -17,14 +17,13 @@ export class ScheduleLockService {
   }
 
   async lock(task: string, lockedUntil: Date) {
-    const lockData = new this.scheduleLockModel({
+    const lockAttempt = await this.scheduleLockModel.create({
       task,
       process: this.uuid,
       lockedAt: new Date(),
       lockedUntil,
     });
 
-    const lockAttempt = await lockData.save();
     const lock = await this.scheduleLockModel.findOne({ task, lockedUntil: { $gt: new Date() } }, undefined, { sort: { lockedAt: 'asc' } }).exec();
 
     if (lock.process === this.uuid) {
