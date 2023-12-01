@@ -70,7 +70,8 @@ class BidService(
 
         if (advertisement.isEmpty
             || advertisement.get().archived
-            || advertisement.get().expiration.isBefore(OffsetDateTime.now())) {
+            || advertisement.get().expiration.isBefore(OffsetDateTime.now())
+            || price < advertisement.get().initialPrice) {
             return
         }
 
