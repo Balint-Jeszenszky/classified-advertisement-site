@@ -5,6 +5,7 @@ import { Site } from './schemas/site.schema';
 import { Product } from './schemas/product.schema';
 import { SiteRequest } from './dto/SiteRequest.dto';
 import { NotFoundException } from '@nestjs/common';
+import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
 
 class SiteMock {
   constructor() { return SiteMock }
@@ -33,6 +34,11 @@ describe('ScraperService', () => {
           useValue: ProductMock,
         },
       ],
+    }).useMocker((token) => {
+      const moduleMocker = new ModuleMocker(global);
+      const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
+      const Mock = moduleMocker.generateFromMetadata(mockMetadata);
+      return new Mock();
     }).compile();
 
     service = module.get<ScraperService>(ScraperService);
@@ -97,7 +103,7 @@ describe('ScraperService', () => {
     const result = await service.createSite({
       name: "site",
       url: "siteurl",
-      categoryId: 1,
+      categoryIds: [1],
       selector: {
         base: "#normal-product-list .product-box-container",
         image: {
@@ -129,7 +135,7 @@ describe('ScraperService', () => {
             _id: { toHexString: jest.fn(() => id) },
             name: site.name,
             url: site.url,
-            categoryId: site.categoryId,
+            categoryIds: site.categoryIds,
             selector: {},
           }
         })
@@ -138,7 +144,7 @@ describe('ScraperService', () => {
     const result = await service.updateSite('siteId', {
       name: "site",
       url: "siteurl",
-      categoryId: 1,
+      categoryIds: [1],
       selector: {
         base: "#normal-product-list .product-box-container",
         image: {
@@ -162,7 +168,7 @@ describe('ScraperService', () => {
     expect(result.id).toEqual('siteId');
     expect(result.name).toEqual('site');
     expect(result.url).toEqual('siteurl');
-    expect(result.categoryId).toEqual(1);
+    expect(result.categoryIds).toEqual([1]);
   });
 
   it('updateSite() should throw NotFoundException for non existing site', async () => {
@@ -174,7 +180,7 @@ describe('ScraperService', () => {
     await expect(service.updateSite('notExisting', {
       name: "site",
       url: "siteurl",
-      categoryId: 1,
+      categoryIds: [1],
       selector: {
         base: "#normal-product-list .product-box-container",
         image: {
