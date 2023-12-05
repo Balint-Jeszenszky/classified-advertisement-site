@@ -1,4 +1,4 @@
-cd classified-advertisement-site/gateway
+cd gateway
 call mvnw clean package -DskipTests
 docker build -t balintjeszenszky/adsite:gateway-latest .
 cd ../userservice
