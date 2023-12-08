@@ -2,6 +2,7 @@ package hu.bme.aut.classifiedadvertisementsite.advertisementservice.service
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.service.messagequeue.ImageProcessingMessageQueue
 import io.minio.*
 import org.apache.commons.io.FilenameUtils
 import org.springframework.amqp.core.Queue
@@ -21,7 +22,7 @@ class FileUploadServiceImpl(
     @Value("\${minio.password}") private val password: String,
     @Value("\${minio.bucket}") private val bucket: String,
     private val rabbitTemplate: RabbitTemplate,
-    @Qualifier("image-processing-queue") private val queue: Queue
+    @Qualifier(ImageProcessingMessageQueue.QUEUE_NAME) private val queue: Queue
 ) : FileUploadService {
 
     private val minioClient: MinioClient = MinioClient.builder()

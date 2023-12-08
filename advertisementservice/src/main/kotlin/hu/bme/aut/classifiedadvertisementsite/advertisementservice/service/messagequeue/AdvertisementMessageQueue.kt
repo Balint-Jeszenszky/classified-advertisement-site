@@ -6,9 +6,11 @@ import org.springframework.stereotype.Component
 
 @Component
 class AdvertisementMessageQueue {
-    private val QUEUE_NAME = "advertisement-queue"
+    companion object {
+        const val QUEUE_NAME = "advertisement-queue"
+    }
 
-    @Bean("advertisement-queue")
+    @Bean(QUEUE_NAME)
     fun advertisementQueue(): Queue {
         return Queue(QUEUE_NAME, true)
     }

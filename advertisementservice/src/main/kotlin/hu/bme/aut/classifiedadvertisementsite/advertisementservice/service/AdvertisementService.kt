@@ -18,6 +18,7 @@ import hu.bme.aut.classifiedadvertisementsite.advertisementservice.repository.Ad
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.repository.CategoryRepository
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.security.LoggedInUserService
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.service.apiclient.BidApiClient
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.service.messagequeue.AdvertisementMessageQueue
 import jakarta.transaction.Transactional
 import org.mapstruct.factory.Mappers
 import org.springframework.amqp.core.Queue
@@ -35,7 +36,7 @@ class AdvertisementService(
     private val categoryRepository: CategoryRepository,
     private val fileUploadService: FileUploadService,
     private val rabbitTemplate: RabbitTemplate,
-    @Qualifier("advertisement-queue") private val queue: Queue,
+    @Qualifier(AdvertisementMessageQueue.QUEUE_NAME) private val queue: Queue,
     private val bidApiClient: BidApiClient,
 ) {
     private val advertisementMapper: AdvertisementMapper = Mappers.getMapper(AdvertisementMapper::class.java)
