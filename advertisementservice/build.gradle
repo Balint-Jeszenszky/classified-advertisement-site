@@ -73,6 +73,11 @@ tasks.register("kotlinExternalApi", GenerateTask) {
 			skipDefaultInterface: "true",
 			exceptionHandler: "false"
 	]
+
+	doLast {
+		// exclude org.* to prevent unused SpringDocConfiguration class collision
+		delete ("$buildDir/generated-sources/openapi/external/src/main/kotlin/org")
+	}
 }
 
 tasks.register("kotlinInternalApi", GenerateTask) {
@@ -87,6 +92,11 @@ tasks.register("kotlinInternalApi", GenerateTask) {
 			skipDefaultInterface: "true",
 			exceptionHandler: "false"
 	]
+
+	doLast {
+		// exclude org.* to prevent unused SpringDocConfiguration class collision
+		delete ("$buildDir/generated-sources/openapi/internal/src/main/kotlin/org")
+	}
 }
 
 tasks.register("javaExternalApi", GenerateTask) {
@@ -115,16 +125,6 @@ tasks.register("bidServiceInternalApiClient", GenerateTask) {
 	bidServiceInternalApiClient.generateModelTests = false
 }
 
-tasks.register("openapiCleanup") {
-	doLast {
-		delete (
-				// exclude org.* to prevent unused SpringDocConfiguration class collision
-				"$buildDir/generated-sources/openapi/external/src/main/kotlin/org",
-				"$buildDir/generated-sources/openapi/internal/src/main/kotlin/org"
-		)
-	}
-}
-
 sourceSets {
 	main {
 		kotlin {
@@ -139,7 +139,7 @@ java.sourceSets["main"].java {
 	srcDir("$buildDir/generated-sources/openapi/client/src/main/java")
 }
 
-compileKotlin.dependsOn('kotlinExternalApi', 'kotlinInternalApi', 'javaExternalApi', 'bidServiceInternalApiClient', 'openapiCleanup')
+compileKotlin.dependsOn('kotlinExternalApi', 'kotlinInternalApi', 'javaExternalApi', 'bidServiceInternalApiClient')
 
 test {
 	systemProperty 'spring.profiles.active', 'test'
