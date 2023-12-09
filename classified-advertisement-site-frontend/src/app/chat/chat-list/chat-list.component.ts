@@ -32,16 +32,18 @@ export class ChatListComponent implements OnInit {
         next: ({data}) => {
           this.loadingState = LoadingState.LOADED;
           this.chats = data.chatsForUser.map(chat => ({ chat }));
-          this.advertisementService.getAdvertisementsListIds(data.chatsForUser.map(c => c.advertisementId)).subscribe(res => {
-            this.chats?.forEach(c => {
-              c.advertisementTitle = res.find(a => a.id === c.chat.advertisementId)?.title;
+          if (this.chats.length) {
+            this.advertisementService.getAdvertisementsListIds(data.chatsForUser.map(c => c.advertisementId)).subscribe(res => {
+              this.chats?.forEach(c => {
+                c.advertisementTitle = res.find(a => a.id === c.chat.advertisementId)?.title;
+              });
             });
-          });
-          this.publicUserService.getUserId(data.chatsForUser.map(c => c.fromUserId === user?.id ? c.advertisementOwnerUserId : c.fromUserId)).subscribe(res => {
-            this.chats?.forEach(c => {
-              c.fromUsername = res.find(u => u.id === c.chat.fromUserId || c.chat.advertisementOwnerUserId)?.username;
+            this.publicUserService.getUserId(data.chatsForUser.map(c => c.fromUserId === user?.id ? c.advertisementOwnerUserId : c.fromUserId)).subscribe(res => {
+              this.chats?.forEach(c => {
+                c.fromUsername = res.find(u => u.id === c.chat.fromUserId || c.chat.advertisementOwnerUserId)?.username;
+              });
             });
-          });
+          }
         },
         error: () => {
           this.loadingState = LoadingState.ERROR;
