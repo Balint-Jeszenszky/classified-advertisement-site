@@ -41,6 +41,10 @@
 			"path": "classified-advertisement-site-frontend"
 		},
 		{
+			"name": "CICD",
+			"path": ".github/workflows"
+		},
+		{
 			"name": "Root",
 			"path": "."
 		}
