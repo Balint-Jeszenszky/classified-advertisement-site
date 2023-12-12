@@ -127,7 +127,7 @@ class AdvertisementService(
     fun deleteById(id: Int) {
         val user = loggedInUserService.getLoggedInUser() ?: throw ForbiddenException("User not found")
         val advertisement = advertisementRepository.findById(id)
-            .orElseThrow { ForbiddenException("Advertisement not found") }
+            .orElseThrow { NotFoundException("Advertisement not found") }
 
         if (!loggedInUserService.isAdmin() && advertisement.advertiserId != user.getId()) {
             throw ForbiddenException("Can not delete advertisement")
@@ -136,6 +136,14 @@ class AdvertisementService(
         fileUploadService.deleteImagesForAd(id)
 
         sendAdvertisementMessage("DELETE", id)
+
+        if (advertisement.type == AdvertisementType.BID) {
+            try {
+                bidApiClient.deleteModify(advertisement.id)
+            } catch (e: RestClientException) {
+                throw ServiceUnavailableException("Bid service unavailable")
+            }
+        }
 
         advertisementRepository.delete(advertisement)
     }

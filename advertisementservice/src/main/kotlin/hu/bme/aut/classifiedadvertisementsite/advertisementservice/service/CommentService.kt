@@ -34,8 +34,8 @@ class CommentService(
     }
 
     fun deleteById(id: Int) {
-        val comment = commentRepository.findById(id).orElseThrow { ForbiddenException("Can not delete comment") }
         val user = loggedInUserService.getLoggedInUser() ?: throw ForbiddenException("User not found")
+        val comment = commentRepository.findById(id).orElseThrow { NotFoundException("Comment not found") }
 
         if (!loggedInUserService.isAdmin() && comment.creatorId != user.getId()) {
             throw ForbiddenException("Can not delete comment")
