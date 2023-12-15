@@ -2,25 +2,30 @@ package hu.bme.aut.classifiedadvertisementsite.advertisementservice.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.api.internal.model.AdvertisementExistsResponse
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.client.java.api.model.CreateBidRequest
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.client.java.api.model.ModifyBidRequest
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.*
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.AdvertisementResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.NewAdvertisementsResponse
-import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.BadRequestException
-import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.ForbiddenException
-import hu.bme.aut.classifiedadvertisementsite.advertisementservice.controller.exception.NotFoundException
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.java.api.external.model.AdvertisementDataResponse
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.mapper.AdvertisementMapper
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.mapper.CategoryMapper
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.model.Advertisement
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.model.AdvertisementStatus
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.model.AdvertisementType
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.model.Category
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.repository.AdvertisementRepository
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.repository.CategoryRepository
 import hu.bme.aut.classifiedadvertisementsite.advertisementservice.security.LoggedInUserService
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.service.apiclient.BidApiClient
+import hu.bme.aut.classifiedadvertisementsite.advertisementservice.service.messagequeue.AdvertisementMessageQueue
+import jakarta.transaction.Transactional
 import org.mapstruct.factory.Mappers
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
+import org.springframework.web.client.RestClientException
 import org.springframework.web.multipart.MultipartFile
 import java.time.OffsetDateTime
 
@@ -31,7 +36,8 @@ class AdvertisementService(
     private val categoryRepository: CategoryRepository,
     private val fileUploadService: FileUploadService,
     private val rabbitTemplate: RabbitTemplate,
-    @Qualifier("advertisement-queue") private val queue: Queue
+    @Qualifier(AdvertisementMessageQueue.QUEUE_NAME) private val queue: Queue,
+    private val bidApiClient: BidApiClient,
 ) {
     private val advertisementMapper: AdvertisementMapper = Mappers.getMapper(AdvertisementMapper::class.java)
     private val categoryMapper: CategoryMapper = Mappers.getMapper(CategoryMapper::class.java)
@@ -55,15 +61,32 @@ class AdvertisementService(
         return listOf(category, *subcategories.toTypedArray())
     }
 
+    @Transactional
     fun createAdvertisement(
         title: String,
         description: String,
         price: Double,
         categoryId: Int,
+        type: String,
+        expiration: OffsetDateTime?,
         images: MutableList<MultipartFile>?
     ): AdvertisementResponse {
         val user = loggedInUserService.getLoggedInUser() ?: throw ForbiddenException("User not found")
         val category = categoryRepository.findById(categoryId).orElseThrow { BadRequestException("Category not found") }
+
+        val advertisementType = try {
+            AdvertisementType.valueOf(type)
+        } catch(e: IllegalArgumentException) {
+            throw BadRequestException("Wrong advertisement type")
+        }
+        val advertisementStatus = if (advertisementType == AdvertisementType.FIXED_PRICE)
+            AdvertisementStatus.AVAILABLE
+        else
+            AdvertisementStatus.BIDDING
+
+        if (advertisementType == AdvertisementType.BID && (expiration == null || expiration.isBefore(OffsetDateTime.now()))) {
+            throw BadRequestException("Expiration should be set for bids to a valid timestamp")
+        }
 
         val advertisement = Advertisement(
             title,
@@ -71,7 +94,9 @@ class AdvertisementService(
             user.getId(),
             price,
             category,
-            AdvertisementStatus.AVAILABLE)
+            advertisementStatus,
+            advertisementType,
+            expiration)
 
         advertisementRepository.save(advertisement)
 
@@ -81,13 +106,28 @@ class AdvertisementService(
 
         sendAdvertisementMessage("CREATE", advertisement.id!!, advertisement.title, advertisement.category.id)
 
+        if (advertisement.type == AdvertisementType.BID) {
+            try {
+                bidApiClient.postCreate(CreateBidRequest()
+                    .advertisementId(advertisement.id)
+                    .userId(advertisement.advertiserId)
+                    .price(advertisement.price)
+                    .expiration(advertisement.expiration)
+                    .title(advertisement.title))
+            } catch (e: RestClientException) {
+                sendAdvertisementMessage("DELETE", advertisement.id!!)
+                fileUploadService.deleteImagesForAd(advertisement.id!!)
+                throw ServiceUnavailableException("Bid service unavailable")
+            }
+        }
+
         return advertisementMapper.advertisementToAdvertisementResponse(advertisement)
     }
 
     fun deleteById(id: Int) {
         val user = loggedInUserService.getLoggedInUser() ?: throw ForbiddenException("User not found")
         val advertisement = advertisementRepository.findById(id)
-            .orElseThrow { ForbiddenException("Advertisement not found") }
+            .orElseThrow { NotFoundException("Advertisement not found") }
 
         if (!loggedInUserService.isAdmin() && advertisement.advertiserId != user.getId()) {
             throw ForbiddenException("Can not delete advertisement")
@@ -96,6 +136,14 @@ class AdvertisementService(
         fileUploadService.deleteImagesForAd(id)
 
         sendAdvertisementMessage("DELETE", id)
+
+        if (advertisement.type == AdvertisementType.BID) {
+            try {
+                bidApiClient.deleteModify(advertisement.id)
+            } catch (e: RestClientException) {
+                throw ServiceUnavailableException("Bid service unavailable")
+            }
+        }
 
         advertisementRepository.delete(advertisement)
     }
@@ -116,6 +164,10 @@ class AdvertisementService(
         val category = categoryRepository.findById(categoryId)
             .orElseThrow { BadRequestException("Category not found") }
 
+        if (advertisement.type == AdvertisementType.BID && advertisement.price != price) {
+            throw BadRequestException("Bid start price cannot be changed")
+        }
+
         advertisement.title = title
         advertisement.description = description
         advertisement.price = price
@@ -131,14 +183,26 @@ class AdvertisementService(
 
         advertisementRepository.save(advertisement)
 
-        if (!images.isNullOrEmpty()) {
-            fileUploadService.uploadFiles(images, advertisement.id!!)
-        }
         if (!deletedImages.isNullOrEmpty()) {
             fileUploadService.deleteImagesByName(deletedImages.split(";"))
         }
 
+        if (!images.isNullOrEmpty()) {
+            fileUploadService.uploadFiles(images, advertisement.id!!)
+        }
+
         sendAdvertisementMessage("UPDATE", id, advertisement.title, advertisement.category.id)
+
+        if (advertisement.type == AdvertisementType.BID) {
+            try {
+                bidApiClient.putModify(advertisement.id,
+                    ModifyBidRequest()
+                        .title(advertisement.title)
+                        .archived(advertisement.status == AdvertisementStatus.ARCHIVED))
+            } catch (e: RestClientException) {
+                throw ServiceUnavailableException("Bid service unavailable")
+            }
+        }
 
         return advertisementMapper.advertisementToAdvertisementResponse(advertisement)
     }
@@ -155,7 +219,8 @@ class AdvertisementService(
 
     private fun validStateTransition(from: AdvertisementStatus, to: AdvertisementStatus): Boolean {
         return when (from) {
-            AdvertisementStatus.AVAILABLE -> true
+            AdvertisementStatus.AVAILABLE -> to != AdvertisementStatus.BIDDING
+            AdvertisementStatus.BIDDING -> listOf(AdvertisementStatus.SOLD, AdvertisementStatus.ARCHIVED).contains(to)
             AdvertisementStatus.FREEZED -> listOf(AdvertisementStatus.AVAILABLE, AdvertisementStatus.SOLD).contains(to)
             else -> false
         }

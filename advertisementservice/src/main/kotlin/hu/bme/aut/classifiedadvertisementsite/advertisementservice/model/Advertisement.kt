@@ -25,14 +25,20 @@ class Advertisement (
     @Column(length = 20, nullable = false)
     var status: AdvertisementStatus,
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    var type: AdvertisementType,
+
+    @Column(name = "expiration")
+    var expiration: OffsetDateTime? = null,
+
     @Column(name = "updated_at", nullable = false)
     var updatedAt: OffsetDateTime = OffsetDateTime.now(),
 
     @Column(name = "created_at", nullable = false, updatable = false)
     var createdAt: OffsetDateTime = OffsetDateTime.now(),
 
-    @OneToMany(cascade = [CascadeType.ALL])
-    @JoinColumn(name = "advertisement_id")
+    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY, mappedBy = "advertisement")
     var comments: List<Comment> = mutableListOf(),
 
     @Id

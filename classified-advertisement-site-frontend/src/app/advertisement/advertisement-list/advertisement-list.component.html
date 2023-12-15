@@ -6,4 +6,7 @@
   <app-search class="mx-auto search" (searchEvent)="search($event)" [term]="searchTerm"></app-search>
 </div>
 <h2 *ngIf="searchTerm">Results for "{{ searchTerm }}"</h2>
+<h3 *ngIf="searchTerm && advertisements?.length === 0" class="text-center">No results for "{{ searchTerm }}"</h3>
+<h3 *ngIf="!searchTerm && advertisements?.length === 0" class="text-center">This category is empty</h3>
+<app-spinner [loadingState]="loadingState"></app-spinner>
 <app-advertisement-list-item *ngFor="let advertisement of advertisements" [advertisement]="advertisement"></app-advertisement-list-item>

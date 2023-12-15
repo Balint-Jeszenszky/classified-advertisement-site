@@ -12,7 +12,7 @@ export class PushSubscriptionRequest {
   @ApiProperty()
   endpoint: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   expirationTime: string | null;
 
   @ApiProperty()

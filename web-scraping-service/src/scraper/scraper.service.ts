@@ -12,6 +12,7 @@ import { Browser, executablePath } from 'puppeteer';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import UserAgent from 'user-agents';
 import { Cron } from '@nestjs/schedule';
+import { ScheduleLockService } from '../schedule-lock/schedule-lock.service';
 
 @Injectable()
 export class ScraperService {
@@ -20,6 +21,7 @@ export class ScraperService {
   constructor(
     @InjectModel(Site.name) private readonly siteModel: Model<Site>,
     @InjectModel(Product.name) private readonly productModel: Model<Product>,
+    private readonly scheduleLockService: ScheduleLockService,
   ) { }
 
   async getProductByAdvertisementId(id: number): Promise<ProductResponse> {
@@ -74,38 +76,67 @@ export class ScraperService {
     await this.productModel.deleteOne({ advertisementId }).exec();
   }
 
+  async scrapeSite(siteId: string) {
+    this.logger.log('Manual scraper started');
+
+    const site = await this.siteModel.findById(siteId).exec();
+
+    if (!site) {
+      throw new NotFoundException("Site not found");
+    }
+
+    this.scrapeCategories(site.categoryIds).then(() => {
+      this.logger.log('Manual scraper finished');
+    });
+  }
+
   @Cron('0 3 * * *')
   private async scrapePriceForAllAds() {
-    this.logger.log('Scraper started');
-    const categoryIds = await this.siteModel.distinct('categoryId').exec() as number[];
+    if (!await this.scheduleLockService.lock('test', new Date(Date.now() + 1000 * 60 * 60 * 3))) {
+      return;
+    }
 
-    puppeteer.use(StealthPlugin());
-    const browser = await puppeteer.launch({ executablePath: executablePath() });
+    this.logger.log('Scheduled scraper started');
+    const categoryIds = await this.siteModel.distinct('categoryIds').exec() as number[];
+    await this.scrapeCategories(categoryIds);
+  
+    this.logger.log('Scheduled scraper finished');
+  }
 
-    await Promise.all(categoryIds.map(async id => await this.scrapeCategory(id, browser)));
-
+  private async scrapeCategories(ids: number[]) {
+    const browser = await puppeteer.use(StealthPlugin()).launch({
+      headless: 'new',
+      executablePath: executablePath(),
+      args: ['--no-sandbox'],
+    });
+    await Promise.all(ids.map(async id => await this.scrapeCategory(id, browser)));
     await browser.close();
-    this.logger.log('Scraper finished');
   }
 
   private async scrapeCategory(categoryId: number, browser: Browser) {
     this.logger.log(`Scrape category ${categoryId}`);
-    const sites = await this.siteModel.find({ categoryId }).exec();
+    const sites = await this.siteModel.find({ categoryIds: categoryId }).exec();
     const advertisements = await this.productModel.find({ categoryId }).exec();
+
+    if (!sites.length || !advertisements?.length) {
+      this.logger.log(`No sites or advertisements in category ${categoryId}`);
+      return;
+    }
 
     const updatedAdvertisements = await Promise.all(advertisements.map(async advertisement => {
 
       try {
         const results = await this.scrapeSites(sites, advertisement.title, browser);
-        const bestResult = results.reduce((prev, curr) => prev.price < curr.price ? prev : curr);
+        const bestResult = results.filter(r => r).reduce((prev, curr) => prev.price < curr.price ? prev : curr);
 
         advertisement.site = bestResult.site;
         advertisement.image = bestResult.image;
         advertisement.productTitle = bestResult.title;
         advertisement.url = bestResult.url;
         advertisement.price = bestResult.price;
-      } catch {
-        this.logger.log(`No results for ${advertisement.title} (${advertisement.id})`);
+      } catch(e) {
+        this.logger.error(e);
+        this.logger.log(`No results for ${advertisement.title} (${advertisement.id} - ${advertisement.advertisementId})`);
 
         advertisement.site = undefined;
         advertisement.image = undefined;
@@ -176,7 +207,7 @@ export class ScraperService {
       id: site._id.toHexString(),
       name: site.name,
       url: site.url,
-      categoryId: site.categoryId,
+      categoryIds: site.categoryIds,
       selector: site.selector,
     };
   }

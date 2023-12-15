@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdvertisementResponse, AdvertisementService, CategoryResponse, CategoryService } from 'src/app/openapi/advertisementservice';
+import { BidService } from 'src/app/openapi/bidservice';
+import { LoadingState } from 'src/app/shared/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-advertisement-list',
@@ -12,12 +14,14 @@ export class AdvertisementListComponent implements OnInit {
   advertisements?: AdvertisementResponse[];
   category: CategoryResponse[] = [];
   searchTerm: string = '';
+  loadingState: LoadingState = LoadingState.LOADING;
 
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly advertisementService: AdvertisementService,
     private readonly categoryService: CategoryService,
+    private readonly bidService: BidService,
   ) { }
 
   ngOnInit(): void {
@@ -63,15 +67,52 @@ export class AdvertisementListComponent implements OnInit {
     }
 
     this.advertisementService.getAdvertisements(this.categoryId).subscribe({
-      next: advertisements => this.advertisements = advertisements,
+      next: advertisements => {
+        this.loadingState = LoadingState.LOADED;
+        this.advertisements = advertisements;
+        this.loadBids();
+      },
+      error: () => {
+        this.loadingState = LoadingState.ERROR;
+      },
+    });
+  }
+
+  loadBids() {
+    if (!this.advertisements) {
+      return;
+    }
+
+    const ids = this.advertisements.filter(a => a.type === AdvertisementResponse.TypeEnum.Bid).map(a => a.id);
+
+    if (!ids.length) {
+      return;
+    }
+
+    this.bidService.getCurrentBidsIds(ids).subscribe(res => {
+      res.forEach(bid => {
+        const advertisement = this.advertisements?.find(a => a.id === bid.id);
+        if (advertisement) {
+          advertisement.price = bid.price;
+        }
+      });
     });
   }
 
   searchAll() {
     this.router.navigate(['/search/', this.searchTerm]);
 
+    this.loadingState = LoadingState.LOADING;
+    this.advertisements = undefined;
     this.advertisementService.getAdvertisementsSearchQuery(this.searchTerm).subscribe({
-      next: res => this.advertisements = res,
+      next: advertisements => {
+        this.loadingState = LoadingState.LOADED;
+        this.advertisements = advertisements;
+        this.loadBids();
+      },
+      error: () => {
+        this.loadingState = LoadingState.ERROR;
+      },
     });
   }
 
@@ -82,8 +123,17 @@ export class AdvertisementListComponent implements OnInit {
 
     this.router.navigate(['/category/', this.categoryId, this.searchTerm]);
 
+    this.loadingState = LoadingState.LOADING;
+    this.advertisements = undefined;
     this.advertisementService.getCategoryIdSearchQuery(this.categoryId, this.searchTerm).subscribe({
-      next: res => this.advertisements = res,
+      next: advertisements => {
+        this.loadingState = LoadingState.LOADED;
+        this.advertisements = advertisements;
+        this.loadBids();
+      },
+      error: () => {
+        this.loadingState = LoadingState.ERROR;
+      },
     });
   }
 
@@ -95,6 +145,8 @@ export class AdvertisementListComponent implements OnInit {
       if (currentCategory) {
         this.category.unshift(currentCategory);
         parentCategoryId = currentCategory.parentCategoryId;
+      } else {
+        return;
       }
     } while (parentCategoryId);
   }

@@ -1,0 +1,38 @@
+import { Injectable } from '@nestjs/common';
+import { Model } from 'mongoose';
+import { ScheduleLock } from './schema/schedule-lock.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { v4 as uuidv4 } from 'uuid';
+
+@Injectable()
+export class ScheduleLockService {
+  private readonly serviceUUID: string = uuidv4();
+
+  constructor(
+    @InjectModel(ScheduleLock.name) private readonly scheduleLockModel: Model<ScheduleLock>,
+  ) { }
+
+  get uuid() {
+    return this.serviceUUID;
+  }
+
+  async lock(task: string, lockedUntil: Date) {
+    const lockAttempt = await this.scheduleLockModel.create({
+      task,
+      process: this.uuid,
+      lockedAt: new Date(),
+      lockedUntil,
+    });
+
+    const lock = await this.scheduleLockModel.findOne({ task, lockedUntil: { $gt: new Date() } }, undefined, { sort: { lockedAt: 'asc' } }).exec();
+
+    if (lock.process === this.uuid) {
+      await this.scheduleLockModel.deleteMany({ $and: [{ task }, { lockedUntil: { $lt: new Date() } }]});
+      return true;
+    }
+
+    await this.scheduleLockModel.deleteMany({ $and: [{ task }, { $or: [{ _id: lockAttempt._id }, { lockedUntil: { $lt: new Date() } }]}] }).exec();
+
+    return false;
+  }
+}

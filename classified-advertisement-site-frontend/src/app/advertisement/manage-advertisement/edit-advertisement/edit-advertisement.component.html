@@ -7,7 +7,7 @@
     <mat-label>Description</mat-label>
     <input matInput placeholder="Description" name="description" [(ngModel)]="description">
   </mat-form-field>
-  <mat-form-field appearance="fill" class="w-100">
+  <mat-form-field *ngIf="advertisement?.type !== 'BID'" appearance="fill" class="w-100">
     <mat-label>Price</mat-label>
     <input matInput placeholder="Price" name="price" [(ngModel)]="price">
   </mat-form-field>
@@ -26,6 +26,20 @@
         {{ status }}
       </mat-option>
     </mat-select>
+  </mat-form-field>
+  <mat-form-field *ngIf="!advertisement?.id" appearance="fill" class="w-100">
+    <mat-label>Type</mat-label>
+    <mat-select [(ngModel)]="advertisementType" name="type">
+      <mat-option *ngFor="let type of allTypes" [value]="type">
+        {{ type }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field *ngIf="!advertisement?.id && advertisementType === 'BID'" appearance="fill" class="w-100">
+    <mat-label>Expiration</mat-label>
+    <input matInput [ngxMatDatetimePicker]="picker" placeholder="Expiration" [(ngModel)]="expiration" name="expiration">
+    <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
+    <ngx-mat-datetime-picker #picker color="primary"></ngx-mat-datetime-picker>
   </mat-form-field>
   <div class="text-end">
     <button mat-button (click)="onNext()">Next</button>

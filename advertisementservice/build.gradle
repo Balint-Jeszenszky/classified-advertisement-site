@@ -73,6 +73,11 @@ tasks.register("kotlinExternalApi", GenerateTask) {
 			skipDefaultInterface: "true",
 			exceptionHandler: "false"
 	]
+
+	doLast {
+		// exclude org.* to prevent unused SpringDocConfiguration class collision
+		delete ("$buildDir/generated-sources/openapi/external/src/main/kotlin/org")
+	}
 }
 
 tasks.register("kotlinInternalApi", GenerateTask) {
@@ -87,6 +92,11 @@ tasks.register("kotlinInternalApi", GenerateTask) {
 			skipDefaultInterface: "true",
 			exceptionHandler: "false"
 	]
+
+	doLast {
+		// exclude org.* to prevent unused SpringDocConfiguration class collision
+		delete ("$buildDir/generated-sources/openapi/internal/src/main/kotlin/org")
+	}
 }
 
 tasks.register("javaExternalApi", GenerateTask) {
@@ -102,14 +112,17 @@ tasks.register("javaExternalApi", GenerateTask) {
 	]
 }
 
-tasks.register("openapiCleanup") {
-	doLast {
-		delete (
-				// exclude org.* to prevent unused SpringDocConfiguration class collision
-				"$buildDir/generated-sources/openapi/external/src/main/kotlin/org",
-				"$buildDir/generated-sources/openapi/internal/src/main/kotlin/org"
-		)
-	}
+tasks.register("bidServiceInternalApiClient", GenerateTask) {
+	bidServiceInternalApiClient.generatorName = "java"
+	bidServiceInternalApiClient.library = "resttemplate"
+	bidServiceInternalApiClient.inputSpec = "$rootDir/../bidservice/src/main/resources/openapi/internal.yaml".toString()
+	bidServiceInternalApiClient.outputDir = "$buildDir/generated-sources/openapi/client".toString()
+	bidServiceInternalApiClient.apiPackage = "hu.bme.aut.classifiedadvertisementsite.advertisementservice.client.java.api"
+	bidServiceInternalApiClient.modelPackage = "hu.bme.aut.classifiedadvertisementsite.advertisementservice.client.java.api.model"
+	bidServiceInternalApiClient.generateApiDocumentation = false
+	bidServiceInternalApiClient.generateApiTests = false
+	bidServiceInternalApiClient.generateModelDocumentation = false
+	bidServiceInternalApiClient.generateModelTests = false
 }
 
 sourceSets {
@@ -123,9 +136,10 @@ sourceSets {
 
 java.sourceSets["main"].java {
 	srcDir("$buildDir/generated-sources/openapi/external/src/main/java")
+	srcDir("$buildDir/generated-sources/openapi/client/src/main/java")
 }
 
-compileKotlin.dependsOn('kotlinExternalApi', 'kotlinInternalApi', 'javaExternalApi', 'openapiCleanup')
+compileKotlin.dependsOn('kotlinExternalApi', 'kotlinInternalApi', 'javaExternalApi', 'bidServiceInternalApiClient')
 
 test {
 	systemProperty 'spring.profiles.active', 'test'

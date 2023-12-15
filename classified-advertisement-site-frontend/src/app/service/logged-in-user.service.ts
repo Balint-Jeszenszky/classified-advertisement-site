@@ -137,7 +137,7 @@ export class LoggedInUserService {
         next: res => {
           this.swPush.requestSubscription({
             serverPublicKey: res.publicVapidKey,
-          }).then(sub => this.notificationsService.notificationControllerPushSubscription(sub).subscribe());
+          }).then(sub => this.notificationsService.notificationControllerPushSubscription(sub as any).subscribe());
         },
         error: err => console.error("Could not subscribe to notifications", err),
       });

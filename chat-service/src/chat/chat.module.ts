@@ -22,6 +22,29 @@ import { HttpModule } from '@nestjs/axios';
           port: parseInt(process.env.REDIS_PORT),
         },
       },
+      { 
+        name: 'PUSH_NOTIFICATION',
+        transport: Transport.RMQ,
+        options: {
+          urls: [{
+            protocol: 'amqp',
+            hostname: process.env.RABBITMQ_HOST,
+            port: parseInt(process.env.RABBITMQ_PORT),
+            username: process.env.RABBITMQ_USER,
+            password: process.env.RABBITMQ_PASS,
+          }],
+          queue: 'push-queue',
+          persistent: true,
+          serializer: {
+            serialize(value) {
+              return value.data;
+            },
+          },
+          queueOptions: {
+            durable: true,
+          },
+        },
+      },
     ]),
     HttpModule,
   ],

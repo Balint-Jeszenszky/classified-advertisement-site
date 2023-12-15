@@ -87,6 +87,11 @@ spec:
             configMapKeyRef:
               name: chatservice-config
               key: chatservice-url
+        - name: BID_SERVICE_URI
+          valueFrom:
+            configMapKeyRef:
+              name: bidservice-config
+              key: bidservice-url
         - name: FRONTEND_URI
           valueFrom:
             configMapKeyRef:

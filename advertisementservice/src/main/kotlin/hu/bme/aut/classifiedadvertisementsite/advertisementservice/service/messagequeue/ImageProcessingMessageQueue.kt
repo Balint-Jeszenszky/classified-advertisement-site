@@ -6,9 +6,11 @@ import org.springframework.stereotype.Component
 
 @Component
 class ImageProcessingMessageQueue {
-    private val QUEUE_NAME = "image-processing-queue"
+    companion object {
+        const val QUEUE_NAME = "image-processing-queue"
+    }
 
-    @Bean("image-processing-queue")
+    @Bean(QUEUE_NAME)
     fun imageProcessingQueue(): Queue {
         return Queue(QUEUE_NAME, true)
     }

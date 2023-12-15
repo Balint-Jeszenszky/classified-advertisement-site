@@ -5,8 +5,8 @@ export class SiteResponse {
   @ApiProperty()
   id: string;
   
-  @ApiProperty()
-  categoryId: number;
+  @ApiProperty({ isArray: true, type: Number })
+  categoryIds: number[];
   
   @ApiProperty()
   name: string;

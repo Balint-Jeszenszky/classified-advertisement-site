@@ -3,6 +3,8 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { Transport } from '@nestjs/microservices';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as fs from 'fs';
+import * as http from 'http';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,7 +30,7 @@ async function bootstrap() {
       urls: [{
         protocol: 'amqp',
         hostname: process.env.RABBITMQ_HOST,
-        port: 5672,
+        port: parseInt(process.env.RABBITMQ_PORT),
         username: process.env.RABBITMQ_USER,
         password: process.env.RABBITMQ_PASS,
       }],
@@ -49,5 +51,14 @@ async function bootstrap() {
 
   await app.startAllMicroservices();
   await app.listen(process.env.PORT);
+
+  const file = fs.createWriteStream('src/openapi.yaml');
+  http.get(`http://localhost:${process.env.PORT}/api-yaml`, response => {
+    response.pipe(file);
+    file.on('finish', () => {
+        file.close();
+        console.info('openapi.yaml saved');
+    });
+  });
 }
 bootstrap();

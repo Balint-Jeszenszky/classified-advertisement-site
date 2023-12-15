@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CategoryResponse } from 'src/app/openapi/advertisementservice';
 import { SiteRequest, SiteResponse } from 'src/app/openapi/webscraperservice';
+import { CategoryTree, createCategoryTree } from 'src/app/util/category-tree';
 
 @Component({
   selector: 'app-edit-site-dialog',
@@ -11,7 +12,7 @@ import { SiteRequest, SiteResponse } from 'src/app/openapi/webscraperservice';
 export class EditSiteDialogComponent {
   name: string = '';
   url: string = '';
-  categoryId?: number;
+  categoryIds: number[] = [];
   selectorBase: string = '';
   selectorImageProperty: string = '';
   selectorImageSelector: string = '';
@@ -21,7 +22,7 @@ export class EditSiteDialogComponent {
   selectorTitleSelector: string = '';
   selectorUrlProperty: string = '';
   selectorUrlSelector: string = '';
-  categories: CategoryResponse[] = [];
+  categoryTree: CategoryTree[] = [];
   siteId?: string;
 
   constructor(
@@ -30,12 +31,12 @@ export class EditSiteDialogComponent {
   ) { }
 
   ngOnInit(): void {
-    this.categories = this.data.categories;
+    this.categoryTree = createCategoryTree(this.data.categories);
 
     if (this.data.site) {
       this.name = this.data.site.name;
       this.url = this.data.site.url;
-      this.categoryId = this.data.site.categoryId;
+      this.categoryIds = this.data.site.categoryIds;
       this.selectorBase = this.data.site.selector.base;
       this.selectorImageProperty = this.data.site.selector.image.property;
       this.selectorImageSelector = this.data.site.selector.image.selector;
@@ -53,15 +54,32 @@ export class EditSiteDialogComponent {
     this.dialogRef.close();
   }
 
+  handleChange() {
+    if (this.categoryIds.some(e => !e)) {
+      this.categoryIds = [];
+      return;
+    }
+
+    this.categoryIds = this.categoryIds.map(c => this.getChildrenCategoryIds(this.categoryTree.filter(t => t.id === c))).flat();
+  }
+
+  private getChildrenCategoryIds(categoryTree: CategoryTree[] | undefined): number[] {
+    if (!categoryTree) {
+      return [];
+    }
+
+    return categoryTree.map(c => [c.id, ...this.getChildrenCategoryIds(c.children)]).flat();
+  }
+
   getSiteData(): SiteRequest | undefined {
-    if (!this.categoryId) {
+    if (!this.categoryIds.length) {
       return undefined;
     }
 
     return {
       name: this.name,
       url: this.url,
-      categoryId: this.categoryId,
+      categoryIds: this.categoryIds,
       selector: {
         base: this.selectorBase,
         image: {

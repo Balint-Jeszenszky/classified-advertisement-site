@@ -11,12 +11,17 @@ export class EditAdvertisementComponent implements OnInit {
   @Input() advertisement?: EditAdvertisement;
   @Input() categories?: CategoryResponse[];
   @Output() next: EventEmitter<EditAdvertisement> = new EventEmitter();
+  @Input() newAdvertisement?: boolean;
   title: string = '';
   description: string = '';
   price: number = 0;
   categoryId?: number;
   status?: AdvertisementResponse.StatusEnum;
-  allStatuses = Object.values(AdvertisementResponse.StatusEnum);
+  advertisementType?: AdvertisementResponse.TypeEnum;
+  allStatuses: AdvertisementResponse.StatusEnum[] = [];
+  allTypes = Object.values(AdvertisementResponse.TypeEnum); 
+  expiration?: Date;
+  private initialStatus?: AdvertisementResponse.StatusEnum;
 
   ngOnInit(): void {
     if (this.advertisement) {
@@ -28,6 +33,9 @@ export class EditAdvertisementComponent implements OnInit {
         this.status = this.advertisement.status;
       }
     }
+
+    this.initialStatus = this.advertisement?.status;
+    this.allStatuses = this.availableStatuses();
   }
 
   onNext() {
@@ -38,6 +46,36 @@ export class EditAdvertisementComponent implements OnInit {
       price: this.price,
       categoryId: this.categoryId,
       status: this.status,
+      type: this.advertisementType,
+      expiration: this.advertisementType === AdvertisementResponse.TypeEnum.Bid ? this.expiration : undefined,
     });
+  }
+
+  private availableStatuses() {
+    switch (this.initialStatus) {
+      case AdvertisementResponse.StatusEnum.Available:
+      case AdvertisementResponse.StatusEnum.Freezed:
+        return [
+          AdvertisementResponse.StatusEnum.Available,
+          AdvertisementResponse.StatusEnum.Freezed,
+          AdvertisementResponse.StatusEnum.Sold,
+        ];
+      case AdvertisementResponse.StatusEnum.Sold:
+        return [
+          AdvertisementResponse.StatusEnum.Sold,
+        ];
+      case AdvertisementResponse.StatusEnum.Archived:
+        return [
+          AdvertisementResponse.StatusEnum.Archived,
+        ];
+      case AdvertisementResponse.StatusEnum.Bidding:
+        return [
+          AdvertisementResponse.StatusEnum.Bidding,
+          AdvertisementResponse.StatusEnum.Sold,
+          AdvertisementResponse.StatusEnum.Archived,
+        ];
+      default:
+        return [];
+    }
   }
 }

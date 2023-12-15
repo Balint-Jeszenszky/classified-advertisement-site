@@ -1,4 +1,5 @@
 {
   "emailVerification": "Email verification",
-  "resetPassword": "Reset password"
+  "resetPassword": "Reset password",
+  "winnerBid": "Your bid won for the {{advertisementTitle}} advertisement"
 }

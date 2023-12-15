@@ -11,10 +11,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ConfirmEmailComponent } from './confirm-email/confirm-email.component';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ResetPasswordDialogComponent } from './reset-password-dialog/reset-password-dialog.component';
+import { SharedModule } from '../shared/shared.module';
 
 const routes: Routes = [
   { path: '', component: AuthenticationComponent },
@@ -34,13 +34,13 @@ const routes: Routes = [
   imports: [
     RouterModule.forChild(routes),
     CommonModule,
+    SharedModule,
     FormsModule,
     MatTabsModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatSnackBarModule,
-    MatProgressSpinnerModule,
     MatDialogModule,
   ]
 })

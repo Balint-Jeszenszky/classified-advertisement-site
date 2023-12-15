@@ -32,7 +32,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/LoginRequest'
-  '/users/{userId}':
+  '/users/find/{userId}':
     parameters:
       - schema:
           type: integer
@@ -54,6 +54,30 @@ paths:
       description: Query details of a user
       tags:
         - users
+  '/users/list/{ids}':
+    parameters:
+      - schema:
+          type: array
+          items:
+            type: integer
+        name: ids
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDataResponse'
+      operationId: get-userDetails-ids
+      description: Get user data
 components:
   schemas:
     UserDataResponse:

@@ -69,7 +69,7 @@ public class Webscraperservicetest {
                 .accept(MediaType.APPLICATION_JSON)
                 .header(AUTHORIZATION_HEADER, BEARER + adminJwt)
                 .body(BodyInserters.fromObject("{" +
-                        "  \"categoryId\": 1," +
+                        "  \"categoryIds\": [1]," +
                         "  \"name\": \"string\"," +
                         "  \"url\": \"string\"," +
                         "  \"selector\": {" +
@@ -104,7 +104,7 @@ public class Webscraperservicetest {
                 .accept(MediaType.APPLICATION_JSON)
                 .header(AUTHORIZATION_HEADER, BEARER + adminJwt)
                 .body(BodyInserters.fromObject("{" +
-                        "  \"categoryId\": 1," +
+                        "  \"categoryIds\": [1]," +
                         "  \"name\": \"string\"," +
                         "  \"url\": \"string\"," +
                         "  \"selector\": {" +
@@ -147,7 +147,7 @@ public class Webscraperservicetest {
                 .accept(MediaType.APPLICATION_JSON)
                 .header(AUTHORIZATION_HEADER, BEARER + adminJwt)
                 .body(BodyInserters.fromObject("{" +
-                        "  \"categoryId\": 1," +
+                        "  \"categoryIds\": [1]," +
                         "  \"name\": \"string\"," +
                         "  \"url\": \"string\"," +
                         "  \"selector\": {" +

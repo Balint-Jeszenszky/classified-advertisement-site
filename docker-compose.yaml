@@ -6,6 +6,7 @@ services:
     volumes:
       - ./container-data/prod/rabbitmq:/var/lib/rabbitmq
     environment:
+      - TZ=${TZ}
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
     networks:
@@ -18,6 +19,7 @@ services:
     volumes:
       - ./container-data/prod/minio:/data
     environment:
+      - TZ=${TZ}
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
     command: server --console-address :9001 /data
@@ -31,6 +33,7 @@ services:
     volumes:
       - ./container-data/prod/gateway-mysql:/var/lib/mysql
     environment:
+      - TZ=${TZ}
       - MYSQL_DATABASE=gateway
       - MYSQL_ROOT_PASSWORD=${MYSQL_GATEWAY_ROOT_PASSWORD}
       - MYSQL_USER=${MYSQL_GATEWAY_USERNAME}
@@ -47,6 +50,7 @@ services:
     ports:
       - 8080:8080
     environment:
+      - TZ=${TZ}
       - DATABASE_URL=gateway-db:3306/gateway
       - DB_USER=${MYSQL_GATEWAY_USERNAME}
       - DB_PASS=${MYSQL_GATEWAY_PASSWORD}
@@ -61,6 +65,7 @@ services:
       - WEBSCRAPER_SERVICE_URI=http://webscraperservice:3000
       - NOTIFICATION_SERVICE_URI=http://notificationservice:3000
       - CHAT_SERVICE_URI=http://chatservice:3000
+      - BID_SERVICE_URI=http://bidservice:8080
       - FRONTEND_URI=http://frontend:80
     networks:
       - web
@@ -73,6 +78,7 @@ services:
     volumes:
       - ./container-data/prod/userservice-postgres:/var/lib/postgresql/data
     environment:
+      - TZ=${TZ}
       - POSTGRES_USER=${USERSERVICE_POSTGRES_USER}
       - POSTGRES_PASSWORD=${USERSERVICE_POSTGRES_PASSWORD}
       - POSTGRES_DB=users
@@ -87,6 +93,7 @@ services:
       - userservice-db
       - rabbitmq
     environment:
+      - TZ=${TZ}
       - DATABASE_URL=userservice-db:5432/users
       - DB_PASS=${USERSERVICE_POSTGRES_PASSWORD}
       - DB_USER=${USERSERVICE_POSTGRES_USER}
@@ -106,6 +113,7 @@ services:
     volumes:
       - ./container-data/prod/advertisementservice-mysql:/var/lib/mysql
     environment:
+      - TZ=${TZ}
       - MYSQL_DATABASE=advertisements
       - MYSQL_ROOT_PASSWORD=${MYSQL_ADVERTISEMENTSERVICE_ROOT_PASSWORD}
       - MYSQL_USER=${MYSQL_ADVERTISEMENTSERVICE_USERNAME}
@@ -122,6 +130,7 @@ services:
       - rabbitmq
       - minio
     environment:
+      - TZ=${TZ}
       - DATABASE_URL=advertisementservice-db:3306/advertisements
       - DB_USER=${MYSQL_ADVERTISEMENTSERVICE_USERNAME}
       - DB_PASS=${MYSQL_ADVERTISEMENTSERVICE_PASSWORD}
@@ -132,6 +141,7 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=${RABBITMQ_USER}
       - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - BID_API_URL=http://bidservice:8080/api/bid
     networks:
       - web
       - database
@@ -145,6 +155,7 @@ services:
     volumes:
       - ./container-data/prod/imageprocessingservice-postgres:/var/lib/postgresql/data
     environment:
+      - TZ=${TZ}
       - POSTGRES_USER=${IMAGEPROCESSING_POSTGRES_USER}
       - POSTGRES_PASSWORD=${IMAGEPROCESSING_POSTGRES_PASSWORD}
       - POSTGRES_DB=imageprocessing
@@ -160,6 +171,7 @@ services:
       - rabbitmq
       - minio
     environment:
+      - TZ=${TZ}
       - DATABASE_URL=imageprocessingservice-db:5432/imageprocessing
       - DB_USER=${IMAGEPROCESSING_POSTGRES_USER}
       - DB_PASS=${IMAGEPROCESSING_POSTGRES_PASSWORD}
@@ -170,6 +182,7 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=${RABBITMQ_USER}
       - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - WATERMARK_TEXT=${WATERMARK_TEXT}
     networks:
       - web
       - database
@@ -181,8 +194,9 @@ services:
     restart: unless-stopped
     container_name: webscraperservice-db
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+      - TZ=${TZ}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_WEBSCRAPINGSERVICE_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_WEBSCRAPINGSERVICE_PASSWORD}
       - MONGO_INITDB_DATABASE=scraper
     volumes:
       - ./container-data/prod/webscraperservice-mongo:/data/db
@@ -197,13 +211,59 @@ services:
       - webscraperservice-db
       - rabbitmq
     environment:
+      - TZ=${TZ}
       - PORT=3000
       - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
       - RABBITMQ_USER=${RABBITMQ_USER}
       - RABBITMQ_PASS=${RABBITMQ_PASS}
       - MONGO_URL=webscraperservice-db/scraper
-      - MONGO_USER=${MONGO_USERNAME}
-      - MONGO_PASS=${MONGO_PASSWORD}
+      - MONGO_USER=${MONGO_WEBSCRAPINGSERVICE_USERNAME}
+      - MONGO_PASS=${MONGO_WEBSCRAPINGSERVICE_PASSWORD}
+    networks:
+      - web
+      - database
+      - message
+  
+  notificationservice-db:
+    image: mongo:5
+    restart: unless-stopped
+    container_name: notificationservice-db
+    environment:
+      - TZ=${TZ}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_NOTIFICATIONSERVICE_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_NOTIFICATIONSERVICE_PASSWORD}
+      - MONGO_INITDB_DATABASE=notification
+    volumes:
+      - ./container-data/prod/notificationservice-mongo:/data/db
+    networks:
+      - database
+
+  notificationservice:
+    image: balintjeszenszky/adsite:notificationservice-latest
+    restart: unless-stopped
+    container_name: notificationservice
+    depends_on:
+      - notificationservice-db
+      - rabbitmq
+    environment:
+      - TZ=${TZ}
+      - PORT=3000
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - MONGO_URL=notificationservice-db/notification
+      - MONGO_USER=${MONGO_NOTIFICATIONSERVICE_USERNAME}
+      - MONGO_PASS=${MONGO_NOTIFICATIONSERVICE_PASSWORD}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - VAPID_PUBLIC_KEY=${VAPID_PUBLIC_KEY}
+      - VAPID_PRIVATE_KEY=${VAPID_PRIVATE_KEY}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+      - BASEURL=${BASEURL}
     networks:
       - web
       - database
@@ -213,11 +273,10 @@ services:
     image: mysql:8
     restart: unless-stopped
     container_name: chatservice-db
-    ports:
-      - 3308:3306
     volumes:
-      - ./container-data/dev/chat-mysql:/var/lib/mysql
+      - ./container-data/prod/chat-mysql:/var/lib/mysql
     environment:
+      - TZ=${TZ}
       - MYSQL_DATABASE=chat
       - MYSQL_ROOT_PASSWORD=${MYSQL_CHATSERVICE_ROOT_PASSWORD}
       - MYSQL_USER=${MYSQL_CHATSERVICE_USERNAME}
@@ -229,8 +288,8 @@ services:
     image: redis:7
     restart: unless-stopped
     container_name: chatservice-redis
-    ports:
-      - 6379:6379
+    environment:
+      - TZ=${TZ}
     networks:
       - database
 
@@ -241,9 +300,8 @@ services:
     depends_on:
       - chatservice-db
       - chatservice-redis
-    ports:
-      - 3002:3000
     environment:
+      - TZ=${TZ}
       - PORT=3000
       - DB_URL=chatservice-db
       - DB_PORT=3306
@@ -252,16 +310,69 @@ services:
       - DB_NAME=chat
       - REDIS_HOST=chatservice-redis
       - REDIS_PORT=6379
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}
       - ADVERTISEMENT_SERVICE_INTERNAL_API_URL=http://advertisementservice:8080/api/advertisement/internal
       - ADVERTISEMENT_SERVICE_ADVERTISEMENT_EXISTS_PATH=/advertisement/exists
     networks:
       - web
       - database
+      - message
+
+  bidservice-db:
+    image: postgres:15
+    restart: unless-stopped
+    container_name: bidservice-db
+    volumes:
+      - ./container-data/prod/bidservice-postgres:/var/lib/postgresql/data
+    environment:
+      - TZ=${TZ}
+      - POSTGRES_USER=${BIDSERVICE_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${BIDERVICE_POSTGRES_PASSWORD}
+      - POSTGRES_DB=bids
+    networks:
+      - database
+
+  bidservice-redis:
+    image: redis:7
+    restart: unless-stopped
+    container_name: bidservice-redis
+    environment:
+      - TZ=${TZ}
+    networks:
+      - database
+
+  bidservice:
+    image: balintjeszenszky/adsite:bidservice-latest
+    restart: unless-stopped
+    container_name: bidservice
+    depends_on:
+      - bidservice-db
+    environment:
+      - TZ=${TZ}
+      - DATABASE_URL=bidservice-db:5432/bids
+      - DB_USER=${BIDSERVICE_POSTGRES_USER}
+      - DB_PASS=${BIDERVICE_POSTGRES_PASSWORD}
+      - PORT=8080
+      - USER_API_URL=http://userservice:8080/api/user
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - REDIS_HOST=bidservice-redis
+      - REDIS_PORT=6379
+    networks:
+      - web
+      - database
+      - message
 
   frontend:
     image: balintjeszenszky/adsite:frontend-latest
     restart: unless-stopped
     container_name: frontend
+    environment:
+      - TZ=${TZ}
     networks:
       - web
 

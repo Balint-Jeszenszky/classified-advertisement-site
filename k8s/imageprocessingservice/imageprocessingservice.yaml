@@ -67,6 +67,11 @@ spec:
             secretKeyRef:
               name: rabbitmq-secret
               key: rabbitmq-password
+        - name: WATERMARK_TEXT
+          valueFrom:
+            configMapKeyRef:
+              name: imageprocessingservice-config
+              key: watermark-text
 ---
 apiVersion: v1
 kind: Service

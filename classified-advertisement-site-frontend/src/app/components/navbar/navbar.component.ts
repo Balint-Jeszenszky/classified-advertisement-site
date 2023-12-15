@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CategoryResponse, CategoryService } from 'src/app/openapi/advertisementservice';
+import { CategoryService } from 'src/app/openapi/advertisementservice';
 import { LoggedInUserService } from 'src/app/service/logged-in-user.service';
 import { Role } from 'src/app/service/types';
-import { MenuTree } from './submenu/submenu.component';
+import { CategoryTree, createCategoryTree } from 'src/app/util/category-tree';
 
 @Component({
   selector: 'app-navbar',
@@ -13,7 +13,7 @@ import { MenuTree } from './submenu/submenu.component';
 export class NavbarComponent implements OnInit {
   loggedIn: boolean = false;
   admin: boolean = false;
-  categoryTree?: MenuTree[];
+  categoryTree?: CategoryTree[];
 
   constructor(
     private readonly loggedInUserService: LoggedInUserService,
@@ -27,20 +27,12 @@ export class NavbarComponent implements OnInit {
       this.admin = !!u?.roles.includes(Role.ROLE_ADMIN);
     });
     this.categoryService.getCategories().subscribe({
-      next: res => this.categoryTree = this.createCategoryTree(res),
+      next: res => this.categoryTree = createCategoryTree(res),
     });
   }
 
   logout() {
     this.loggedInUserService.logout();
     this.router.navigate(['/']);
-  }
-
-  private createCategoryTree(categoryList: CategoryResponse[], parentId: number | null = null): MenuTree[] {
-    return categoryList.filter(c => c.parentCategoryId === parentId).map(c => ({
-      name: c.name,
-      id: c.id,
-      children: this.createCategoryTree(categoryList, c.id),
-    }));
   }
 }

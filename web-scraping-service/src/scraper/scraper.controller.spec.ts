@@ -3,6 +3,7 @@ import { ScraperController } from './scraper.controller';
 import { ScraperService } from './scraper.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
 import { Site } from './schemas/site.schema';
 import { Product } from './schemas/product.schema';
 
@@ -23,6 +24,11 @@ describe('ScraperController', () => {
         },
       ],
       controllers: [ScraperController],
+    }).useMocker((token) => {
+      const moduleMocker = new ModuleMocker(global);
+      const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
+      const Mock = moduleMocker.generateFromMetadata(mockMetadata);
+      return new Mock();
     }).compile();
 
     controller = module.get<ScraperController>(ScraperController);

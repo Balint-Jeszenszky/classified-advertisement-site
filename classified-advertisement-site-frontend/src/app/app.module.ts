@@ -11,6 +11,7 @@ import { ApiModule as AdvertisementserviceApiModule, Configuration as Advertisem
 import { ApiModule as ImageserviceApiModule, Configuration as ImageserviceApiConfiguration } from './openapi/imageprocessingservice';
 import { ApiModule as WebscraperserviceApiModule, Configuration as WebscraperserviceApiConfiguration } from './openapi/webscraperservice';
 import { ApiModule as NotificationserviceApiModule, Configuration as NotificationserviceApiConfiguration } from './openapi/notificationservice';
+import { ApiModule as BidserviceApiModule, Configuration as BidserviceApiConfiguration } from './openapi/bidservice';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -18,12 +19,14 @@ import { MatMenuModule } from '@angular/material/menu';
 import { SubmenuComponent } from './components/navbar/submenu/submenu.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { GraphQLModule as ChatGraphQLModule } from './graphql/chat/graphql.module';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
-    SubmenuComponent
+    SubmenuComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,
@@ -36,6 +39,7 @@ import { GraphQLModule as ChatGraphQLModule } from './graphql/chat/graphql.modul
     ImageserviceApiModule.forRoot(() => new ImageserviceApiConfiguration({ basePath: '/api/images' })),
     WebscraperserviceApiModule.forRoot(() => new WebscraperserviceApiConfiguration({ basePath: '' })),
     NotificationserviceApiModule.forRoot(() => new NotificationserviceApiConfiguration({ basePath: '' })),
+    BidserviceApiModule.forRoot(() => new BidserviceApiConfiguration({ basePath: '/api/bid' })),
     MatToolbarModule,
     MatMenuModule,
     ServiceWorkerModule.register('ngsw-worker.js', {

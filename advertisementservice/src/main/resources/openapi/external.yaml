@@ -371,6 +371,15 @@ components:
             - FREEZED
             - SOLD
             - ARCHIVED
+            - BIDDING
+        type:
+          type: string
+          enum:
+            - FIXED_PRICE
+            - BID
+        expiration:
+          type: string
+          format: date-time
       required:
         - id
         - title
@@ -380,6 +389,7 @@ components:
         - updatedAt
         - price
         - status
+        - type
     CreateAdvertisementRequest:
       title: CreateAdvertisementRequest
       x-stoplight:
@@ -395,6 +405,14 @@ components:
           format: double
         categoryId:
           type: integer
+        type:
+          type: string
+          enum:
+            - FIXED_PRICE
+            - BID
+        expiration:
+          type: string
+          format: date-time
         images:
           type: array
           format: binary
@@ -406,6 +424,7 @@ components:
         - description
         - price
         - categoryId
+        - type
     EditAdvertisementRequest:
       title: EditAdvertisementRequest
       x-stoplight:
@@ -428,6 +447,7 @@ components:
             - FREEZED
             - SOLD
             - ARCHIVED
+            - BIDDING
         images:
           type: array
           format: binary

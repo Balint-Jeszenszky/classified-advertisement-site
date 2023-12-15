@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { ChatService } from './chat.service';
-import { parseAuthHeader } from 'src/auth/parse-auth-header';
+import { parseAuthHeader } from '../auth/parse-auth-header';
 
 type MessageRequest = {
   chatId: number,

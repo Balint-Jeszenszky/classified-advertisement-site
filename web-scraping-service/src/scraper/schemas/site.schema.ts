@@ -39,8 +39,8 @@ export class Site {
   @Prop({ required: true })
   url: string;
 
-  @Prop({ required: true })
-  categoryId: number;
+  @Prop({ required: true, type: [Number] })
+  categoryIds: number[] = [];
 
   @Prop({ required: true, type: RootSelector })
   selector: RootSelector;

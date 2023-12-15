@@ -26,6 +26,9 @@ import { loginGuard } from '../auth.guard';
 import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import { CommercialPriceComponent } from './details/commercial-price/commercial-price.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { NgxMatDateFormats, NgxMatDatetimePickerModule, NgxMatTimepickerModule, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
+import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -37,6 +40,20 @@ const routes: Routes = [
   { path: 'category/:id/:query', component: AdvertisementListComponent },
   { path: 'search/:query', component: AdvertisementListComponent },
 ];
+
+const defaultTimeFormat = 'YYYY. MM. DD. HH:mm';
+const defaultMonthYearLabel = 'YYYY. MM.';
+const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
+  parse: {
+    dateInput: defaultTimeFormat,
+  },
+  display: {
+    dateInput: defaultTimeFormat,
+    monthYearLabel: defaultMonthYearLabel,
+    dateA11yLabel: defaultTimeFormat,
+    monthYearA11yLabel: defaultMonthYearLabel,
+  },
+};
 
 @NgModule({
   declarations: [
@@ -68,6 +85,16 @@ const routes: Routes = [
     MatSelectModule,
     MatChipsModule,
     SharedModule,
-  ]
+    MatDatepickerModule,
+    NgxMatDatetimePickerModule,
+    NgxMatTimepickerModule,
+    NgxMatMomentModule,
+  ],
+  providers: [
+    {
+      provide: NGX_MAT_DATE_FORMATS,
+      useValue: CUSTOM_DATE_FORMATS,
+    },
+  ],
 })
 export class AdvertisementModule { }

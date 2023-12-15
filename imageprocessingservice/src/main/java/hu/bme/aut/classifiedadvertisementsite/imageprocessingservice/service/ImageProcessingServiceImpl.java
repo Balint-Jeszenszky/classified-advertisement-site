@@ -40,20 +40,15 @@ public class ImageProcessingServiceImpl implements ImageProcessingService {
     private final ImageDataRepository imageDataRepository;
     private final String watermarkText;
 
-    ImageProcessingServiceImpl(
+    public ImageProcessingServiceImpl(
             ImageDataRepository imageDataRepository,
-            @Value("${minio.endpoint}") String endpoint,
-            @Value("${minio.username}") String username,
-            @Value("${minio.password}") String password,
+            MinioClient minioClient,
             @Value("${minio.bucket}") String bucket,
-            @Value("advertisement.image.watermark.text") String watermarkText) {
+            @Value("${advertisement.image.watermark.text}") String watermarkText) {
         this.imageDataRepository = imageDataRepository;
         this.bucket = bucket;
         this.watermarkText = watermarkText;
-        minioClient = MinioClient.builder()
-                .endpoint(endpoint)
-                .credentials(username, password)
-                .build();
+        this.minioClient = minioClient;
     }
 
     @Override
@@ -144,9 +139,19 @@ public class ImageProcessingServiceImpl implements ImageProcessingService {
 
     @Override
     public void processImage(String name, int advertisementId) throws Exception {
+        if (imageDataRepository.countByAdvertisementId(advertisementId) >= 10) {
+            removeImages(List.of(new DeleteObject(RAW_PATH + name)));
+            return;
+        }
+
         String newName = FileNameUtils.getBaseName(name) + JPG_EXTENSION;
 
-        convertImage(getImageByPath(RAW_PATH + name), 1000, IMAGE_PATH + newName, true);
+        try {
+            convertImage(getImageByPath(RAW_PATH + name), 1000, IMAGE_PATH + newName, true);
+        } catch (Exception e) {
+            removeImages(List.of(new DeleteObject(RAW_PATH + name)));
+            return;
+        }
 
         ImageData imageData = new ImageData();
         imageData.setName(newName);
@@ -174,7 +179,7 @@ public class ImageProcessingServiceImpl implements ImageProcessingService {
         if (watermark) {
             graphics.setColor(new Color(255, 255, 255, 128));
             graphics.setFont(new Font("Roboto", Font.PLAIN, 80));
-            graphics.drawString("Watermark", 10, height);
+            graphics.drawString(watermarkText, 10, height);
         }
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "jpeg", os);

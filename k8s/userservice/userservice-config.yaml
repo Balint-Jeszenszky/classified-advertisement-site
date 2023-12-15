@@ -4,3 +4,4 @@ metadata:
   name: userservice-config
 data:
   userservice-url: http://userservice-service:8080
+  userservice-api-url: http://userservice-service:8080/api/user

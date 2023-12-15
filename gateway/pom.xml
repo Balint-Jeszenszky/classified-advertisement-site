@@ -17,6 +17,7 @@
 		<java.version>17</java.version>
 		<spring-cloud.version>2022.0.1</spring-cloud.version>
 		<openapi-generator-version>6.3.0</openapi-generator-version>
+		<shedlock-version>5.9.1</shedlock-version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -81,6 +82,16 @@
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>8.0.0.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>net.javacrumbs.shedlock</groupId>
+			<artifactId>shedlock-spring</artifactId>
+			<version>${shedlock-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.javacrumbs.shedlock</groupId>
+			<artifactId>shedlock-provider-jdbc-template</artifactId>
+			<version>${shedlock-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>

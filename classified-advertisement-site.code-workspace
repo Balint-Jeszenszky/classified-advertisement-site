@@ -29,12 +29,20 @@
 			"path": "chat-service"
 		},
 		{
+			"name": "Bid service",
+			"path": "bidservice"
+		},
+		{
 			"name": "Kubernetes",
 			"path": "k8s"
 		},
 		{
 			"name": "Frontend",
 			"path": "classified-advertisement-site-frontend"
+		},
+		{
+			"name": "CICD",
+			"path": ".github/workflows"
 		},
 		{
 			"name": "Root",

@@ -1,0 +1,226 @@
+openapi: 3.0.0
+paths:
+  /api/scraper/advertisement/{id}:
+    get:
+      operationId: ScraperController_getProductByAdvertisementId
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '404':
+          description: ''
+      tags: &ref_0
+        - scraper
+      security: &ref_1
+        - JWT: []
+  /api/scraper/sites:
+    get:
+      operationId: ScraperController_getAllSites
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SiteResponse'
+      tags: *ref_0
+      security: *ref_1
+  /api/scraper/scrape:
+    post:
+      operationId: ScraperController_scrapeSite
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScrapeRequest'
+      responses:
+        '201':
+          description: ''
+      tags: *ref_0
+      security: *ref_1
+  /api/scraper/site:
+    post:
+      operationId: ScraperController_createSite
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteRequest'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteResponse'
+      tags: *ref_0
+      security: *ref_1
+  /api/scraper/site/{id}:
+    put:
+      operationId: ScraperController_updateSite
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteRequest'
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteResponse'
+        '404':
+          description: ''
+      tags: *ref_0
+      security: *ref_1
+    delete:
+      operationId: ScraperController_deleteSite
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+      tags: *ref_0
+      security: *ref_1
+info:
+  title: Web scraper microservice
+  description: >-
+    The web scraper microservice provides price data of the products from
+    external websites
+  version: '1.0'
+  contact: {}
+tags:
+  - name: scraper
+    description: ''
+servers: []
+components:
+  securitySchemes:
+    JWT:
+      type: http
+      scheme: bearer
+  schemas:
+    ProductResponse:
+      type: object
+      properties:
+        site:
+          type: string
+        image:
+          type: string
+        title:
+          type: string
+        url:
+          type: string
+        price:
+          type: number
+      required:
+        - site
+        - image
+        - title
+        - url
+        - price
+    Selector:
+      type: object
+      properties:
+        selector:
+          type: string
+        property:
+          type: string
+      required:
+        - selector
+        - property
+    RootSelector:
+      type: object
+      properties:
+        base:
+          type: string
+        image:
+          $ref: '#/components/schemas/Selector'
+        price:
+          $ref: '#/components/schemas/Selector'
+        title:
+          $ref: '#/components/schemas/Selector'
+        url:
+          $ref: '#/components/schemas/Selector'
+      required:
+        - base
+        - image
+        - price
+        - title
+        - url
+    SiteResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        categoryIds:
+          type: array
+          items:
+            type: number
+        name:
+          type: string
+        url:
+          type: string
+        selector:
+          $ref: '#/components/schemas/RootSelector'
+      required:
+        - id
+        - categoryIds
+        - name
+        - url
+        - selector
+    ScrapeRequest:
+      type: object
+      properties:
+        siteId:
+          type: string
+      required:
+        - siteId
+    SiteRequest:
+      type: object
+      properties:
+        categoryIds:
+          type: array
+          items:
+            type: number
+        name:
+          type: string
+        url:
+          type: string
+        selector:
+          $ref: '#/components/schemas/RootSelector'
+      required:
+        - categoryIds
+        - name
+        - url
+        - selector
+    Advertisement:
+      type: object
+      properties: {}

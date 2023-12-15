@@ -3,6 +3,7 @@ import { MatStepper } from '@angular/material/stepper';
 import { ActivatedRoute } from '@angular/router';
 import { AdvertisementResponse, AdvertisementService, CategoryResponse, CategoryService } from 'src/app/openapi/advertisementservice';
 import { ImagesService } from 'src/app/openapi/imageprocessingservice';
+import { parseDate } from 'src/app/util/parse-date';
 
 export interface EditAdvertisement {
   id?: number;
@@ -11,6 +12,8 @@ export interface EditAdvertisement {
   price: number;
   categoryId?: number;
   status?: AdvertisementResponse.StatusEnum;
+  type?: AdvertisementResponse.TypeEnum;
+  expiration?: Date;
 }
 
 @Component({
@@ -42,7 +45,7 @@ export class ManageAdvertisementComponent implements OnInit {
       }
       if (advertisementId) {
         this.advertisementService.getAdvertisementId(advertisementId).subscribe({
-          next: res => this.advertisement = res,
+          next: res => this.advertisement = this.parseAdvertisementResponse(res),
         });
         this.imagesService.getImageListAdvertisementId(advertisementId).subscribe({
           next: res => this.images = res,
@@ -76,16 +79,18 @@ export class ManageAdvertisementComponent implements OnInit {
       return;
     }
 
-    if (this.newAdvertisement) {
+    if (this.newAdvertisement && this.advertisement.type) {
       this.advertisementService.postAdvertisements(
         this.advertisement.title,
         this.advertisement.description,
         this.advertisement.price,
         this.advertisement.categoryId,
+        this.advertisement.type,
+        this.advertisement.expiration?.toISOString(),
         this.files,
       ).subscribe({
         next: res => {
-          this.advertisement = res;
+          this.advertisement = this.parseAdvertisementResponse(res);
           stepper.next();
         },
       })
@@ -101,10 +106,14 @@ export class ManageAdvertisementComponent implements OnInit {
         this.imagesToDelete.join(';'),
       ).subscribe({
         next: res => {
-          this.advertisement = res;
+          this.advertisement = this.parseAdvertisementResponse(res);
           stepper.next();
         },
       });
     }
+  }
+
+  private parseAdvertisementResponse(res: AdvertisementResponse) {
+    return { ...res, expiration: parseDate(res.expiration) }
   }
 }

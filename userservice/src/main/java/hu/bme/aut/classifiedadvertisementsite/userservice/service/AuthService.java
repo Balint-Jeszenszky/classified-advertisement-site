@@ -20,7 +20,7 @@ import hu.bme.aut.classifiedadvertisementsite.userservice.service.util.UserValid
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,7 +34,6 @@ import java.util.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@EnableScheduling
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -51,7 +50,7 @@ public class AuthService {
         String username = registrationRequest.getUsername().toLowerCase();
 
         if (!UserValidator.validateUsername(username)) {
-            throw new BadRequestException("Error: Username should be at least 4 characters long!");
+            throw new BadRequestException("Error: Username should be at least 4, at most 20 characters long!");
         }
 
         if (!EmailValidator.validateEmail(email)) {
@@ -188,8 +187,9 @@ public class AuthService {
         passwordResetRepository.delete(passwordReset);
     }
 
-    @Scheduled(cron = "0 0 3 * * *", zone = "Europe/Budapest")
-    void deleteExpiredPasswordResetKeys() {
+    @Scheduled(cron = "0 0 3 * * *")
+    @SchedulerLock(name = "deleteExpiredPasswordResetKeys", lockAtLeastFor = "PT10M", lockAtMostFor = "PT1H")
+    protected void deleteExpiredPasswordResetKeys() {
         log.info("Deleting expired password reset keys");
         List<PasswordReset> expired = passwordResetRepository.findByExpirationLessThan(new Date());
         passwordResetRepository.deleteAllInBatch(expired);

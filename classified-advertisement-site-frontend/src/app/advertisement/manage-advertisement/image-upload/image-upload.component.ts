@@ -19,7 +19,10 @@ export class ImageUploadComponent {
     const fileList: File[] = [];
     if (files) {
       for (let i = 0; i < files.length; i++) {
-        if (this.acceptedExtensions.includes(`.${files.item(i)?.name.split('.').pop()?.toLocaleLowerCase()}`)) {
+        if (
+          this.acceptedExtensions.includes(`.${files.item(i)?.name.split('.').pop()?.toLocaleLowerCase()}`)
+          && this.images.length - this.imagesToDelete.length + this.files.length + fileList.length < 10
+        ) {
           fileList.push(files.item(i)!);
         }
       }

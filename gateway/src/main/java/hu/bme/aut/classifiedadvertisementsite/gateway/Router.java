@@ -21,6 +21,8 @@ public class Router {
     private String notificationServiceUri;
     @Value("${gateway.services.chatServiceUri}")
     private String chatServiceUri;
+    @Value("${gateway.services.bidServiceUri}")
+    private String bidServiceUri;
     @Value("${gateway.services.frontend}")
     private String frontendUri;
 
@@ -49,6 +51,10 @@ public class Router {
                         .path("/api/chat/**")
                         .filters(f -> f.rewritePath("/api/chat/", "/api/"))
                         .uri(chatServiceUri))
+                .route(p -> p
+                        .path("/api/bid/**")
+                        .filters(f -> f.rewritePath("/api/bid/", "/api/bid/external/"))
+                        .uri(bidServiceUri))
                 .route(p -> p
                         .path("/**")
                         .uri(frontendUri))
